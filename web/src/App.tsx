@@ -11,7 +11,9 @@ import Discussion from './student/Discussion';
 import Feedback from './student/Feedback';
 
 import TeacherLogin from './teacher/TeacherLogin';
+import TeacherSignup from './teacher/TeacherSignup';
 import TeacherHome from './teacher/TeacherHome';
+import AdminMembers from './teacher/AdminMembers';
 import CourseView from './teacher/CourseView';
 import ActivityView from './teacher/ActivityView';
 
@@ -81,7 +83,9 @@ export default function App() {
         <Route path="/feedback" element={<RequireStudent><Feedback /></RequireStudent>} />
 
         <Route path="/teacher/login" element={<TeacherLogin />} />
+        <Route path="/teacher/signup" element={<TeacherSignup />} />
         <Route path="/teacher" element={<TeacherHome />} />
+        <Route path="/teacher/members" element={<AdminMembers />} />
         <Route path="/teacher/course/:courseId" element={<CourseView />} />
         <Route path="/teacher/activity/:activityId" element={<ActivityView />} />
 

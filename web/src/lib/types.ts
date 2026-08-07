@@ -18,6 +18,38 @@ export const STATUS_LABEL: Record<ActivityStatus, string> = {
 /** 팀 기여도는 루브릭이 아니라 100점 배분 방식이라 평가 화면이 다르다. */
 export const isRubricKind = (k: ActivityKind) => k !== 'team_contribution';
 
+/**
+ * 화면 표시용. 실제 권한 판정은 서버(DB의 is_admin())가 한다 —
+ * 이 상수를 고쳐도 남의 회원 목록은 볼 수 없다.
+ */
+export const ADMIN_EMAIL = 'radical8566@gmail.com';
+
+export type MemberStatus = 'pending' | 'approved' | 'suspended';
+
+export const MEMBER_STATUS_LABEL: Record<MemberStatus, string> = {
+  pending: '승인 대기',
+  approved: '승인됨',
+  suspended: '정지',
+};
+
+export interface Profile {
+  id: string;
+  email: string;
+  name: string | null;
+  affiliation: string | null;
+  role: 'admin' | 'teacher';
+  status: MemberStatus;
+  note: string | null;
+  created_at: string;
+  approved_at: string | null;
+}
+
+export interface Member extends Profile {
+  course_count: number;
+  student_count: number;
+  last_sign_in: string | null;
+}
+
 export interface Course {
   id: string;
   owner_id: string;

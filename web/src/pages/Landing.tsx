@@ -25,9 +25,14 @@ export default function Landing() {
       <div className="card">
         <h3 style={{ marginTop: 0 }}>교수</h3>
         <p className="small muted">과목·명단·루브릭을 만들고, 평가를 배정하고, 결과를 확정합니다.</p>
-        <Link className="btn btn-navy btn-block" to="/teacher">
-          교수 화면
-        </Link>
+        <div className="btn-row">
+          <Link className="btn btn-navy" style={{ flex: 2 }} to="/teacher">
+            로그인
+          </Link>
+          <Link className="btn btn-ghost" style={{ flex: 1 }} to="/teacher/signup">
+            회원가입
+          </Link>
+        </div>
       </div>
     </div>
   );

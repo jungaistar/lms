@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { teacherClient } from '../lib/supabase';
-import type { Course } from '../lib/types';
+import { MEMBER_STATUS_LABEL, type Course, type Profile } from '../lib/types';
 
 /** 학생이 손으로 입력할 코드라 헷갈리는 글자(O/0, I/1)를 뺀다. */
 function randomJoinCode(): string {
@@ -12,6 +12,8 @@ function randomJoinCode(): string {
 export default function TeacherHome() {
   const nav = useNavigate();
   const [ready, setReady] = useState(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [pendingCount, setPendingCount] = useState(0);
   const [courses, setCourses] = useState<Course[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -37,6 +39,20 @@ export default function TeacherHome() {
     (async () => {
       const { data } = await teacherClient.auth.getSession();
       if (!data.session) return nav('/teacher/login', { replace: true });
+
+      const { data: p } = await teacherClient
+        .from('profiles')
+        .select('*')
+        .eq('id', data.session.user.id)
+        .maybeSingle();
+      setProfile((p ?? null) as Profile | null);
+
+      // 관리자면 승인 대기 인원을 배지로 띄운다. 관리자가 아니면 빈 목록이 온다.
+      if ((p as Profile | null)?.role === 'admin') {
+        const { data: members } = await teacherClient.rpc('admin_member_list');
+        setPendingCount(((members ?? []) as Array<{ status: string }>).filter((m) => m.status === 'pending').length);
+      }
+
       await load();
       setReady(true);
     })();
@@ -67,7 +83,20 @@ export default function TeacherHome() {
     <div className="container">
       <div className="card tight">
         <div className="row" style={{ alignItems: 'center' }}>
-          <h2 style={{ margin: 0, flex: 1 }}>내 과목</h2>
+          <div style={{ flex: 1 }}>
+            <h2 style={{ margin: 0 }}>내 과목</h2>
+            {profile && (
+              <div className="small muted">
+                {profile.name ?? profile.email}
+                {profile.role === 'admin' && <span className="badge badge-finalized" style={{ marginLeft: 6 }}>관리자</span>}
+              </div>
+            )}
+          </div>
+          {profile?.role === 'admin' && (
+            <Link className="btn btn-navy btn-sm" to="/teacher/members" style={{ flex: '0 0 auto' }}>
+              회원관리{pendingCount > 0 && ` (${pendingCount})`}
+            </Link>
+          )}
           <button
             className="btn-ghost btn-sm"
             style={{ flex: '0 0 auto' }}
@@ -82,6 +111,17 @@ export default function TeacherHome() {
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
+
+      {profile && profile.status !== 'approved' && (
+        <div className={`alert ${profile.status === 'suspended' ? 'alert-error' : 'alert-warn'}`}>
+          <b>{MEMBER_STATUS_LABEL[profile.status]} 상태입니다.</b>
+          <p className="small" style={{ margin: '6px 0 0' }}>
+            {profile.status === 'pending'
+              ? '관리자가 승인해야 과목을 만들 수 있습니다. 승인되면 이 안내가 사라집니다.'
+              : '계정이 정지되어 과목을 만들거나 수정할 수 없습니다. 관리자에게 문의하세요.'}
+          </p>
+        </div>
+      )}
 
       {courses.length === 0 && !creating && (
         <div className="empty">
@@ -165,8 +205,12 @@ export default function TeacherHome() {
           </form>
         </div>
       ) : (
-        <button className="btn-primary btn-block" onClick={() => setCreating(true)}>
-          + 새 과목
+        <button
+          className="btn-primary btn-block"
+          onClick={() => setCreating(true)}
+          disabled={profile !== null && profile.status !== 'approved'}
+        >
+          {profile && profile.status !== 'approved' ? '승인 후 과목을 만들 수 있습니다' : '+ 새 과목'}
         </button>
       )}
     </div>

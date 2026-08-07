@@ -23,6 +23,7 @@
 2. `supabase/migrations/0002_rls.sql` — 접근 권한
 3. `supabase/migrations/0003_functions.sql` — 배정·집계 함수
 4. `supabase/migrations/0004_student_auth.sql` — 학생 인증 연결
+5. `supabase/migrations/0005_profiles.sql` — 회원가입·회원관리
 
 > 순서가 중요합니다. 2번은 1번의 테이블을, 3번은 2번의 헬퍼 함수를,
 > 4번은 앞의 전부를 씁니다.
@@ -61,16 +62,41 @@ Supabase가 자동으로 주입하므로 따로 설정할 필요가 없습니다
 > `app_metadata` 는 서버만 쓸 수 있어 학생이 자기 토큰을 고쳐 남의 `student_id` 를
 > 주장할 수 없습니다.
 
-## 4단계 — 교수 계정 만들기
+## 4단계 — 관리자 계정 만들기
 
-대시보드 **Authentication → Users → Add user**
+대시보드에서 만들 필요가 없습니다. **앱의 회원가입 화면**에서 직접 가입합니다.
 
-- Email: 본인 이메일
-- Password: 원하는 비밀번호
-- **Auto Confirm User 를 켜세요** (메일 인증 절차를 건너뜁니다)
+1. 배포된 사이트 → **교수 → 회원가입**
+2. 관리자로 지정된 이메일(`radical8566@gmail.com`)로 가입하면
+   **자동으로 관리자 + 승인 상태**가 됩니다
+3. 다른 이메일로 가입한 사람은 **승인 대기** 상태로 들어오고,
+   관리자가 승인해야 과목을 만들 수 있습니다
 
-학생용 회원가입은 열지 마세요. **Authentication → Providers → Email** 에서
-**Enable Sign Ups 를 끄면** 교수 계정만 존재하게 됩니다.
+관리자 이메일은 `supabase/migrations/0005_profiles.sql` 의 `admin_email()` 함수에
+하드코딩되어 있습니다. 바꾸려면 그 함수만 고쳐 다시 실행하세요.
+
+```sql
+create or replace function admin_email() returns text
+language sql immutable as $$ select '새주소@example.com' $$;
+```
+
+> **왜 프론트가 아니라 DB에 박아두는가.** 프론트에서 이메일을 비교하면
+> 브라우저에서 코드를 고쳐 관리자 행세를 할 수 있습니다. DB에 두면
+> RLS가 JWT의 email 클레임을 직접 보고 판단하므로 위조할 수 없습니다.
+
+### Auth 설정
+
+**Authentication → Sign In / Providers → Email** 에서 다음이 맞는지 확인하세요.
+
+| 항목 | 값 | 이유 |
+|---|---|---|
+| Enable Sign Ups | **켬** | 교수가 스스로 가입해야 하므로 |
+| Confirm email | **끔** (autoconfirm) | 메일 발송에 의존하지 않기 위해. 대신 관리자 승인이 문지기 역할을 합니다 |
+| Minimum password length | 8 | |
+
+가입을 열어두어도 안전한 이유: **승인 전에는 과목을 만들 수 없습니다.**
+이건 화면에서 버튼을 감추는 게 아니라, `courses` INSERT 정책이
+`is_approved()` 를 요구하기 때문입니다.
 
 ## 5단계 — 프론트에 연결
 
@@ -114,12 +140,13 @@ npm run dev        # http://localhost:5173
 
 ## 확인 체크리스트
 
-- [ ] SQL 세 개가 오류 없이 실행됐다
+- [ ] SQL 다섯 개가 오류 없이 실행됐다
 - [ ] `student-login` 함수가 배포됐다
-- [ ] 교수 계정으로 로그인해서 과목을 만들 수 있다
+- [ ] 관리자 이메일로 가입하니 바로 과목을 만들 수 있다
+- [ ] 다른 이메일로 가입하면 "승인 대기"가 뜨고 과목 생성 버튼이 잠긴다
+- [ ] 관리자 화면의 회원관리에서 그 사람을 승인하면 바로 풀린다
 - [ ] 명단을 붙여넣으면 학생이 표에 뜬다
 - [ ] 학생 화면에서 수업코드 + 학번으로 들어가진다
-- [ ] 회원가입(Sign up)이 막혀 있다
 
 ## 잘 안 될 때
 
