@@ -23,7 +23,8 @@ function NotConfigured() {
         <p className="small" style={{ margin: '6px 0 0' }}>
           <code>web/.env</code> 에 <code>VITE_SUPABASE_URL</code> 과{' '}
           <code>VITE_SUPABASE_ANON_KEY</code> 를 넣고 다시 빌드하세요.
-          자세한 절차는 <code>docs/30-setup.md</code> 에 있습니다.
+          GitHub Pages 로 배포한 경우에는 저장소 Secrets 에 같은 두 값을 등록해야 합니다.
+          자세한 절차는 <code>docs/10-setup.md</code> 에 있습니다.
         </p>
       </div>
     </div>

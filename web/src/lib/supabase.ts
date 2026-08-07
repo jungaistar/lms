@@ -5,8 +5,22 @@ const ANON = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const isConfigured = Boolean(URL && ANON && !URL.includes('xxxx'));
 
+/**
+ * 설정이 없을 때 쓰는 자리표시자.
+ *
+ * `??` 가 아니라 `||` 인 게 중요하다. CI 에서 시크릿이 비어 있으면 환경변수가
+ * undefined 가 아니라 **빈 문자열**로 들어오고, `??` 는 빈 문자열을 통과시켜
+ * createClient 가 "supabaseUrl is required" 로 던진다. 그러면 앱 전체가
+ * 흰 화면이 되어 "설정이 없습니다" 안내조차 못 보여준다.
+ *
+ * 이 클라이언트는 isConfigured 가 false 인 동안 실제로 쓰이지 않는다 —
+ * App 이 그 전에 안내 화면으로 빠진다.
+ */
+const SAFE_URL = URL || 'https://placeholder.supabase.co';
+const SAFE_ANON = ANON || 'placeholder-anon-key';
+
 /** 교수용 — Supabase Auth 세션을 브라우저에 유지한다. */
-export const teacherClient: SupabaseClient = createClient(URL ?? 'http://localhost', ANON ?? 'anon', {
+export const teacherClient: SupabaseClient = createClient(SAFE_URL, SAFE_ANON, {
   auth: { persistSession: true, storageKey: 'pa-teacher-auth', autoRefreshToken: true },
 });
 
@@ -18,7 +32,7 @@ let studentCache: { token: string; client: SupabaseClient } | null = null;
 
 export function studentClient(token: string): SupabaseClient {
   if (studentCache?.token === token) return studentCache.client;
-  const client = createClient(URL ?? 'http://localhost', ANON ?? 'anon', {
+  const client = createClient(SAFE_URL, SAFE_ANON, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: { headers: { Authorization: `Bearer ${token}` } },
   });
