@@ -2,13 +2,14 @@ node_modules/
 dist/
 .env
 .env.local
+.env.*.local
 
 # 세션 쿠키 / 인증 상태 — 절대 커밋 금지
 .auth/
 storageState.json
 cookies.json
 
-# 수집된 실제 학생 데이터 — 절대 커밋 금지
+# 실제 학생 데이터 — 절대 커밋 금지
 data/
 *.sqlite
 *.sqlite3
@@ -16,6 +17,11 @@ data/
 downloads/
 submissions/
 exports/
+*_성적.csv
+
+# Supabase 로컬 개발
+supabase/.branches/
+supabase/.temp/
 
 # 로그
 logs/

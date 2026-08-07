@@ -1,8 +1,8 @@
 {
-  "name": "lms-grading-assistant",
+  "name": "lms-bridge",
   "version": "0.1.0",
   "private": true,
-  "description": "세션 재사용 기반 LMS 읽기 전용 수집 + AI 채점 초안 + 사람 확인 후 브라우저 자동화 입력",
+  "description": "학교 LMS(*.dunet) 연동 — 명단·제출물 읽기, 동료평가 결과 성적 입력",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -14,7 +14,8 @@
     "collect": "tsx src/cli/collect.ts",
     "grade": "tsx src/cli/grade.ts",
     "review": "tsx src/cli/review.ts",
-    "submit": "tsx src/cli/submit.ts"
+    "submit": "tsx src/cli/submit.ts",
+    "push": "tsx src/cli/push.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.0",
