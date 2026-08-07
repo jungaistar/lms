@@ -1,43 +1,42 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { studentClient } from './supabase';
 
-const KEY = 'pa-student-session';
+/**
+ * 학생 화면에 표시할 프로필(이름·과목).
+ *
+ * 인증 자체는 studentClient 의 Supabase 세션이 담당한다. 여기 있는 건
+ * 매 화면마다 이름·과목을 다시 조회하지 않기 위한 캐시일 뿐이다.
+ * 그래서 이 값이 있다고 로그인된 게 아니고, 없다고 로그아웃된 것도 아니다 —
+ * 판단 기준은 항상 Supabase 세션 쪽이다.
+ */
+const KEY = 'pa-student-profile';
 
-export interface StudentSession {
-  token: string;
-  expiresAt: number; // epoch ms
+export interface StudentProfile {
   student: { id: string; name: string; student_no: string };
   course: { id: string; title: string; term: string; class_no: string | null };
 }
 
-export function saveStudentSession(s: StudentSession): void {
-  sessionStorage.setItem(KEY, JSON.stringify(s));
+export function saveStudentProfile(p: StudentProfile): void {
+  sessionStorage.setItem(KEY, JSON.stringify(p));
 }
 
-export function loadStudentSession(): StudentSession | null {
+export function loadStudentSession(): StudentProfile | null {
   const raw = sessionStorage.getItem(KEY);
   if (!raw) return null;
   try {
-    const s = JSON.parse(raw) as StudentSession;
-    // 만료된 토큰으로 요청을 보내 401 을 받느니, 여기서 바로 정리한다.
-    if (s.expiresAt <= Date.now()) {
-      sessionStorage.removeItem(KEY);
-      return null;
-    }
-    return s;
+    return JSON.parse(raw) as StudentProfile;
   } catch {
     sessionStorage.removeItem(KEY);
     return null;
   }
 }
 
-export function clearStudentSession(): void {
+export async function clearStudentSession(): Promise<void> {
   sessionStorage.removeItem(KEY);
+  await studentClient.auth.signOut();
 }
 
-/** 로그인된 학생의 Supabase 클라이언트. 세션이 없으면 던진다. */
+/** 로그인된 학생의 Supabase 클라이언트. */
 export function studentDb(): SupabaseClient {
-  const s = loadStudentSession();
-  if (!s) throw new Error('로그인이 필요합니다.');
-  return studentClient(s.token);
+  return studentClient;
 }

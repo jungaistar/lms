@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { studentLogin } from '../lib/supabase';
-import { saveStudentSession } from '../lib/session';
+import { saveStudentProfile } from '../lib/session';
 
 export default function StudentLogin() {
   const nav = useNavigate();
@@ -16,12 +16,7 @@ export default function StudentLogin() {
     setError(null);
     try {
       const r = await studentLogin(joinCode, studentNo);
-      saveStudentSession({
-        token: r.token,
-        expiresAt: Date.now() + r.expires_in * 1000,
-        student: r.student,
-        course: r.course,
-      });
+      saveStudentProfile({ student: r.student, course: r.course });
       nav('/me', { replace: true });
     } catch (e) {
       setError(e instanceof Error ? e.message : '로그인에 실패했습니다.');

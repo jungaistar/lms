@@ -51,8 +51,8 @@ function TopBar() {
           <button
             className="btn-ghost btn-sm"
             style={{ marginLeft: 8 }}
-            onClick={() => {
-              clearStudentSession();
+            onClick={async () => {
+              await clearStudentSession();
               nav('/login', { replace: true });
             }}
           >

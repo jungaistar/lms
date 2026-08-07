@@ -12,9 +12,6 @@ export const isConfigured = Boolean(URL && ANON && !URL.includes('xxxx'));
  * undefined 가 아니라 **빈 문자열**로 들어오고, `??` 는 빈 문자열을 통과시켜
  * createClient 가 "supabaseUrl is required" 로 던진다. 그러면 앱 전체가
  * 흰 화면이 되어 "설정이 없습니다" 안내조차 못 보여준다.
- *
- * 이 클라이언트는 isConfigured 가 false 인 동안 실제로 쓰이지 않는다 —
- * App 이 그 전에 안내 화면으로 빠진다.
  */
 const SAFE_URL = URL || 'https://placeholder.supabase.co';
 const SAFE_ANON = ANON || 'placeholder-anon-key';
@@ -25,33 +22,61 @@ export const teacherClient: SupabaseClient = createClient(SAFE_URL, SAFE_ANON, {
 });
 
 /**
- * 학생용 — student-login Edge Function 이 발급한 토큰을 헤더에 실어 보낸다.
- * Supabase Auth 세션이 아니므로 persistSession 은 끈다.
+ * 학생용.
+ *
+ * 학생도 이제 진짜 Supabase 세션을 쓴다(토큰 직접 서명 방식에서 옮겨왔다).
+ * 그래서 액세스 토큰 만료를 우리가 신경 쓸 필요가 없다 — 클라이언트가 알아서 갱신한다.
+ *
+ * 저장소로 sessionStorage 를 쓰는 이유: 학교 실습실 PC 처럼 공용 기기에서
+ * 탭을 닫으면 세션이 남지 않게 하기 위해서. 학생 본인 휴대폰에서는 차이가 없다.
  */
-let studentCache: { token: string; client: SupabaseClient } | null = null;
+export const studentClient: SupabaseClient = createClient(SAFE_URL, SAFE_ANON, {
+  auth: {
+    persistSession: true,
+    storageKey: 'pa-student-auth',
+    autoRefreshToken: true,
+    storage: typeof window === 'undefined' ? undefined : window.sessionStorage,
+  },
+});
 
-export function studentClient(token: string): SupabaseClient {
-  if (studentCache?.token === token) return studentCache.client;
-  const client = createClient(SAFE_URL, SAFE_ANON, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: { headers: { Authorization: `Bearer ${token}` } },
-  });
-  studentCache = { token, client };
-  return client;
+export interface StudentLoginResult {
+  access_token: string;
+  refresh_token: string;
+  student: { id: string; name: string; student_no: string };
+  course: { id: string; title: string; term: string; class_no: string | null };
 }
 
-export async function studentLogin(joinCode: string, studentNo: string) {
-  const res = await fetch(`${URL}/functions/v1/student-login`, {
+/**
+ * 학번 + 수업코드로 로그인.
+ * Edge Function 이 명단을 대조하고 정상 세션을 발급한다.
+ */
+export async function studentLogin(joinCode: string, studentNo: string): Promise<StudentLoginResult> {
+  const res = await fetch(`${SAFE_URL}/functions/v1/student-login`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', apikey: ANON },
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: SAFE_ANON,
+      Authorization: `Bearer ${SAFE_ANON}`,
+    },
     body: JSON.stringify({ join_code: joinCode, student_no: studentNo }),
   });
-  const body = await res.json();
-  if (!res.ok) throw new Error(body?.error ?? '로그인에 실패했습니다.');
-  return body as {
-    token: string;
-    expires_in: number;
-    student: { id: string; name: string; student_no: string };
-    course: { id: string; title: string; term: string; class_no: string | null };
-  };
+
+  let body: Record<string, unknown>;
+  try {
+    body = await res.json();
+  } catch {
+    throw new Error(`로그인 서버가 응답하지 않습니다 (HTTP ${res.status}).`);
+  }
+  if (!res.ok) throw new Error(String(body?.error ?? '로그인에 실패했습니다.'));
+
+  const result = body as unknown as StudentLoginResult;
+
+  // 받은 세션을 클라이언트에 심는다. 이후 모든 질의가 이 세션으로 나간다.
+  const { error } = await studentClient.auth.setSession({
+    access_token: result.access_token,
+    refresh_token: result.refresh_token,
+  });
+  if (error) throw new Error(`세션을 저장하지 못했습니다: ${error.message}`);
+
+  return result;
 }
