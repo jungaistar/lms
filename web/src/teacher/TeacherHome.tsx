@@ -97,6 +97,9 @@ export default function TeacherHome() {
               회원관리{pendingCount > 0 && ` (${pendingCount})`}
             </Link>
           )}
+          <Link className="btn btn-ghost btn-sm" to="/teacher/password" style={{ flex: '0 0 auto' }}>
+            비밀번호
+          </Link>
           <button
             className="btn-ghost btn-sm"
             style={{ flex: '0 0 auto' }}

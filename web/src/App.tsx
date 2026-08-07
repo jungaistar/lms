@@ -4,6 +4,8 @@ import { clearStudentSession, loadStudentSession } from './lib/session';
 
 import Landing from './pages/Landing';
 import StudentLogin from './pages/StudentLogin';
+import AuthOtp from './pages/AuthOtp';
+import SetPassword from './teacher/SetPassword';
 import StudentHome from './student/StudentHome';
 import Evaluate from './student/Evaluate';
 import Contribution from './student/Contribution';
@@ -86,6 +88,8 @@ export default function App() {
         <Route path="/teacher/signup" element={<TeacherSignup />} />
         <Route path="/teacher" element={<TeacherHome />} />
         <Route path="/teacher/members" element={<AdminMembers />} />
+        <Route path="/teacher/password" element={<SetPassword />} />
+        <Route path="/auth/otp" element={<AuthOtp />} />
         <Route path="/teacher/course/:courseId" element={<CourseView />} />
         <Route path="/teacher/activity/:activityId" element={<ActivityView />} />
 
