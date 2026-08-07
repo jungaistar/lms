@@ -1,0 +1,28 @@
+node_modules/
+dist/
+.env
+.env.local
+
+# 세션 쿠키 / 인증 상태 — 절대 커밋 금지
+.auth/
+storageState.json
+cookies.json
+
+# 수집된 실제 학생 데이터 — 절대 커밋 금지
+data/
+*.sqlite
+*.sqlite3
+*.db
+downloads/
+submissions/
+exports/
+
+# 로그
+logs/
+*.log
+npm-debug.log*
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

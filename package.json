@@ -1,0 +1,33 @@
+{
+  "name": "lms-grading-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "description": "세션 재사용 기반 LMS 읽기 전용 수집 + AI 채점 초안 + 사람 확인 후 브라우저 자동화 입력",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "auth": "tsx src/cli/auth.ts",
+    "collect": "tsx src/cli/collect.ts",
+    "grade": "tsx src/cli/grade.ts",
+    "review": "tsx src/cli/review.ts",
+    "submit": "tsx src/cli/submit.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.0",
+    "better-sqlite3": "^12.4.1",
+    "cheerio": "^1.1.2",
+    "dotenv": "^17.2.3",
+    "playwright": "^1.56.1",
+    "undici": "^7.16.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24.7.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

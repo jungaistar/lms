@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LMS 채점 보조 도구 — 개발 가이드</title>
+<meta name="description" content="세션 쿠키 기반 LMS(*.dunet)를 대상으로 한 읽기 전용 수집 + AI 채점 초안 + 사람 확인 후 브라우저 자동화 입력 설계 가이드">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📘</text></svg>">
+<style>
+:root{
+  --navy:#0E2A47; --navy-2:#173C63; --navy-3:#22508220;
+  --orange:#F26B21; --orange-soft:#FFF1E8;
+  --ink:#16202B; --muted:#5B6B7C; --line:#DDE4EC;
+  --bg:#FFFFFF; --bg-alt:#F5F8FB; --code-bg:#0E2A47;
+  --ok:#1B7F5A; --ok-bg:#E8F6F0; --warn:#B4530A; --warn-bg:#FFF3E4;
+  --danger:#B3261E; --danger-bg:#FDECEA;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",Pretendard,sans-serif;
+  --mono:"Cascadia Code",Consolas,"D2Coding",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:78px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+
+/* ── 헤더 ─────────────────────────────── */
+header.top{position:sticky;top:0;z-index:50;background:var(--navy);color:#fff;
+  border-bottom:3px solid var(--orange)}
+.top-in{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;
+  align-items:center;gap:20px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
+.brand span{color:var(--orange)}
+nav.top-nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav.top-nav a{color:#C7D6E6;text-decoration:none;font-size:13.5px;font-weight:600;
+  padding:6px 11px;border-radius:6px;transition:.15s}
+nav.top-nav a:hover{background:#ffffff1a;color:#fff}
+
+/* ── 히어로 ───────────────────────────── */
+.hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;
+  padding:56px 24px 60px}
+.hero-in{max-width:1180px;margin:0 auto}
+.tag{display:inline-block;background:var(--orange);color:#fff;font-size:11.5px;
+  font-weight:800;letter-spacing:.1em;padding:5px 12px;border-radius:4px;margin-bottom:18px}
+.hero h1{margin:0 0 14px;font-size:clamp(28px,4.2vw,42px);line-height:1.25;
+  letter-spacing:-.03em;font-weight:800}
+.hero p.lead{margin:0;font-size:clamp(15px,1.7vw,18px);color:#BFD2E4;max-width:66ch;line-height:1.7}
+.hero-cta{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-block;padding:11px 22px;border-radius:7px;text-decoration:none;
+  font-weight:700;font-size:14.5px;transition:.15s}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:#d85a14}
+.btn-ghost{border:1.5px solid #ffffff40;color:#fff}
+.btn-ghost:hover{background:#ffffff14;border-color:#fff}
+
+/* ── 레이아웃 ─────────────────────────── */
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px;display:grid;
+  grid-template-columns:220px 1fr;gap:52px;align-items:start}
+aside{position:sticky;top:88px;padding:38px 0;font-size:13.5px}
+aside .aside-title{font-size:11px;font-weight:800;letter-spacing:.12em;
+  color:var(--muted);margin-bottom:12px}
+aside a{display:block;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;
+  border-left:2px solid var(--line);transition:.15s}
+aside a:hover{color:var(--navy);border-left-color:var(--orange);background:var(--bg-alt)}
+main{padding:38px 0 80px;min-width:0}
+
+/* ── 섹션 ─────────────────────────────── */
+section{margin-bottom:60px;scroll-margin-top:80px}
+h2{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0 0 6px;
+  padding-bottom:12px;border-bottom:2px solid var(--line);position:relative}
+h2::after{content:"";position:absolute;bottom:-2px;left:0;width:56px;height:2px;background:var(--orange)}
+h2 .num{color:var(--orange);font-size:15px;font-weight:800;display:block;
+  letter-spacing:.1em;margin-bottom:4px}
+h3{font-size:18px;font-weight:750;margin:32px 0 10px;letter-spacing:-.01em}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 16px;padding-left:22px}
+li{margin-bottom:6px}
+a{color:#1B5FA8}
+strong{font-weight:750;color:var(--navy)}
+code{font-family:var(--mono);font-size:.885em;background:var(--bg-alt);
+  border:1px solid var(--line);border-radius:4px;padding:1.5px 5px;color:#8A3A0F;
+  word-break:break-all}
+
+/* ── 표 ───────────────────────────────── */
+.tbl{overflow-x:auto;margin:0 0 20px;border:1px solid var(--line);border-radius:9px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+th{background:var(--navy);color:#fff;text-align:left;padding:11px 14px;
+  font-weight:700;font-size:12.5px;letter-spacing:.02em;white-space:nowrap}
+td{padding:10px 14px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(even){background:var(--bg-alt)}
+td code{background:#fff}
+
+/* ── 코드블록 ─────────────────────────── */
+pre{background:var(--code-bg);color:#DDE9F5;padding:18px 20px;border-radius:9px;
+  overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.65;margin:0 0 20px}
+pre code{background:none;border:none;color:inherit;padding:0;font-size:inherit}
+
+/* ── 콜아웃 ───────────────────────────── */
+.note{border-left:4px solid;border-radius:0 8px 8px 0;padding:14px 18px;margin:0 0 20px;font-size:14.5px}
+.note :last-child{margin-bottom:0}
+.note-t{font-weight:800;display:block;margin-bottom:5px;font-size:13px;letter-spacing:.02em}
+.info{border-color:var(--navy);background:var(--bg-alt)}
+.info .note-t{color:var(--navy)}
+.warn{border-color:var(--orange);background:var(--warn-bg)}
+.warn .note-t{color:var(--warn)}
+.danger{border-color:var(--danger);background:var(--danger-bg)}
+.danger .note-t{color:var(--danger)}
+.ok{border-color:var(--ok);background:var(--ok-bg)}
+.ok .note-t{color:var(--ok)}
+
+/* ── 원칙 카드 ────────────────────────── */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:0 0 22px}
+.card{border:1px solid var(--line);border-top:3px solid var(--orange);
+  border-radius:9px;padding:18px 20px;background:#fff}
+.card h4{margin:0 0 8px;font-size:15.5px;font-weight:750;color:var(--navy)}
+.card p{margin:0;font-size:14px;color:var(--muted);line-height:1.65}
+.card .who{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;
+  background:var(--orange-soft);color:var(--warn);padding:3px 9px;border-radius:4px;margin-bottom:9px}
+
+/* ── 다이어그램 ───────────────────────── */
+.diagram{border:1px solid var(--line);border-radius:10px;background:var(--bg-alt);
+  padding:20px;margin:0 0 22px;overflow-x:auto}
+.diagram svg{display:block;min-width:640px;width:100%;height:auto}
+
+/* ── 단계 ─────────────────────────────── */
+.phase{border:1px solid var(--line);border-radius:10px;margin:0 0 14px;overflow:hidden}
+.phase-h{background:var(--bg-alt);padding:13px 18px;display:flex;align-items:center;gap:13px;
+  border-bottom:1px solid var(--line)}
+.phase-n{background:var(--navy);color:#fff;width:30px;height:30px;border-radius:50%;
+  display:grid;place-items:center;font-weight:800;font-size:13px;flex-shrink:0}
+.phase-t{font-weight:750;font-size:15.5px}
+.phase-b{padding:15px 18px}
+.phase-b ul{margin:0 0 10px}
+.phase-b .done{font-size:13.5px;color:var(--ok);font-weight:700;margin:0;
+  background:var(--ok-bg);padding:9px 13px;border-radius:6px}
+
+/* ── 푸터 ─────────────────────────────── */
+footer{background:var(--navy);color:#9FB4CA;padding:34px 24px;font-size:13.5px}
+.foot-in{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;
+  gap:18px;flex-wrap:wrap}
+footer a{color:#BFD2E4}
+
+@media(max-width:900px){
+  .wrap{grid-template-columns:1fr;gap:0}
+  aside{position:static;padding:24px 0 0;
+    display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:16px}
+  aside .aside-title{width:100%}
+  aside a{border-left:none;border:1px solid var(--line);border-radius:6px;padding:5px 11px}
+  main{padding-top:26px}
+  nav.top-nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">LMS <span>채점 보조 도구</span></div>
+    <nav class="top-nav">
+      <a href="#findings">발견 사항</a>
+      <a href="#endpoints">엔드포인트</a>
+      <a href="#architecture">아키텍처</a>
+      <a href="#roadmap">로드맵</a>
+      <a href="#safety">안전장치</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-in">
+    <div class="tag">개발 가이드 · v1.0</div>
+    <h1>세션 쿠키 기반 LMS를<br>안전하게 자동화하는 방법</h1>
+    <p class="lead">
+      대상 시스템은 REST API가 아니라 <code style="background:#ffffff1f;border-color:#ffffff30;color:#FFD9C2">*.dunet</code>
+      서버 렌더링 웹앱입니다. 화면 탐색과 네트워크 요청 분석으로 파악한 구조와,
+      성적 데이터를 손상시키지 않으면서 반복 작업을 줄이는 설계를 정리했습니다.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#architecture">아키텍처 보기</a>
+      <a class="btn btn-ghost" href="https://github.com/jungaistar/lms">GitHub 저장소</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <aside>
+    <div class="aside-title">목차</div>
+    <a href="#findings">01 · 핵심 발견 사항</a>
+    <a href="#endpoints">02 · 엔드포인트</a>
+    <a href="#architecture">03 · 아키텍처</a>
+    <a href="#roadmap">04 · 구현 로드맵</a>
+    <a href="#safety">05 · 안전장치</a>
+    <a href="#caution">06 · 유의사항</a>
+  </aside>
+
+  <main>
+
+  <!-- ═══ 01 ═══ -->
+  <section id="findings">
+    <h2><span class="num">01</span>핵심 발견 사항</h2>
+
+    <p>
+      기대했던 깔끔한 REST/JSON 구조가 아니라, <strong>예전 방식의 서버 렌더링 웹앱</strong>입니다
+      (Struts / JSP 계열로 추정). 모든 요청이 <code>.dunet</code>으로 끝나고,
+      대부분 GET이 아니라 POST이며, 응답도 JSON이 아니라 HTML 조각이거나 페이지 전체입니다.
+    </p>
+
+    <div class="tbl">
+      <table>
+        <thead><tr><th>항목</th><th>일반적인 REST API</th><th>이 LMS</th></tr></thead>
+        <tbody>
+          <tr><td>URL</td><td><code>/api/v1/courses/123</code></td><td><code>/lms/myLecture/doListView.dunet</code></td></tr>
+          <tr><td>메서드</td><td>자원별 GET/POST/PUT/DELETE</td><td>대부분 <strong>POST</strong> (조회조차도)</td></tr>
+          <tr><td>응답</td><td>JSON</td><td><strong>HTML 조각 또는 페이지 전체</strong></td></tr>
+          <tr><td>인증</td><td>Bearer 토큰 / API 키</td><td><strong>세션 쿠키 JSESSIONID</strong></td></tr>
+          <tr><td>상태 확인</td><td>없음 (stateless)</td><td>화면마다 <code>getSessionInfo.dunet</code> 반복 호출</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>로그인은 자동화할 수 없다</h3>
+    <p>
+      로그인 화면에 <strong>슬라이더 캡차(slidercaptcha)</strong> 리소스가 존재합니다.
+      따라서 아이디/비밀번호 자동 제출로는 로그인이 되지 않습니다.
+    </p>
+    <div class="note info">
+      <span class="note-t">채택한 방식</span>
+      사람이 브라우저에서 직접 로그인 → 그 시점의 세션 쿠키를 저장 → 이후 수집 작업이 그 쿠키를 재사용.
+      이건 우회가 아니라 <strong>캡차의 의도를 그대로 존중하는 방식</strong>입니다.
+      "사람이 한 번 로그인했다"는 사실을 유지한 채, 그 사람이 손으로 하던 반복 조회만 대신합니다.
+    </div>
+
+    <h3>메뉴 이동은 링크가 아니라 폼 제출</h3>
+    <p>
+      메뉴는 <code>href="..."</code>가 아니라 <code>javascript:fnGoContent(...)</code>,
+      <code>fncGoClassroom(...)</code> 같은 함수 호출입니다.
+      이 함수들이 <strong>숨겨진 폼을 만들어 POST로 제출</strong>합니다.
+      즉 URL만 복사해서는 화면에 갈 수 없고, 어떤 파라미터가 폼에 실리는지를 알아야 합니다.
+    </p>
+
+    <h3>식별자 스키마 — 이 세 가지면 충분하다</h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>식별자</th><th>예시 (마스킹)</th><th>의미</th></tr></thead>
+        <tbody>
+          <tr><td><code>course_id</code></td><td><code>202610UN0060****Y2</code></td><td>학기(202610) + 과목코드 + 분반코드가 이어붙은 문자열</td></tr>
+          <tr><td><code>class_no</code></td><td><code>Y2</code></td><td>분반코드 (Y1~Y6 형태)</td></tr>
+          <tr><td><code>user_no</code></td><td><code>2024*****</code></td><td>학생 학번</td></tr>
+          <tr><td><code>report_no</code> + <code>report_seq</code></td><td><code>3</code> + <code>1</code></td><td>과제 식별 (과제번호 + 회차)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note ok">
+      <span class="note-t">학기 전환</span>
+      <code>course_id</code>의 앞 6자리(학기)만 새 값으로 바꾸면 동일 로직이 그대로 재사용됩니다.
+      그래서 <strong>어떤 식별자도 코드에 하드코딩하지 않습니다.</strong> 전부 <code>.env</code>에서 주입합니다.
+    </div>
+
+    <h3>확인하지 않은 부분 — 의도적으로</h3>
+    <p>
+      개별 학생 채점 모달에 "저장" 버튼이 있고, 목록에는 "선택한 교육생의 점수 일괄 수정" 기능이 있습니다.
+      하지만 저장 시 호출되는 실제 POST 엔드포인트는 확인하지 않았습니다.
+      <strong>실제 학생 데이터를 변경하지 않기 위해 저장 버튼을 누르지 않고 모달을 닫았기 때문입니다.</strong>
+      이 미확인 영역이 곧 아래 아키텍처에서 쓰기를 브라우저 자동화로 처리하기로 한 이유입니다.
+    </p>
+  </section>
+
+  <!-- ═══ 02 ═══ -->
+  <section id="endpoints">
+    <h2><span class="num">02</span>엔드포인트 레퍼런스</h2>
+    <p>모든 경로는 <code>{LMS_HOST}</code> 기준입니다. 실제 호스트는 <code>.env</code>에 두고 커밋하지 않습니다.</p>
+
+    <h3>전역 · 강의실</h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>기능</th><th>메서드</th><th>경로</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td>세션 체크</td><td>POST</td><td><code>/lms/common/select/getSessionInfo.dunet</code></td><td>거의 모든 화면이 호출. 세션 생존 확인에 재사용</td></tr>
+          <tr><td>담당 과목 목록</td><td>POST</td><td><code>/lms/myLecture/doListView.dunet</code></td><td><strong>course_id 수집의 시작점</strong></td></tr>
+          <tr><td>강의실 홈</td><td>POST</td><td><code>/lms/class/classroom/doViewClassRoom.dunet</code><br><code>.../doViewClassRoom_new.dunet</code></td><td>course_id, class_no 필요</td></tr>
+          <tr><td>강의계획서</td><td>GET</td><td><code>/lms/class/coursePlan/doListView.dunet</code></td><td></td></tr>
+          <tr><td>주/회차 콘텐츠</td><td>GET</td><td><code>/lms/class/course/manage/doListCourseContents.dunet</code></td><td>주차별 자료·출결 관련</td></tr>
+          <tr><td>학습현황/통계</td><td>GET</td><td><code>/lms/class/studyCondition/doStudyListView.dunet</code></td><td>진도율, 참여율</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>게시판 — 하나의 엔드포인트 + <code>board_no</code></h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>게시판</th><th>메서드</th><th>경로</th><th>board_no</th></tr></thead>
+        <tbody>
+          <tr><td>공지사항</td><td>GET</td><td rowspan="4"><code>/lms/class/boardItem/doListView.dunet</code></td><td><code>7</code></td></tr>
+          <tr><td>자료실</td><td>GET</td><td><code>6</code></td></tr>
+          <tr><td>질문답변</td><td>GET</td><td><code>5</code></td></tr>
+          <tr><td>자유게시판</td><td>GET</td><td><code>20</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>과제 — 채점 파이프라인의 핵심</h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>기능</th><th>메서드</th><th>경로</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td>과제 목록</td><td>GET</td><td><code>/lms/class/report/prof/doListView.dunet</code></td><td>주차별 리스트 → report_no, report_seq 획득</td></tr>
+          <tr><td>채점 목록(학생별)</td><td>POST</td><td><code>/lms/class/report/prof/doMarkView.dunet</code></td><td>제출 여부 + 취득점수 입력칸</td></tr>
+          <tr><td>제출물 상세 / 채점 모달</td><td>GET</td><td><code>/lms/class/report/prof/doFormReportMark.dunet</code></td><td><strong>제출 내용·첨부·코멘트·현재 점수</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+<pre><code>GET /lms/class/report/prof/doFormReportMark.dunet
+      ?course_id=&lt;COURSE_ID&gt;
+      &amp;class_no=&lt;CLASS_NO&gt;
+      &amp;report_no=&lt;N&gt;
+      &amp;report_seq=&lt;N&gt;
+      &amp;user_no=&lt;학번&gt;
+      &amp;gubun=mark</code></pre>
+
+    <h3>성적</h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>기능</th><th>메서드</th><th>경로</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td>성적산출 목록</td><td>POST</td><td><code>/lms/class/courseScoreManage/doListView.dunet</code></td><td>평가기준 미설정 시 안내 문구 반환</td></tr>
+          <tr><td><strong>학생 그리드 데이터</strong></td><td>POST</td><td><code>/lms/common/courseScoreManage/doListCourseStudent.dunet</code></td><td><strong>성적표의 핵심.</strong> Tabulator 그리드용</td></tr>
+          <tr><td>페이지 정보</td><td>POST</td><td><code>/lms/common/courseScoreManage/doGetPageInfo.dunet</code></td><td>평가항목·가중치 메타데이터</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note info">
+      <span class="note-t">한 번에 확보</span>
+      <code>doListCourseStudent</code> + <code>doGetPageInfo</code> 두 개를 함께 호출하면
+      <strong>학생 명단 + 평가항목 정의 + 가중치</strong>를 한 번에 얻습니다. 로컬 DB 초기 적재의 시작점입니다.
+    </div>
+
+    <h3>기타 활동</h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>기능</th><th>메서드</th><th>경로</th></tr></thead>
+        <tbody>
+          <tr><td>퀴즈 관리</td><td>GET</td><td><code>/lms/class/exam/manage/doListView.dunet</code></td></tr>
+          <tr><td>설문 목록 / 응답수</td><td>GET / POST</td><td><code>/lms/class/survey/control/doListView.dunet</code> · <code>doGetSurveyApplyCnt.dunet</code></td></tr>
+          <tr><td>토론 관리</td><td>GET</td><td><code>/lms/class/discuss/prof/doListView.dunet</code></td></tr>
+          <tr><td>팀프로젝트</td><td>GET</td><td><code>/lms/class/teamproject/prof/doListView.dunet</code></td></tr>
+          <tr><td>조교 관리</td><td>GET</td><td><code>/lms/class/assist/prof/doListView.dunet</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note danger">
+      <span class="note-t">⛔ 미확인 — 직접 호출 금지</span>
+      개별 점수 저장(<code>doSaveReportMark.dunet</code> 추정), 점수 일괄 수정, 성적 확정.
+      파라미터와 서버측 검증 로직을 파악하지 못했습니다.
+      추측해서 호출하면 성적이 0으로 덮이거나, 다른 회차에 기록되거나, 부분 저장으로 정합성이 깨질 수 있습니다.
+    </div>
+  </section>
+
+  <!-- ═══ 03 ═══ -->
+  <section id="architecture">
+    <h2><span class="num">03</span>아키텍처</h2>
+
+    <div class="note info" style="font-size:16px">
+      <span class="note-t">한 문장 요약</span>
+      <strong>읽기는 HTTP 클라이언트로, 판단은 AI 초안으로, 쓰기는 사람 확인 후 브라우저 자동화로.</strong>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <span class="who">사람</span>
+        <h4>로그인</h4>
+        <p>슬라이더 캡차 때문에 자동화 불가. 사람이 로그인하고 세션 쿠키를 저장해 재사용합니다.</p>
+      </div>
+      <div class="card">
+        <span class="who">프로그램</span>
+        <h4>읽기</h4>
+        <p>과제 목록·제출물·학생 명단·성적 그리드는 확인된 엔드포인트로 안전하게 수집합니다.</p>
+      </div>
+      <div class="card">
+        <span class="who">브라우저</span>
+        <h4>쓰기</h4>
+        <p>점수 저장은 직접 호출하지 않습니다. 화면을 열어 입력창을 채우고 저장 버튼을 누릅니다.</p>
+      </div>
+    </div>
+
+    <h3>전체 흐름</h3>
+    <div class="diagram">
+      <svg viewBox="0 0 900 470" xmlns="http://www.w3.org/2000/svg" role="img"
+           aria-label="사람 로그인에서 시작해 읽기 전용 수집, 로컬 DB, AI 채점 초안, 사람 검토, 브라우저 자동화 저장으로 이어지는 흐름도">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0 0 L10 5 L0 10 z" fill="#0E2A47"/>
+          </marker>
+        </defs>
+        <g font-family="-apple-system,'Malgun Gothic',sans-serif">
+
+          <!-- 1 사람 로그인 -->
+          <rect x="250" y="12" width="400" height="58" rx="9" fill="#FFF1E8" stroke="#F26B21" stroke-width="2"/>
+          <text x="270" y="36" font-size="14" font-weight="700" fill="#B4530A">① 사람이 브라우저에서 로그인</text>
+          <text x="270" y="56" font-size="12" fill="#8A5A3A">슬라이더 캡차 통과 — 이 단계는 항상 사람</text>
+          <path d="M450 70 L450 96" stroke="#0E2A47" stroke-width="2" marker-end="url(#ar)"/>
+          <text x="462" y="88" font-size="11" fill="#5B6B7C">세션 쿠키 저장 (.auth/ · git 제외)</text>
+
+          <!-- 2 수집 -->
+          <rect x="250" y="100" width="400" height="66" rx="9" fill="#fff" stroke="#0E2A47" stroke-width="2"/>
+          <text x="270" y="124" font-size="14" font-weight="700" fill="#0E2A47">② 읽기 전용 수집</text>
+          <text x="270" y="143" font-size="11.5" fill="#5B6B7C" font-family="Consolas,monospace">doListView · doMarkView · doFormReportMark</text>
+          <text x="270" y="159" font-size="11.5" fill="#5B6B7C">HTML 파싱 → 정규화 · 원본(raw_html) 함께 보존</text>
+          <path d="M450 166 L450 192" stroke="#0E2A47" stroke-width="2" marker-end="url(#ar)"/>
+
+          <!-- 3 DB -->
+          <rect x="250" y="196" width="400" height="56" rx="9" fill="#F5F8FB" stroke="#22508255" stroke-width="2"/>
+          <text x="270" y="220" font-size="14" font-weight="700" fill="#0E2A47">③ 로컬 SQLite</text>
+          <text x="270" y="239" font-size="11.5" fill="#5B6B7C">courses · students · reports · submissions · audit_log</text>
+          <path d="M450 252 L450 278" stroke="#0E2A47" stroke-width="2" marker-end="url(#ar)"/>
+
+          <!-- 4 초안 -->
+          <rect x="250" y="282" width="400" height="56" rx="9" fill="#fff" stroke="#0E2A47" stroke-width="2"/>
+          <text x="270" y="306" font-size="14" font-weight="700" fill="#0E2A47">④ 채점 초안 생성</text>
+          <text x="270" y="325" font-size="11.5" fill="#5B6B7C">루브릭 + 제출물 → Claude → {점수, 근거, 피드백} · status=draft</text>
+          <path d="M450 338 L450 364" stroke="#0E2A47" stroke-width="2" marker-end="url(#ar)"/>
+
+          <!-- 5 검토 -->
+          <rect x="250" y="368" width="400" height="56" rx="9" fill="#FFF1E8" stroke="#F26B21" stroke-width="2"/>
+          <text x="270" y="392" font-size="14" font-weight="700" fill="#B4530A">⑤ 사람 검토 → status=approved</text>
+          <text x="270" y="411" font-size="11.5" fill="#8A5A3A">승인되지 않은 초안은 다음 단계로 갈 수 없음</text>
+          <path d="M650 396 L700 396" stroke="#0E2A47" stroke-width="2" marker-end="url(#ar)"/>
+
+          <!-- 6 저장 -->
+          <rect x="704" y="360" width="186" height="72" rx="9" fill="#FDECEA" stroke="#B3261E" stroke-width="2"/>
+          <text x="718" y="383" font-size="13" font-weight="700" fill="#B3261E">⑥ 브라우저 자동화 저장</text>
+          <text x="718" y="401" font-size="11" fill="#8A3A32">Playwright · 학생 단위 확인</text>
+          <text x="718" y="418" font-size="11" fill="#8A3A32">저장 후 값 재조회 검증</text>
+
+          <!-- 좌측 라벨 -->
+          <rect x="14" y="100" width="200" height="152" rx="8" fill="#E8F6F0" stroke="#1B7F5A" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="30" y="126" font-size="12.5" font-weight="700" fill="#1B7F5A">읽기 전용 구간</text>
+          <text x="30" y="147" font-size="11" fill="#3A6B58">LMS 데이터를</text>
+          <text x="30" y="164" font-size="11" fill="#3A6B58">전혀 변경하지 않음</text>
+          <text x="30" y="192" font-size="11" fill="#3A6B58">client.ts 는 조회</text>
+          <text x="30" y="209" font-size="11" fill="#3A6B58">요청만 만들 수 있게</text>
+          <text x="30" y="226" font-size="11" fill="#3A6B58">코드로 강제</text>
+
+          <rect x="704" y="196" width="186" height="128" rx="8" fill="#FDECEA" stroke="#B3261E" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="718" y="222" font-size="12.5" font-weight="700" fill="#B3261E">유일한 쓰기 경로</text>
+          <text x="718" y="243" font-size="11" fill="#8A3A32">automation/ 에만 존재</text>
+          <text x="718" y="262" font-size="11" fill="#8A3A32">DRY_RUN 기본 true</text>
+          <text x="718" y="281" font-size="11" fill="#8A3A32">학생마다 확인 프롬프트</text>
+          <text x="718" y="300" font-size="11" fill="#8A3A32">감사 로그 기록</text>
+        </g>
+      </svg>
+    </div>
+
+    <h3>왜 쓰기를 직접 호출하지 않는가</h3>
+    <p><strong>(a) 데이터 손상 위험.</strong>
+      저장 API의 정확한 파라미터와 서버측 검증 로직을 100% 파악하지 못했습니다.
+      필수 파라미터 하나를 빠뜨리거나 형식이 틀리면 성적이 0으로 덮이거나 다른 회차에 기록될 수 있습니다.
+      <strong>성적은 되돌리기 어려운 데이터입니다.</strong>
+    </p>
+    <p><strong>(b) 기관 정책.</strong>
+      학교 IT 정책상 비공식 API 호출이 허용되지 않을 수 있습니다.
+      브라우저에서 사람이 하는 것과 동일한 조작은 정책적으로도 훨씬 방어 가능합니다.
+    </p>
+    <div class="note warn">
+      <span class="note-t">느린 게 맞다</span>
+      브라우저 자동화는 API 직접 호출보다 훨씬 느립니다.
+      하지만 성적 데이터에서는 느린 쪽이 옳은 선택입니다.
+    </div>
+
+    <h3>계층 설계 — 읽기와 쓰기를 물리적으로 분리</h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>계층</th><th>책임</th><th>이 계층이 절대 하지 않는 것</th></tr></thead>
+        <tbody>
+          <tr><td><code>lms/session.ts</code></td><td>세션 쿠키 확보·저장·생존 확인</td><td>로그인 자동 시도</td></tr>
+          <tr><td><code>lms/client.ts</code></td><td>쿠키 실어 요청, 레이트리밋, 만료 감지</td><td><strong>쓰기 요청 전송</strong></td></tr>
+          <tr><td><code>lms/parse.ts</code></td><td>HTML/JSON → 정규화된 객체</td><td>네트워크 호출</td></tr>
+          <tr><td><code>collect/*</code></td><td>화면별 수집 로직</td><td>데이터 가공·판단</td></tr>
+          <tr><td><code>db/*</code></td><td>로컬 저장, 원본 스냅샷 보존</td><td>외부 통신</td></tr>
+          <tr><td><code>grade/*</code></td><td>루브릭 적용, 초안 생성</td><td>LMS 접근</td></tr>
+          <tr><td><code>automation/*</code></td><td>브라우저로 점수 입력</td><td>사람 확인 없이 저장</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      핵심은 <strong><code>client.ts</code>가 조회만 가능하도록 코드 수준에서 막는 것</strong>입니다.
+      쓰기 경로는 오직 <code>automation/</code>에만 존재합니다. 실수로 섞일 수 없게 물리적으로 분리합니다.
+    </p>
+  </section>
+
+  <!-- ═══ 04 ═══ -->
+  <section id="roadmap">
+    <h2><span class="num">04</span>구현 로드맵</h2>
+    <p>각 단계는 앞 단계가 끝나야 다음이 의미가 있습니다. 순서대로 진행하세요.</p>
+
+    <div class="phase">
+      <div class="phase-h"><div class="phase-n">0</div><div class="phase-t">사전 확인 — 코드 작성 전</div></div>
+      <div class="phase-b">
+        <ul>
+          <li>접속 중인 시스템이 <strong>운영인지 데모인지</strong> 확인 (화면에 "Demo" 표기가 있었음)</li>
+          <li>운영이라면 <strong>원격교육지원센터에 자동화 도구 사용 가능 여부 문의</strong></li>
+          <li>본인 담당 과목의 <code>course_id</code>, <code>class_no</code> 확보</li>
+        </ul>
+        <p class="done" style="background:var(--warn-bg);color:var(--warn)">이 단계를 건너뛰지 마세요. 여기서 "불가" 답을 받으면 이후 전부가 무의미합니다.</p>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-h"><div class="phase-n">1</div><div class="phase-t">세션 확보</div></div>
+      <div class="phase-b">
+        <ul>
+          <li><code>npm run auth</code> — Playwright로 브라우저를 열고, 사람이 직접 로그인</li>
+          <li>로그인 완료 후 <code>storageState</code>를 <code>.auth/state.json</code>에 저장</li>
+          <li><code>getSessionInfo.dunet</code> 호출로 세션 생존 확인</li>
+        </ul>
+        <p class="done">완료 기준 — 스크립트에서 담당 과목 목록을 한 번 읽어올 수 있다.</p>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-h"><div class="phase-n">2</div><div class="phase-t">읽기 전용 수집</div></div>
+      <div class="phase-b">
+        <ul>
+          <li>담당 과목 목록 → 학생 명단 + 평가항목/가중치</li>
+          <li>과제 목록 → 학생별 제출 여부·현재 점수 → 제출물 본문·첨부</li>
+          <li>모든 응답 원본을 <code>raw_html</code>로 함께 저장</li>
+        </ul>
+        <p class="done">완료 기준 — LMS에 다시 접속하지 않고도 로컬 데이터만으로 채점할 수 있다.</p>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-h"><div class="phase-n">3</div><div class="phase-t">채점 초안 생성</div></div>
+      <div class="phase-b">
+        <ul>
+          <li>과제별 루브릭을 <strong>사람이 직접 작성</strong> (<code>grade/rubrics/*.md</code>)</li>
+          <li>제출물 + 루브릭 → Claude → <code>{score, reasoning, feedback}</code></li>
+          <li><code>status='draft'</code>로 저장 · 만점 초과/음수 범위 검증</li>
+        </ul>
+        <p class="done">완료 기준 — 초안이 로컬에 쌓인다. <strong>아직 LMS에는 아무것도 쓰지 않았다.</strong></p>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-h"><div class="phase-n">4</div><div class="phase-t">사람 검토</div></div>
+      <div class="phase-b">
+        <ul>
+          <li><code>npm run review</code> — 초안을 제출물과 나란히 표시, 점수·피드백 수정</li>
+          <li>승인 시 <code>status='approved'</code> + 검토 시각 기록</li>
+          <li>미검토 초안은 Phase 5 진입 차단</li>
+        </ul>
+        <p class="done">완료 기준 — 승인된 항목만 다음 단계로 넘어간다.</p>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-h"><div class="phase-n">5</div><div class="phase-t">브라우저 자동화 입력</div></div>
+      <div class="phase-b">
+        <ul>
+          <li><code>--dry-run</code>으로 먼저 전 과정 실행 (저장 버튼만 안 누름)</li>
+          <li>채점 화면 열기 → 입력창 채움 → <strong>화면 캡처 + 이전값/새값 표시 → 사람 승인</strong> → 저장</li>
+          <li>저장 후 값 재조회하여 검증 · 감사 로그 기록</li>
+        </ul>
+        <p class="done" style="background:var(--danger-bg);color:var(--danger)">
+          첫 실행은 반드시 <code>--limit 1</code>로 한 명만. 화면에서 눈으로 확인한 뒤 전체를 진행하세요.
+        </p>
+      </div>
+    </div>
+
+    <h3>학기 전환 — 코드 변경 없음</h3>
+<pre><code># 1학기
+npm run collect -- --course 202610UN0060****Y2 --class Y2
+
+# 2학기 — .env 의 COURSE_ID 만 교체하면 끝
+npm run collect -- --course 202620UN0060****Y2 --class Y2</code></pre>
+  </section>
+
+  <!-- ═══ 05 ═══ -->
+  <section id="safety">
+    <h2><span class="num">05</span>안전장치</h2>
+    <p>하나라도 빼지 마세요. 각각이 서로 다른 실패 유형을 막습니다.</p>
+
+    <div class="tbl">
+      <table>
+        <thead><tr><th>장치</th><th>동작</th><th>막는 실패</th></tr></thead>
+        <tbody>
+          <tr><td><code>DRY_RUN=true</code> 기본값</td><td>어떤 저장도 실제로 수행되지 않음</td><td>실수로 전체 저장</td></tr>
+          <tr><td>학생 단위 확인</td><td>저장 직전 화면 캡처 + 값 표시 → 사람 승인</td><td>잘못된 학생/점수 저장</td></tr>
+          <tr><td>승인 상태 검사</td><td><code>approved</code>가 아니면 제출 단계 진입 불가</td><td>검토 없이 AI 초안 반영</td></tr>
+          <tr><td>저장 후 검증</td><td>저장 뒤 값을 다시 읽어 일치 확인</td><td>조용한 저장 실패</td></tr>
+          <tr><td>원본 스냅샷</td><td>손대기 전 점수를 <code>original_score</code>에 보존</td><td>되돌릴 기준값 상실</td></tr>
+          <tr><td>감사 로그</td><td>모든 쓰기 시도를 시각·학생·이전값·새값과 함께 기록</td><td>무슨 일이 있었는지 모름</td></tr>
+          <tr><td>레이트리밋 1.2초</td><td>요청 간 최소 간격 강제</td><td>학교 서버 부담 · 차단</td></tr>
+          <tr><td>파서 명시적 실패</td><td>셀렉터 불일치 시 빈 배열 대신 throw</td><td>"학생 0명"으로 보이는 조용한 실패</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>하지 말아야 할 것</h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>금지</th><th>이유</th></tr></thead>
+        <tbody>
+          <tr><td>저장 엔드포인트 파라미터 추측해서 직접 POST</td><td>성적 손상 위험. 되돌리기 어려움</td></tr>
+          <tr><td>로그인 캡차 우회 시도</td><td>시스템의 명시적 의도를 거스름</td></tr>
+          <tr><td>요청 병렬 폭주</td><td>학교 서버 부담. 차단 사유가 됨</td></tr>
+          <tr><td>학생 데이터 커밋</td><td><code>data/</code>, <code>.auth/</code>, <code>.env</code>는 <code>.gitignore</code> 처리. 커밋 전 확인</td></tr>
+          <tr><td>담당 외 과목 접근</td><td>권한 범위를 넘어섬</td></tr>
+          <tr><td>사람 검토 없이 일괄 저장</td><td>AI 초안은 초안입니다. 최종 책임은 교수자에게 있습니다</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══ 06 ═══ -->
+  <section id="caution">
+    <h2><span class="num">06</span>유의사항</h2>
+
+    <div class="note warn">
+      <span class="note-t">⚠️ 운영 시스템 여부 확인 필요</span>
+      조사 당시 페이지 좌측 상단에 <strong>"LMS(BLU3.0) Demo"</strong>라는 문구가 보였습니다.
+      이게 실제 운영 시스템인지 데모/테스트 환경인지 확인되지 않았습니다.
+      <strong>실제 운영 시스템이라면 자동화 전에 소속 기관 원격교육지원센터에
+      비공식 자동화 도구 사용이 정책상 허용되는지 확인하세요.</strong>
+    </div>
+
+    <div class="note info">
+      <span class="note-t">이 문서의 마스킹</span>
+      이 저장소의 호스트명·과목코드·학번은 모두 마스킹되어 있습니다
+      (<code>&lt;LMS_HOST&gt;</code>, <code>202610UN0060****Y2</code>, <code>2024*****</code>).
+      실제 값은 <code>.env</code>에만 두고, 이 파일은 <code>.gitignore</code>로 제외되어 있습니다.
+    </div>
+
+    <div class="note ok">
+      <span class="note-t">사용 범위</span>
+      본인이 담당하는 과목의 데이터에만 사용하세요.
+      이 도구는 교수자가 손으로 하던 반복 조회와 채점 초안 작성을 돕는 <strong>보조 도구</strong>이며,
+      채점의 최종 판단과 책임은 교수자에게 있습니다.
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="foot-in">
+    <div>LMS 채점 보조 도구 — 개발 가이드 · MIT License</div>
+    <div><a href="https://github.com/jungaistar/lms">github.com/jungaistar/lms</a></div>
+  </div>
+</footer>
+
+</body>
+</html>
