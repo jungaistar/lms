@@ -46,7 +46,7 @@ docs/      설계·설치·운영 문서
 | 항목 | 결정 |
 |---|---|
 | 백엔드 | Supabase (Postgres + RLS + Edge Functions) |
-| 학생 인증 | 학번 + 수업코드 → Edge Function이 커스텀 JWT 발급 |
+| 학생 인증 | 학번 + 수업코드 → Edge Function이 **진짜 Supabase 세션** 발급 (식별자는 `app_metadata`). JWT를 직접 서명하는 방식으로 되돌리지 말 것 — 프로젝트 서명 키가 ES256이라 legacy 키 폐기 시 전부 죽는다 |
 | 교수 인증 | Supabase Auth (이메일 + 비밀번호) |
 | 익명성 | 코멘트만 익명 공개, 점수 비공개 |
 | 활동 종류 | 발표 상호평가 · 토론 참여 · 팀 기여도 · 과제 동료 첨삭 |
@@ -78,10 +78,14 @@ cd bridge && npm run auth      # 사람이 로그인 → 세션 저장
 cd bridge && npm run push -- --csv "...성적.csv" --dry-run
 ```
 
-## 현재 상태
+## 현재 상태 (2026-08-07)
 
-- 스키마 · RLS · 집계 함수 · 학생 로그인: 작성 완료, **실제 Supabase 프로젝트에서 미검증**
-- 프론트: 타입체크와 빌드 통과, **실데이터 미검증**
-- 학교 LMS 성적 입력: 화면 셀렉터 미확인으로 잠김
+- Supabase 프로젝트 `aujvpcpjpgxghxmsheur` 에 마이그레이션 4개 적용 완료,
+  `student-login` 함수 배포 완료, 공개 회원가입 차단 완료
+- GitHub Pages 배포 동작 중 (저장소 Secrets 에 URL/anon key 등록됨)
+- **실제 프로젝트 대상 end-to-end 검증 27항목 통과** — 배정(자기 팀 제외),
+  학생 로그인, 평가 제출, 만점 초과 거부, RLS 격리, 집계·감점 계산,
+  점수 비공개, 과목 격리
+- 학교 LMS 성적 입력만 화면 셀렉터 미확인으로 잠김 (`SELECTORS_VERIFIED = false`)
 
-`TODO(selector)` 주석이 남은 곳이 미구현 지점이다.
+`TODO(selector)` 주석이 남은 곳이 유일한 미구현 지점이다.

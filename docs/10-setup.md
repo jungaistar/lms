@@ -22,8 +22,10 @@
 1. `supabase/migrations/0001_schema.sql` — 테이블
 2. `supabase/migrations/0002_rls.sql` — 접근 권한
 3. `supabase/migrations/0003_functions.sql` — 배정·집계 함수
+4. `supabase/migrations/0004_student_auth.sql` — 학생 인증 연결
 
-> 순서가 중요합니다. 2번은 1번의 테이블을, 3번은 2번의 헬퍼 함수를 씁니다.
+> 순서가 중요합니다. 2번은 1번의 테이블을, 3번은 2번의 헬퍼 함수를,
+> 4번은 앞의 전부를 씁니다.
 
 **방법 B — Supabase CLI**
 
@@ -36,8 +38,8 @@ supabase db push
 
 ## 3단계 — 학생 로그인 함수 배포
 
-학생은 Supabase 계정을 만들지 않습니다. 대신 Edge Function이 명단을 대조하고
-토큰을 발급합니다.
+학생은 회원가입을 하지 않습니다. 대신 Edge Function이 명단을 대조한 뒤,
+그 학생에 대응하는 계정으로 **정상 로그인 세션**을 만들어 줍니다.
 
 ```bash
 supabase functions deploy student-login --no-verify-jwt
@@ -46,8 +48,18 @@ supabase functions deploy student-login --no-verify-jwt
 `--no-verify-jwt` 가 필요한 이유: 이 함수는 **로그인하기 전에** 불리는 함수라
 토큰 검사를 요구하면 아무도 호출할 수 없습니다.
 
-환경변수 `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET` 은
+환경변수 `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY` 는
 Supabase가 자동으로 주입하므로 따로 설정할 필요가 없습니다.
+
+> **왜 토큰을 직접 서명하지 않는가.** 처음에는 프로젝트 JWT 시크릿으로 HS256
+> 토큰을 직접 만들려 했습니다. 그런데 요즘 만들어지는 Supabase 프로젝트는
+> 서명 키가 **ES256(비대칭)** 이 기본이고 HS256 공유 시크릿은 legacy 로만 남습니다.
+> 직접 서명하면 그 legacy 키를 폐기하는 순간 학생 로그인이 전부 죽습니다.
+> Supabase가 자기 키로 서명하게 두면 키 종류가 뭐든, 나중에 회전하든 상관없습니다.
+>
+> 학생 식별자(`student_id`, `course_id`)는 JWT의 `app_metadata` 에 실립니다.
+> `app_metadata` 는 서버만 쓸 수 있어 학생이 자기 토큰을 고쳐 남의 `student_id` 를
+> 주장할 수 없습니다.
 
 ## 4단계 — 교수 계정 만들기
 
