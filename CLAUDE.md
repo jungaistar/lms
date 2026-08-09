@@ -57,6 +57,10 @@ docs/      설계·설치·운영 문서
 | 관리자 | `radical8566@gmail.com` — DB의 `admin_email()` 에 하드코딩. 프론트 상수는 표시용일 뿐 |
 | 익명성 | 코멘트만 익명 공개, 점수 비공개 |
 | 활동 종류 | 발표 상호평가 · 토론 참여 · 팀 기여도 · 과제 동료 첨삭 |
+| 과제·출석 공개 | **과제 점수와 출결은 본인 것만 학생에게 공개.** 시험 점수·상호평가 원점수·최종 성적은 비공개 — 정책을 아예 만들지 않는 방식으로 막는다 |
+| 출석 | 헤이영. 공개 API 가 없어 **CSV 올리기**로 받는다 (`web/src/lib/heyyoung.ts`) |
+| 학교 LMS 방향 | **학교 LMS 가 원본, 이쪽이 사본.** 주차·공지·자료·과제를 가져온다. `locked=true` 인 줄은 가져오기가 덮어쓰지 않는다 |
+| 성적 산출 | `compute_final_grades()` 하나가 유일한 경로. 구성비 합은 DB CHECK 로 100 강제 |
 | 배포 | GitHub Actions → GitHub Pages (`web/dist`) |
 | 라우팅 | HashRouter (Pages에 SPA 리라이트를 걸 수 없어서) |
 
@@ -94,6 +98,7 @@ docs/      설계·설치·운영 문서
 cd web && npm run dev          # 개발 서버
 cd web && npm run build        # 빌드 (dist/)
 cd web && npm run typecheck
+cd web && npm test               # 헤이영 CSV 파서 검사 (프레임워크 없이 tsx 로 실행)
 
 # DB — Supabase CLI 를 쓰는 경우
 supabase db push
