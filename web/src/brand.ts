@@ -34,15 +34,18 @@ export const OWNER = {
 } as const;
 
 /**
- * 공개 연락처. jdy.dreamitbiz.com 에 이미 공개된 값만 둔다.
- * 학생에게 노출하고 싶지 않은 항목은 빈 문자열로 두면 화면에서 사라진다.
+ * 공개 연락처. 학생에게 노출할 값만 둔다.
+ * 빈 문자열로 두면 그 항목은 화면에서 사라진다 — 지우지 말고 비워 둘 것.
+ *
+ * 휴대폰 번호는 일부러 비워 두었다. 학생 전원에게 공개되는 화면이라
+ * 개인 번호 대신 이메일과 연구소 홈으로 받는다.
  */
-export const CONTACT = {
+export const CONTACT: { email: string; phone: string; site: string; siteLabel: string } = {
   email: 'radical8566@gmail.com',
-  phone: '010-7315-4585',
+  phone: '',
   site: 'https://jdy.dreamitbiz.com',
   siteLabel: '직업미래연구소',
-} as const;
+};
 
 /** 푸터의 바로가기 목록 */
 export const EXTERNAL_LINKS: ReadonlyArray<{ label: string; href: string }> = [
