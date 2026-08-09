@@ -77,6 +77,47 @@ insert into course_sessions (week_id, session_no)
 select id, 1 from ins_week
 on conflict (week_id, session_no) do nothing;
 
+-- ── 시험: 모든 과목이 8주차 중간, 15주차 기말 ────────────────
+-- 주차 제목에도 표시해 두면 주차 화면에서 바로 보인다.
+update course_weeks w
+   set title = w.week_no || '주차 — 중간고사'
+  from courses c
+ where c.id = w.course_id and c.owner_id = auth.uid() and c.term = '202610'
+   and w.week_no = 8 and w.title = '8주차';
+
+update course_weeks w
+   set title = w.week_no || '주차 — 기말고사'
+  from courses c
+ where c.id = w.course_id and c.owner_id = auth.uid() and c.term = '202610'
+   and w.week_no = 15 and w.title = '15주차';
+
+insert into exams (course_id, kind, title, max_points, ord)
+select c.id, e.kind, e.title, 100, e.ord
+  from courses c
+  cross join (values ('midterm', '중간고사 (8주차)', 0),
+                     ('final',   '기말고사 (15주차)', 1)) as e(kind, title, ord)
+ where c.owner_id = auth.uid() and c.term = '202610'
+   and not exists (select 1 from exams x where x.course_id = c.id and x.kind = e.kind);
+
+-- ── 감점 항목 기본값 ─────────────────────────────────────────
+-- 지각 · 조퇴 · 태도불량 · 과제미제출 · 과제 지각제출.
+-- 점수는 과목 화면에서 바꿀 수 있다.
+select seed_deduction_kinds(c.id)
+  from courses c
+ where c.owner_id = auth.uid() and c.term = '202610';
+
+-- ── 헤이영 교과목번호 ────────────────────────────────────────
+-- ext_course_id 안에 이미 들어 있지만(202610UN00·50035·67672·Y1)
+-- 출석 파일을 과목에 붙일 때 바로 쓰려고 꺼내 둔다.
+update courses set heyyoung_code = v.code
+  from (values ('RES26Y1', '50035-Y1'),
+               ('ART26Y2', '60717-Y2'),
+               ('CAR26Y3', '60135-Y3'),
+               ('ENT26Y4', '30050-Y4'),
+               ('CUL26Y5', '60716-Y5'),
+               ('CUL26Y6', '60716-Y6')) as v(join_code, code)
+ where courses.join_code = v.join_code and courses.owner_id = auth.uid();
+
 commit;
 
 -- 확인

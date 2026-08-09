@@ -9,10 +9,11 @@ import WeeksTab from './WeeksTab';
 import BoardTab from './BoardTab';
 import TasksTab from './TasksTab';
 import AttendanceTab from './AttendanceTab';
+import DeductionTab from './DeductionTab';
 import GradesTab from './GradesTab';
 import PageHero from '../components/PageHero';
 
-type Tab = 'roster' | 'weeks' | 'board' | 'tasks' | 'attendance' | 'rubric' | 'activity' | 'grades';
+type Tab = 'roster' | 'weeks' | 'board' | 'tasks' | 'attendance' | 'deduction' | 'rubric' | 'activity' | 'grades';
 
 export default function CourseView() {
   const { courseId } = useParams<{ courseId: string }>();
@@ -46,6 +47,7 @@ export default function CourseView() {
     ['board', '공지 · 자료'],
     ['tasks', '과제'],
     ['attendance', '출석'],
+    ['deduction', '감점'],
     ...(course.peer_assessment ? ([['rubric', '루브릭'], ['activity', '평가 활동']] as Array<[Tab, string]>) : []),
     ['grades', '성적'],
   ];
@@ -76,6 +78,7 @@ export default function CourseView() {
         {tab === 'board' && <BoardTab courseId={course.id} />}
         {tab === 'tasks' && <TasksTab courseId={course.id} />}
         {tab === 'attendance' && <AttendanceTab courseId={course.id} />}
+        {tab === 'deduction' && <DeductionTab courseId={course.id} courseTitle={course.title} />}
         {tab === 'rubric' && <RubricTab courseId={course.id} />}
         {tab === 'activity' && <ActivityTab courseId={course.id} />}
         {tab === 'grades' && <GradesTab course={course} />}

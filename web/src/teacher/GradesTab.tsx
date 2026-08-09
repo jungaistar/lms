@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
+import { downloadCsv, downloadXlsx, printTable, type SheetTable } from '../lib/exporters';
 import {
   EXAM_KIND_LABEL,
   type Course,
@@ -20,6 +21,8 @@ const DEFAULT_POLICY: Omit<GradePolicy, 'course_id'> = {
   late_credit: 0.5,
   excused_credit: 1,
   absence_limit: 0.25,
+  etc_pct: 0,
+  etc_base: 100,
 };
 
 /**
@@ -70,7 +73,7 @@ export default function GradesTab({ course }: { course: Course }) {
 
   const pctSum =
     Number(policy.attendance_pct) + Number(policy.task_pct) + Number(policy.midterm_pct) +
-    Number(policy.final_pct) + Number(policy.peer_pct);
+    Number(policy.final_pct) + Number(policy.peer_pct) + Number(policy.etc_pct);
 
   async function savePolicy() {
     if (pctSum !== 100) return setError(`구성비 합이 ${pctSum} 입니다. 100 이어야 저장됩니다.`);
@@ -147,6 +150,25 @@ export default function GradesTab({ course }: { course: Course }) {
 
   const num = (v: number | null | undefined) => (v == null ? '—' : v.toFixed(1));
 
+  /** 화면과 같은 모양의 성적표를 만든다. 내보내기 세 가지가 이걸 함께 쓴다. */
+  function buildSheet(): SheetTable {
+    const head = ['학번', '이름', '출석', '과제', '중간', '기말', '상호평가', '기타', '감점합', '총점', '등급', '결석률', '상태'];
+    const rows = students.map((s) => {
+      const g = byStudent.get(s.id);
+      return [
+        s.student_no, s.name,
+        g?.attendance_pts ?? null, g?.task_pts ?? null, g?.midterm_pts ?? null,
+        g?.final_pts ?? null, g?.peer_pts ?? null, g?.etc_pts ?? null,
+        g?.deduction_total ?? null, g?.total ?? null, g?.letter ?? '',
+        g?.absence_rate == null ? '' : `${(g.absence_rate * 100).toFixed(0)}%`,
+        g?.status === 'approved' ? '확정' : '초안',
+      ];
+    });
+    return { name: '성적표', rows: [head, ...rows] };
+  }
+
+  const fileBase = `${course.title}${course.class_no ? `_${course.class_no}` : ''}_성적표`;
+
   return (
     <>
       {error && <div className="alert alert-error">{error}</div>}
@@ -167,6 +189,7 @@ export default function GradesTab({ course }: { course: Course }) {
             ['midterm_pct', '중간'],
             ['final_pct', '기말'],
             ['peer_pct', '상호평가'],
+            ['etc_pct', '기타(감점)'],
           ] as const).map(([key, label]) => (
             <label key={key} className="small muted" style={{ flex: '1 1 90px' }}>
               {label} %
@@ -269,6 +292,17 @@ export default function GradesTab({ course }: { course: Course }) {
             </button>
           )}
         </div>
+
+        <div className="btn-row" style={{ marginTop: 10 }}>
+          <button className="btn-sm btn-ghost" onClick={() => downloadCsv(buildSheet().rows, fileBase)}>CSV</button>
+          <button className="btn-sm btn-ghost" onClick={() => downloadXlsx([buildSheet()], fileBase)}>XLSX</button>
+          <button
+            className="btn-sm btn-ghost"
+            onClick={() => { if (!printTable(fileBase, [buildSheet()])) setError('팝업이 막혀 있습니다. 주소창 오른쪽에서 팝업을 허용해 주세요.'); }}
+          >
+            PDF(인쇄)
+          </button>
+        </div>
         <p className="muted small" style={{ marginTop: 8 }}>
           자료가 아직 없는 항목은 만점으로 칩니다 — 학기 중간에 눌러도 0점이 되지 않게 하려는 것입니다.
           학기 말에는 출결·과제·시험이 모두 들어온 뒤 다시 눌러 주세요.
@@ -283,7 +317,7 @@ export default function GradesTab({ course }: { course: Course }) {
             <thead>
               <tr>
                 <th>학번</th><th>이름</th>
-                <th>출석</th><th>과제</th><th>중간</th><th>기말</th><th>상호</th>
+                <th>출석</th><th>과제</th><th>중간</th><th>기말</th><th>상호</th><th>기타</th>
                 <th>총점</th><th>등급</th><th>결석률</th><th>상태</th>
               </tr>
             </thead>
@@ -299,6 +333,7 @@ export default function GradesTab({ course }: { course: Course }) {
                     <td>{num(g?.midterm_pts)}</td>
                     <td>{num(g?.final_pts)}</td>
                     <td>{num(g?.peer_pts)}</td>
+                    <td>{num(g?.etc_pts)}</td>
                     <td><b>{num(g?.total)}</b></td>
                     <td>
                       <span className={g?.letter === 'F' ? 'badge badge-draft' : 'badge badge-approved'}>

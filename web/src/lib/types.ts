@@ -259,7 +259,7 @@ export interface TaskSubmission {
   graded_at: string | null;
 }
 
-export type AttendanceStatusValue = 'present' | 'late' | 'absent' | 'excused';
+export type AttendanceStatusValue = 'present' | 'late' | 'absent' | 'excused' | 'early_leave';
 
 export interface AttendanceRow {
   id: string;
@@ -307,6 +307,9 @@ export interface GradePolicy {
   late_credit: number;
   excused_credit: number;
   absence_limit: number;
+  /** 0007 — 감점으로 만드는 기타 성적 */
+  etc_pct: number;
+  etc_base: number;
 }
 
 export interface FinalGrade {
@@ -318,6 +321,8 @@ export interface FinalGrade {
   midterm_pts: number | null;
   final_pts: number | null;
   peer_pts: number | null;
+  etc_pts: number | null;
+  deduction_total: number | null;
   total: number | null;
   letter: string | null;
   sessions_total: number | null;
@@ -328,4 +333,66 @@ export interface FinalGrade {
   note: string | null;
   status: 'draft' | 'approved';
   computed_at: string;
+}
+
+// ── 감점 요소 · 기타 성적 (0007) ─────────────────────────────
+export type DeductionSource =
+  | 'manual'
+  | 'attendance_late'
+  | 'attendance_early_leave'
+  | 'task_missing'
+  | 'task_late';
+
+export const DEDUCTION_SOURCE_LABEL: Record<DeductionSource, string> = {
+  manual: '직접 입력',
+  attendance_late: '출결에서 자동 (지각)',
+  attendance_early_leave: '출결에서 자동 (조퇴)',
+  task_missing: '과제에서 자동 (미제출)',
+  task_late: '과제에서 자동 (지각 제출)',
+};
+
+export interface DeductionKind {
+  id: string;
+  course_id: string;
+  code: string;
+  label: string;
+  points: number;
+  source: DeductionSource;
+  ord: number;
+  active: boolean;
+}
+
+export interface DeductionRow {
+  id: string;
+  kind_id: string;
+  student_id: string;
+  count: number;
+  note: string | null;
+  occurred_on: string | null;
+}
+
+/** deduction_summary() RPC 가 돌려주는 한 줄. */
+export interface DeductionSummaryRow {
+  student_id: string;
+  kind_id: string;
+  code: string;
+  label: string;
+  cnt: number;
+  points: number;
+  subtotal: number;
+}
+
+export interface AttendanceRequestRow {
+  id: string;
+  course_id: string;
+  student_id: string | null;
+  applicant: string | null;
+  kind: 'appeal' | 'excused';
+  week_no: number | null;
+  session_no: number | null;
+  original: string | null;
+  reason: string | null;
+  result_raw: string | null;
+  result: string | null;
+  applied_at: string | null;
 }
