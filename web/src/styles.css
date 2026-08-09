@@ -98,6 +98,34 @@ a:hover { color: var(--accent-600); text-decoration: underline; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 
+/* ── 키보드 포커스 ─────────────────────────────────────
+   브라우저 기본 링은 네이비 헤더 위에서 거의 안 보인다.
+   밝은 바탕/어두운 바탕 양쪽에서 보이도록 직접 그린다. */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.site-header .utility :focus-visible,
+.page-hero :focus-visible,
+.home-hero :focus-visible,
+.quick-links :focus-visible,
+.site-footer :focus-visible {
+  outline-color: #fff;
+}
+
+/* 본문 바로가기 — 탭을 처음 눌렀을 때만 나타난다 */
+.skip-link {
+  position: absolute; left: 12px; top: -70px; z-index: 100;
+  background: var(--accent); color: #fff; border: 0;
+  padding: 12px 18px; border-radius: 0 0 var(--r-sm) var(--r-sm);
+  font-weight: 700; font-size: 14.5px;
+  transition: top 120ms var(--ease);
+}
+.skip-link:focus { top: 0; color: #fff; text-decoration: none; }
+/* 초점을 받은 main 에 브라우저 기본 외곽선이 뜨지 않게 한다 */
+main:focus { outline: none; }
+
 /* ── 뼈대 ─────────────────────────────────────────────── */
 .app { min-height: 100%; display: flex; flex-direction: column; }
 .app > main { flex: 1; animation: page-in 0.4s var(--ease) both; }
@@ -122,13 +150,20 @@ a:hover { color: var(--accent-600); text-decoration: underline; }
 }
 .site-header .utility .org { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .site-header .utility .org b { color: #fff; font-weight: 700; }
+/* opacity 를 겹치면 알파가 곱해져(0.78×0.55) 대비가 3.85:1 까지 떨어진다.
+   색을 직접 지정해 겹침을 끊는다 — 아래 값은 네이비 위에서 6.10:1. */
 .site-header .utility .org .en {
-  font-family: var(--latin); letter-spacing: 0.08em; opacity: 0.55;
+  font-family: var(--latin); letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.6);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.site-header .utility .dot { opacity: 0.35; }
+.site-header .utility .dot { color: rgba(255, 255, 255, 0.4); }
 .site-header .utility a { color: inherit; }
 .site-header .utility a:hover { color: #fff; text-decoration: none; }
+/* display 는 여기서만 정한다. JSX 인라인 style 로 주면
+   아래 미디어쿼리의 display:none 을 이겨서 모바일에서 안 접힌다. */
+.site-header .utility .util-links { display: flex; align-items: center; gap: 16px; }
+.site-header .utility .util-links .owner { color: rgba(255, 255, 255, 0.78); }
 
 .site-header .masthead {
   border-bottom: 1px solid var(--line); background: #fff;
@@ -138,7 +173,11 @@ a:hover { color: var(--accent-600); text-decoration: underline; }
   min-height: 68px; display: flex; align-items: center; gap: 16px;
 }
 
-.brand { display: flex; align-items: center; gap: 12px; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+.brand {
+  display: flex; align-items: center; gap: 12px;
+  background: none; border: 0; padding: 0; cursor: pointer; text-align: left;
+  min-height: 44px; /* 터치 대상 */
+}
 .brand:hover { text-decoration: none; }
 .brand-mark {
   width: 42px; height: 42px; flex: 0 0 42px; border-radius: 11px;
@@ -276,20 +315,6 @@ a:hover { color: var(--accent-600); text-decoration: underline; }
   .quick-links a:first-child { border-top: 0; }
 }
 
-/* ── 통계 줄 ─────────────────────────────────────────── */
-.stat-row {
-  max-width: var(--content); margin: 0 auto;
-  padding: 48px 20px 8px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
-}
-.stat-row .stat { text-align: center; }
-.stat-row .num { font-family: var(--latin); font-size: 38px; font-weight: 800; color: var(--accent); line-height: 1; letter-spacing: -0.02em; }
-.stat-row .label { font-size: 14.5px; font-weight: 700; color: var(--fg-strong); margin-top: 10px; }
-.stat-row .en { font-family: var(--latin); font-size: 11px; letter-spacing: 0.1em; color: var(--fg-disabled); margin-top: 3px; }
-@media (max-width: 640px) {
-  .stat-row { grid-template-columns: repeat(2, 1fr); padding: 32px 16px 0; gap: 24px 12px; }
-  .stat-row .num { font-size: 30px; }
-}
-
 /* ════════════════════════════════════════════════════════
    카드 · 섹션
    ════════════════════════════════════════════════════════ */
@@ -305,6 +330,8 @@ a:hover { color: var(--accent-600); text-decoration: underline; }
 .card.accent { border-left: 4px solid var(--accent); }
 .card h2 { margin: 0 0 6px; font-size: 20px; font-weight: 800; letter-spacing: -0.015em; color: var(--fg-strong); line-height: 1.3; }
 .card h3 { margin: 22px 0 8px; font-size: 16px; font-weight: 800; color: var(--fg-strong); letter-spacing: -0.01em; }
+/* 섹션 제목(h2) 아래 카드는 h3 를 쓴다 — 제목 단계는 낮추되 크기는 카드 제목 그대로 */
+.card > h3:first-child { margin: 0 0 6px; font-size: 20px; letter-spacing: -0.015em; line-height: 1.3; }
 .card p { margin: 0 0 10px; color: var(--fg-muted); }
 .card p:last-child { margin-bottom: 0; }
 
@@ -374,7 +401,8 @@ input[type='password'], input[type='datetime-local'], select, textarea {
   color: var(--fg);
   transition: border-color 120ms var(--ease), box-shadow 120ms var(--ease);
 }
-input::placeholder, textarea::placeholder { color: #9aa4b2; }
+/* 대비 4.83:1 — #9AA4B2 는 2.52:1 로 WCAG AA 미달이었다 */
+input::placeholder, textarea::placeholder { color: #6b7280; }
 input:focus, select:focus, textarea:focus {
   outline: none; border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-50);
@@ -420,7 +448,7 @@ a.btn:hover { text-decoration: none; }
   padding: 4px 10px; border-radius: var(--r-pill); letter-spacing: 0.01em;
   background: var(--surface); color: var(--fg-faded);
 }
-.badge-draft { background: var(--surface); color: var(--fg-disabled); }
+.badge-draft { background: var(--surface); color: #5b6472; } /* 5.53:1 */
 .badge-open { background: var(--ok-bg); color: #15803d; }
 .badge-closed { background: var(--warn-bg); color: var(--warn); }
 .badge-finalized { background: var(--primary); color: #fff; }
@@ -569,16 +597,21 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-fam
 .site-footer .mark b { font-size: 16px; font-weight: 800; color: #fff; }
 .site-footer .desc { font-size: 13.5px; line-height: 1.75; max-width: 34em; }
 .site-footer .desc b { color: #fff; font-weight: 700; }
-.site-footer .links { display: flex; flex-direction: column; gap: 9px; min-width: 170px; }
-.site-footer .links .h { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 2px; }
-.site-footer .links a { color: inherit; font-size: 13.5px; }
+.site-footer .links { display: flex; flex-direction: column; min-width: 170px; }
+.site-footer .links .h { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+/* 링크 하나하나가 44px 터치 대상이 되게 한다 */
+.site-footer .links a {
+  color: inherit; font-size: 13.5px;
+  display: inline-flex; align-items: center; min-height: 44px;
+}
 .site-footer .links a:hover { color: #fff; text-decoration: none; }
 .site-footer .bottom {
   display: flex; align-items: center; justify-content: space-between;
   flex-wrap: wrap; gap: 12px; padding-top: 20px; font-size: 12.5px;
 }
 .site-footer .bottom .policy { color: #fff; font-weight: 700; }
-.site-footer .bottom .copy { opacity: 0.6; font-family: var(--latin); }
+/* opacity 대신 색으로 — 부모 알파(0.72)와 겹치면 3.88:1 까지 떨어졌다. 지금은 6.10:1 */
+.site-footer .bottom .copy { color: rgba(255, 255, 255, 0.6); font-family: var(--latin); }
 
 @media (max-width: 640px) {
   .site-footer .inner { padding: 32px 16px 24px; }

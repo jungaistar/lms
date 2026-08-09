@@ -87,7 +87,7 @@ export default function Landing() {
       </nav>
 
       <div className="container wide">
-        <div className="section-title">평가 활동</div>
+        <h2 className="section-title">평가 활동</h2>
         <div className="feature-grid">
           {ACTIVITIES.map((a) => (
             <div className="feature" key={a.kind}>
@@ -98,10 +98,10 @@ export default function Landing() {
           ))}
         </div>
 
-        <div className="section-title">이용 안내</div>
+        <h2 className="section-title">이용 안내</h2>
         <div className="feature-grid">
           <div className="card">
-            <h2>학생</h2>
+            <h3>학생</h3>
             <p className="small">{NOTICE.student}</p>
             <Link className="btn btn-primary btn-block" to={s ? '/me' : '/login'}>
               {s ? `${s.student.name} 님으로 계속하기` : '수업 들어가기'}
@@ -109,7 +109,7 @@ export default function Landing() {
           </div>
 
           <div className="card">
-            <h2>교수</h2>
+            <h3>교수</h3>
             <p className="small">
               과목·명단·루브릭을 만들고, 평가를 배정하고, 결과를 확정합니다. 가입 후 관리자
               승인을 받으면 과목을 만들 수 있습니다.
@@ -135,9 +135,9 @@ export default function Landing() {
 
         <div className="card soft" style={{ marginTop: 24 }}>
           <div className="eyebrow">OPERATED BY</div>
-          <h2 style={{ marginTop: 8 }}>
+          <h3 style={{ marginTop: 8 }}>
             {OWNER.name} {OWNER.degree}
-          </h2>
+          </h3>
           <p className="small" style={{ margin: 0 }}>
             {OWNER.role} · {OWNER.affiliation}
           </p>

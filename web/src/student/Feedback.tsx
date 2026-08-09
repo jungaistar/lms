@@ -69,7 +69,7 @@ export default function Feedback() {
       ) : (
         Object.entries(byActivity).map(([activity, list]) => (
           <div key={activity}>
-            <div className="section-title">{activity}</div>
+            <h2 className="section-title">{activity}</h2>
             {list.map((it, i) => (
               <div className="card tight" key={i}>
                 {it.target_title && <div className="small muted">{it.target_title}</div>}

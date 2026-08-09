@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { isConfigured } from './lib/supabase';
 import { loadStudentSession } from './lib/session';
@@ -5,22 +6,28 @@ import { loadStudentSession } from './lib/session';
 import SiteHeader from './components/SiteHeader';
 import SiteFooter from './components/SiteFooter';
 
+/* 학생 화면은 수업 중 휴대폰 데이터로 들어온다 — 곧바로 필요하니 같이 묶는다. */
 import Landing from './pages/Landing';
 import StudentLogin from './pages/StudentLogin';
-import AuthOtp from './pages/AuthOtp';
-import SetPassword from './teacher/SetPassword';
 import StudentHome from './student/StudentHome';
 import Evaluate from './student/Evaluate';
 import Contribution from './student/Contribution';
 import Discussion from './student/Discussion';
 import Feedback from './student/Feedback';
 
-import TeacherLogin from './teacher/TeacherLogin';
-import TeacherSignup from './teacher/TeacherSignup';
-import TeacherHome from './teacher/TeacherHome';
-import AdminMembers from './teacher/AdminMembers';
-import CourseView from './teacher/CourseView';
-import ActivityView from './teacher/ActivityView';
+/**
+ * 교수 화면은 따로 떼어 낸다.
+ * 학생은 이 화면들을 절대 열지 않는데, 한 덩어리로 묶으면 명단·루브릭·집계 화면까지
+ * 전부 받고 시작하게 된다. 교수는 데스크톱에서 몇 명이 쓰므로 지연 로딩이 낫다.
+ */
+const AuthOtp = lazy(() => import('./pages/AuthOtp'));
+const SetPassword = lazy(() => import('./teacher/SetPassword'));
+const TeacherLogin = lazy(() => import('./teacher/TeacherLogin'));
+const TeacherSignup = lazy(() => import('./teacher/TeacherSignup'));
+const TeacherHome = lazy(() => import('./teacher/TeacherHome'));
+const AdminMembers = lazy(() => import('./teacher/AdminMembers'));
+const CourseView = lazy(() => import('./teacher/CourseView'));
+const ActivityView = lazy(() => import('./teacher/ActivityView'));
 
 function NotConfigured() {
   return (
@@ -50,8 +57,24 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* 링크가 아니라 버튼이다. HashRouter 라 href="#main" 을 쓰면 해시가 라우트로
+          해석돼 보고 있던 화면에서 홈으로 튕긴다. 버튼은 기본 이동이 없어 그럴 일이 없다. */}
+      <button
+        type="button"
+        className="skip-link"
+        onClick={() => {
+          const m = document.getElementById('main');
+          if (!m) return;
+          m.setAttribute('tabindex', '-1');
+          m.focus();
+          m.scrollIntoView();
+        }}
+      >
+        본문 바로가기
+      </button>
       <SiteHeader />
-      <main>
+      <main id="main">
+        <Suspense fallback={<div className="container"><div className="empty">불러오는 중…</div></div>}>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<StudentLogin />} />
@@ -73,6 +96,7 @@ export default function App() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </Suspense>
       </main>
       <SiteFooter />
     </div>

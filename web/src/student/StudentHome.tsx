@@ -84,7 +84,7 @@ export default function StudentHome() {
 
       {special.length > 0 && (
         <>
-          <div className="section-title">참여</div>
+          <h2 className="section-title">참여</h2>
           <ul className="list">
             {special.map((a) => (
               <li key={a.id}>
@@ -107,9 +107,9 @@ export default function StudentHome() {
         </>
       )}
 
-      <div className="section-title">
+      <h2 className="section-title">
         해야 할 평가{pending.length > 0 && <span className="count">({pending.length})</span>}
-      </div>
+      </h2>
       {pending.length === 0 ? (
         <div className="empty">
           <div className="big">✅</div>
@@ -136,9 +136,9 @@ export default function StudentHome() {
 
       {done.length > 0 && (
         <>
-          <div className="section-title">
+          <h2 className="section-title">
             완료<span className="count">({done.length})</span>
-          </div>
+          </h2>
           <ul className="list">
             {done.map((t) => (
               <li key={t.assignment_id}>

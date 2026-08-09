@@ -45,8 +45,9 @@ export default function SiteHeader() {
             <span className="dot">·</span>
             <span className="en">{ORG.nameEn}</span>
           </div>
-          <div className="util-links" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <span style={{ opacity: 0.75 }}>
+          {/* display 를 인라인으로 주지 말 것 — 모바일 미디어쿼리의 display:none 을 이긴다 */}
+          <div className="util-links">
+            <span className="owner">
               {OWNER.name} {OWNER.degree}
             </span>
             <span className="dot">|</span>
