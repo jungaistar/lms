@@ -14,6 +14,9 @@ import Evaluate from './student/Evaluate';
 import Contribution from './student/Contribution';
 import Discussion from './student/Discussion';
 import Feedback from './student/Feedback';
+import Lessons from './student/Lessons';
+import TaskSubmit from './student/TaskSubmit';
+import MyRecord from './student/MyRecord';
 
 /**
  * 교수 화면은 따로 떼어 낸다.
@@ -84,6 +87,9 @@ export default function App() {
           <Route path="/contribution/:activityId" element={<RequireStudent><Contribution /></RequireStudent>} />
           <Route path="/discussion/:activityId" element={<RequireStudent><Discussion /></RequireStudent>} />
           <Route path="/feedback" element={<RequireStudent><Feedback /></RequireStudent>} />
+          <Route path="/lessons" element={<RequireStudent><Lessons /></RequireStudent>} />
+          <Route path="/task/:taskId" element={<RequireStudent><TaskSubmit /></RequireStudent>} />
+          <Route path="/record" element={<RequireStudent><MyRecord /></RequireStudent>} />
 
           <Route path="/teacher/login" element={<TeacherLogin />} />
           <Route path="/teacher/signup" element={<TeacherSignup />} />

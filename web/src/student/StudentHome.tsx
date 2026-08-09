@@ -57,9 +57,11 @@ export default function StudentHome() {
       en={`${session.course.term}${session.course.class_no ? ` · ${session.course.class_no}분반` : ''}`}
       desc={`${session.student.name} (${session.student.student_no}) 님, 아래 목록에서 해야 할 평가를 확인하세요.`}
       actions={
-        <button className="btn btn-on-hero btn-sm" onClick={() => nav('/feedback')}>
-          내가 받은 피드백
-        </button>
+        <>
+          <button className="btn btn-on-hero btn-sm" onClick={() => nav('/lessons')}>수업</button>
+          <button className="btn btn-on-hero btn-sm" onClick={() => nav('/record')}>내 기록</button>
+          <button className="btn btn-on-hero btn-sm" onClick={() => nav('/feedback')}>받은 피드백</button>
+        </>
       }
       gradient
     />
