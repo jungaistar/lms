@@ -2,7 +2,12 @@
 --  2026학년도 1학기 6과목 설정 — 한 번만 실행한다
 --
 --  Supabase 대시보드 → SQL Editor 에 붙여넣고 실행한다.
---  교수 계정으로 로그인한 상태여야 owner_id 가 제대로 들어간다.
+--
+--  ⚠ SQL Editor 는 postgres 역할로 도는지라 auth.uid() 가 NULL 이다.
+--     그래서 owner_id 를 auth.uid() 로 넣으면 NOT NULL 위반으로 통째로 실패한다.
+--     아래 teacher_id() 가 이메일로 교수 계정을 찾아 준다.
+--     ▸ 교수 이메일이 다르면 TEACHER_EMAIL 한 줄만 고치면 된다.
+--     ▸ 그 이메일로 먼저 회원가입해 두어야 한다 (auth.users 에 있어야 찾는다).
 --
 --  과목명·분반·ext_course_id 는 2026-08-10 에 학교 LMS(lms.dima.ac.kr) 강의 목록에서
 --  직접 확인한 값이다. 추측이 아니다.
@@ -20,6 +25,27 @@
 
 begin;
 
+-- ── 교수 계정 찾기 ───────────────────────────────────────────
+-- SQL Editor(postgres) 에서는 auth.uid() 가 NULL 이라 이메일로 찾는다.
+-- 앱에서 로그인한 채로 돌리는 경우에는 auth.uid() 를 그대로 쓴다.
+create or replace function teacher_id() returns uuid
+language plpgsql stable
+set search_path = public, auth
+as $$
+declare
+  uid uuid;
+  TEACHER_EMAIL constant text := 'radical8566@gmail.com';   -- ◀ 필요하면 이 줄만 고친다
+begin
+  uid := auth.uid();
+  if uid is not null then return uid; end if;
+
+  select id into uid from auth.users where lower(email) = lower(TEACHER_EMAIL) limit 1;
+  if uid is null then
+    raise exception '교수 계정(%)을 찾지 못했습니다. 먼저 그 이메일로 회원가입해 주세요.', TEACHER_EMAIL;
+  end if;
+  return uid;
+end $$;
+
 with course_seed(title, class_no, join_code, ext_course_id, peer_assessment, project_mode,
                  attendance_pct, task_pct, midterm_pct, final_pct, peer_pct) as (
   values
@@ -36,7 +62,7 @@ with course_seed(title, class_no, join_code, ext_course_id, peer_assessment, pro
 ins_course as (
   insert into courses (owner_id, term, title, class_no, join_code,
                        ext_course_id, ext_class_no, peer_assessment, project_mode)
-  select auth.uid(), '202610', s.title, s.class_no, s.join_code,
+  select teacher_id(), '202610', s.title, s.class_no, s.join_code,
          s.ext_course_id, s.class_no, s.peer_assessment, s.project_mode
     from course_seed s
   on conflict (join_code) do update
@@ -64,7 +90,7 @@ on conflict (course_id) do update
 -- 주차를 미리 깔아 두면 공지·자료·과제를 바로 주차에 붙일 수 있다.
 -- 회차가 주 2회인 과목은 나중에 course_sessions 에 2번을 더 넣는다.
 with my_courses as (
-  select id from courses where owner_id = auth.uid() and term = '202610'
+  select id from courses where owner_id = teacher_id() and term = '202610'
 ),
 ins_week as (
   insert into course_weeks (course_id, week_no, title)
@@ -82,13 +108,13 @@ on conflict (week_id, session_no) do nothing;
 update course_weeks w
    set title = w.week_no || '주차 — 중간고사'
   from courses c
- where c.id = w.course_id and c.owner_id = auth.uid() and c.term = '202610'
+ where c.id = w.course_id and c.owner_id = teacher_id() and c.term = '202610'
    and w.week_no = 8 and w.title = '8주차';
 
 update course_weeks w
    set title = w.week_no || '주차 — 기말고사'
   from courses c
- where c.id = w.course_id and c.owner_id = auth.uid() and c.term = '202610'
+ where c.id = w.course_id and c.owner_id = teacher_id() and c.term = '202610'
    and w.week_no = 15 and w.title = '15주차';
 
 insert into exams (course_id, kind, title, max_points, ord)
@@ -96,15 +122,27 @@ select c.id, e.kind, e.title, 100, e.ord
   from courses c
   cross join (values ('midterm', '중간고사 (8주차)', 0),
                      ('final',   '기말고사 (15주차)', 1)) as e(kind, title, ord)
- where c.owner_id = auth.uid() and c.term = '202610'
+ where c.owner_id = teacher_id() and c.term = '202610'
    and not exists (select 1 from exams x where x.course_id = c.id and x.kind = e.kind);
 
 -- ── 감점 항목 기본값 ─────────────────────────────────────────
 -- 지각 · 조퇴 · 태도불량 · 과제미제출 · 과제 지각제출.
--- 점수는 과목 화면에서 바꿀 수 있다.
-select seed_deduction_kinds(c.id)
+-- 점수는 과목의 '감점' 화면에서 바꿀 수 있다.
+--
+-- seed_deduction_kinds() 를 부르지 않고 직접 넣는다. 그 함수는 owns_course()
+-- 로 소유자를 확인하는데 SQL Editor 에서는 auth.uid() 가 NULL 이라 걸린다.
+insert into deduction_kinds (course_id, code, label, points, source, ord)
+select c.id, k.code, k.label, k.points, k.source, k.ord
   from courses c
- where c.owner_id = auth.uid() and c.term = '202610';
+  cross join (values
+    ('late',         '지각',           1, 'attendance_late',        0),
+    ('early_leave',  '조퇴',           1, 'attendance_early_leave', 1),
+    ('attitude',     '태도 불량',      2, 'manual',                 2),
+    ('task_missing', '과제 미제출',    5, 'task_missing',           3),
+    ('task_late',    '과제 지각 제출', 2, 'task_late',              4)
+  ) as k(code, label, points, source, ord)
+ where c.owner_id = teacher_id() and c.term = '202610'
+on conflict (course_id, code) do nothing;
 
 -- ── 헤이영 교과목번호 ────────────────────────────────────────
 -- ext_course_id 안에 이미 들어 있지만(202610UN00·50035·67672·Y1)
@@ -116,7 +154,7 @@ update courses set heyyoung_code = v.code
                ('ENT26Y4', '30050-Y4'),
                ('CUL26Y5', '60716-Y5'),
                ('CUL26Y6', '60716-Y6')) as v(join_code, code)
- where courses.join_code = v.join_code and courses.owner_id = auth.uid();
+ where courses.join_code = v.join_code and courses.owner_id = teacher_id();
 
 commit;
 
@@ -126,5 +164,8 @@ select c.title, c.class_no, c.join_code, c.peer_assessment, c.project_mode,
        (select count(*) from course_weeks w where w.course_id = c.id) as weeks
   from courses c
   left join grade_policies p on p.course_id = c.id
- where c.owner_id = auth.uid() and c.term = '202610'
+ where c.owner_id = teacher_id() and c.term = '202610'
  order by c.title, c.class_no nulls first;
+
+-- 임시 도우미는 지운다. 앱 권한 판단과는 무관하지만 남겨 둘 이유가 없다.
+drop function if exists teacher_id();

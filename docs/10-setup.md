@@ -24,6 +24,12 @@
 3. `supabase/migrations/0003_functions.sql` — 배정·집계 함수
 4. `supabase/migrations/0004_student_auth.sql` — 학생 인증 연결
 5. `supabase/migrations/0005_profiles.sql` — 회원가입·회원관리
+6. `supabase/migrations/0006_course_ops.sql` — 주차·공지·자료·과제·출석·성적
+7. `supabase/migrations/0007_deductions_heyyoung.sql` — 감점 항목·기타 성적·헤이영
+8. `supabase/migrations/0008_fix_task_submission_insert.sql` — 제출물 정책 보강
+
+이미 0001~0005 가 올라가 있다면 [11-migrate.md](11-migrate.md) 를 보라 —
+0006 이후만 올리는 절차와 확인 질의가 정리되어 있다.
 
 > 순서가 중요합니다. 2번은 1번의 테이블을, 3번은 2번의 헬퍼 함수를,
 > 4번은 앞의 전부를 씁니다.
