@@ -354,3 +354,282 @@ export function matchRoster(rows: HeyYoungRow[], roster: RosterEntry[]): MatchRe
 
   return { matched, unmatched, missing: roster.filter((s) => !seen.has(s.id)) };
 }
+
+// ════════════════════════════════════════════════════════════
+//  헤이영 "강좌별 출석관리" 출석부 — 가로형 행렬
+//
+//  실제 화면(/admin/screen/HCO0301M01)은 학생 한 명이 한 행이고
+//  주차마다 교시 열이 붙는다. 위쪽에 머리글이 여러 줄 겹쳐 있다.
+//
+//    순번 | 학과 | 학년 | 학번 | 성명 | 주  | 1주    | 2주    | …
+//                                      월  | 03 03  | 03 03  | …
+//                                      일  | 09 09  | 16 16  | …
+//                                      요일| 월 월  | 월 월  | …
+//                                      교시| 03 04  | 03 04  | …
+//
+//  범례 (2026-08-10 에 화면에서 그대로 확인)
+//    - 미정 · O 출석 · ◎ 유고결석 · △ 지각 · X 결석 · □ 조퇴
+//  ※ ◎ 는 출석이 아니라 **유고결석**이다. 뒤집으면 유고결석이 출석이 된다.
+// ════════════════════════════════════════════════════════════
+
+export type MatrixStatus = AttendanceStatus | 'early_leave';
+
+export const MATRIX_SYMBOL: Record<string, MatrixStatus> = {
+  O: 'present',
+  o: 'present',
+  '○': 'present',   // ○
+  '◯': 'present',   // ◯
+  '◎': 'excused',   // ◎
+  '◉': 'excused',   // ◉
+  '△': 'late',      // △
+  '▲': 'late',      // ▲
+  X: 'absent',
+  x: 'absent',
+  '✕': 'absent',    // ✕
+  '×': 'absent',    // ×
+  '□': 'early_leave', // □
+  '■': 'early_leave', // ■
+};
+
+export interface MatrixCell {
+  /** 1부터. 머리글의 "N주" 에서 읽는다. */
+  week: number;
+  /** 그 주차 안에서 몇 번째 교시인지. 1부터. */
+  session: number;
+  status: MatrixStatus;
+  /** 머리글의 월·일로 만든 날짜. 알 수 없으면 null. */
+  date: string | null;
+  symbol: string;
+}
+
+export interface MatrixStudent {
+  studentNo: string;
+  name: string | null;
+  cells: MatrixCell[];
+}
+
+export interface MatrixParseResult {
+  students: MatrixStudent[];
+  /** 열 하나가 어떤 주차·교시·날짜인지. 화면에 보여 주면 오인식을 바로 알아챈다. */
+  columns: Array<{ week: number; session: number; date: string | null }>;
+  skipped: SkippedRow[];
+  /** 뜻을 모르는 기호와 등장 횟수. 비어 있지 않으면 사람이 확인해야 한다. */
+  unknownSymbols: Record<string, number>;
+}
+
+/** 병합된 칸은 내보내기에서 빈 칸이 되므로 왼쪽 값을 이어서 채운다. */
+function forwardFill(cells: string[]): string[] {
+  const out: string[] = [];
+  let last = '';
+  for (const c of cells) {
+    const v = (c ?? '').trim();
+    if (v) last = v;
+    out.push(last);
+  }
+  return out;
+}
+
+/**
+ * 헤이영 출석부(CSV/TSV)를 읽는다.
+ *
+ * 머리글이 몇 줄인지, 병합이 어떻게 풀리는지가 내보내기 설정에 따라 달라져서
+ * 줄 번호를 못 박지 않는다. "학번" 이 있는 줄을 기준으로 잡고
+ * 그 언저리에서 주 / 월 / 일 줄을 이름으로 찾는다.
+ */
+export function parseHeyYoungMatrix(text: string, year?: number): MatrixParseResult {
+  const delimiter = detectDelimiter(text);
+  const table = parseDelimited(text, delimiter);
+  const skipped: SkippedRow[] = [];
+  const unknownSymbols: Record<string, number> = {};
+
+  const headerIdx = table.findIndex((r) => r.some((c) => normalizeHeader(c) === '학번'));
+  if (headerIdx < 0) return { students: [], columns: [], skipped, unknownSymbols };
+
+  const header = table[headerIdx] ?? [];
+  const noCol = header.findIndex((c) => normalizeHeader(c) === '학번');
+  const nameCol = header.findIndex((c) => ['성명', '이름'].includes(normalizeHeader(c)));
+
+  // 학번·성명 오른쪽에 주 / 월 / 일 / 요일 / 교시 라벨만 담긴 열이 하나 더 있다.
+  // 그 열까지가 머리글이고 **그 다음 열부터** 출결 칸이다.
+  // 이걸 놓치면 열이 한 칸씩 밀려 1주차가 통째로 사라진다.
+  const LABELS = ['주', '주차', '월', '일', '요일', '교시'];
+  const searchFrom = Math.max(0, headerIdx - 4);
+  const searchTo = Math.min(table.length, headerIdx + 8);
+  const afterName = Math.max(noCol, nameCol) + 1;
+
+  let labelCol = -1;
+  for (let c = afterName; c < afterName + 3 && labelCol < 0; c += 1) {
+    for (let i = searchFrom; i < searchTo; i += 1) {
+      if (LABELS.includes(normalizeHeader(table[i]?.[c] ?? ''))) { labelCol = c; break; }
+    }
+  }
+
+  const firstDataCol = labelCol >= 0 ? labelCol + 1 : afterName;
+
+  /** 머리글 언저리에서 라벨로 줄을 찾는다. */
+  const findRow = (labels: string[]): string[] | null => {
+    for (let i = searchFrom; i < searchTo; i += 1) {
+      const row = table[i];
+      if (!row) continue;
+      if (row.slice(0, firstDataCol).some((c) => labels.includes(normalizeHeader(c)))) return row;
+    }
+    return null;
+  };
+
+  const weekRow = findRow(['주', '주차']);
+  const monthRow = findRow(['월']);
+  const dayRow = findRow(['일']);
+
+  const width = Math.max(...table.map((r) => r.length));
+  const weeks = forwardFill((weekRow ?? []).slice(firstDataCol, width));
+  const months = forwardFill((monthRow ?? []).slice(firstDataCol, width));
+  const days = forwardFill((dayRow ?? []).slice(firstDataCol, width));
+
+  // 열마다 주차·교시를 매긴다. 같은 주차가 이어지면 교시를 1, 2 … 로 센다.
+  const columns: MatrixParseResult['columns'] = [];
+  let prevWeek = -1;
+  let sessionNo = 0;
+  for (let i = 0; i < weeks.length; i += 1) {
+    const m = (weeks[i] ?? '').match(/(\d{1,2})\s*주/);
+    if (!m) {
+      columns.push({ week: 0, session: 0, date: null });
+      continue;
+    }
+    const week = Number(m[1]);
+    if (week !== prevWeek) {
+      prevWeek = week;
+      sessionNo = 1;
+    } else {
+      sessionNo += 1;
+    }
+
+    const mm = (months[i] ?? '').match(/\d{1,2}/)?.[0];
+    const dd = (days[i] ?? '').match(/\d{1,2}/)?.[0];
+    const y = year ?? new Date().getFullYear();
+    const date = mm && dd ? `${y}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}` : null;
+
+    columns.push({ week, session: sessionNo, date });
+  }
+
+  const students: MatrixStudent[] = [];
+  for (let r = headerIdx + 1; r < table.length; r += 1) {
+    const row = table[r];
+    if (!row) continue;
+    const studentNo = (row[noCol] ?? '').trim().replace(/\s/g, '');
+    if (!studentNo) {
+      // 합계·구분선 같은 줄은 그냥 넘긴다. 다만 출결 기호가 들어 있는데 학번이
+      // 비어 있다면 진짜 데이터가 사라지는 것이므로 반드시 알린다.
+      const hasSymbols = row.slice(firstDataCol).some((c) => MATRIX_SYMBOL[(c ?? '').trim()]);
+      if (hasSymbols) {
+        skipped.push({
+          line: r + 1,
+          reason: '출결 기호가 있는데 학번 칸이 비어 있음',
+          text: row.join(',').slice(0, 80),
+        });
+      }
+      continue;
+    }
+    if (!/^[0-9A-Za-z-]+$/.test(studentNo)) {
+      skipped.push({ line: r + 1, reason: `학번 형식이 아님: ${studentNo}`, text: row.join(',').slice(0, 80) });
+      continue;
+    }
+
+    const cells: MatrixCell[] = [];
+    for (let i = 0; i < columns.length; i += 1) {
+      const col = columns[i];
+      if (!col || col.week === 0) continue;
+      const symbol = (row[firstDataCol + i] ?? '').trim();
+      if (!symbol || symbol === '-') continue; // 미정은 넣지 않는다
+      const status = MATRIX_SYMBOL[symbol];
+      if (!status) {
+        unknownSymbols[symbol] = (unknownSymbols[symbol] ?? 0) + 1;
+        continue;
+      }
+      cells.push({ week: col.week, session: col.session, status, date: col.date, symbol });
+    }
+
+    students.push({
+      studentNo,
+      name: nameCol >= 0 ? (row[nameCol] ?? '').trim() || null : null,
+      cells,
+    });
+  }
+
+  return { students, columns: columns.filter((c) => c.week > 0), skipped, unknownSymbols };
+}
+
+// ── 이의신청 / 유고결석 목록 ─────────────────────────────────
+export interface RequestRow {
+  /** '50035-Y1' — 교과목명 뒤 괄호에서 꺼낸다. */
+  courseCode: string | null;
+  week: number | null;
+  session: number | null;
+  original: string | null; // 출석구분 — 결석 · 지각 …
+  reason: string | null;   // 유고결석의 사유구분 — 단순질병 · 수강정정 …
+  applicant: string | null;
+  appliedAt: string | null;
+  resultRaw: string | null;
+  /** 처리여부 괄호 안의 결과. '답변완료( 출석 )' → present */
+  result: MatrixStatus | 'pending' | null;
+}
+
+/**
+ * 출결이의신청(/screen/HAP0602M01) · 유고결석(/screen/HAP0604M01) 목록을 읽는다.
+ * 두 화면은 '사유구분' 열이 있고 없고만 다르다.
+ */
+export function parseHeyYoungRequests(text: string): { rows: RequestRow[]; skipped: SkippedRow[] } {
+  const delimiter = detectDelimiter(text);
+  const table = parseDelimited(text, delimiter).filter((r) => r.some((c) => c.trim() !== ''));
+  const skipped: SkippedRow[] = [];
+
+  const headerIdx = table.findIndex((r) => r.some((c) => normalizeHeader(c).includes('교과목명')));
+  if (headerIdx < 0) return { rows: [], skipped };
+
+  const header = (table[headerIdx] ?? []).map(normalizeHeader);
+  const col = (...names: string[]) => header.findIndex((h) => names.some((n) => h.includes(n)));
+
+  const cSubject = col('교과목명');
+  const cDate = col('출석일자');
+  const cKind = col('출석구분');
+  const cReason = col('사유구분');
+  const cWho = col('신청자');
+  const cWhen = col('신청일시');
+  const cResult = col('처리여부');
+
+  const rows: RequestRow[] = [];
+  for (let i = headerIdx + 1; i < table.length; i += 1) {
+    const r = table[i];
+    if (!r) continue;
+    const at = (idx: number) => (idx >= 0 ? (r[idx] ?? '').trim() : '');
+
+    const subject = at(cSubject);
+    if (!subject) continue;
+
+    // '문화예술콘텐츠창업(60716-Y5)' 에서 과목코드만 꺼낸다
+    const codeMatch = subject.match(/\(([0-9]{4,6}-[A-Za-z0-9]+)\)/);
+    // '14주차 2번째' → week 14, session 2
+    const dm = at(cDate).match(/(\d{1,2})\s*주차\s*(\d{1,2})?/);
+
+    const resultRaw = at(cResult);
+    const inParens = resultRaw.match(/\(([^)]*)\)/)?.[1]?.trim() ?? '';
+    let result: RequestRow['result'] = null;
+    if (inParens) {
+      result = mapStatus(inParens) ?? (inParens.includes('조퇴') ? 'early_leave' : null);
+    }
+    if (!result && /접수|대기|처리중/.test(resultRaw)) result = 'pending';
+
+    rows.push({
+      courseCode: codeMatch?.[1] ?? null,
+      week: dm?.[1] ? Number(dm[1]) : null,
+      session: dm?.[2] ? Number(dm[2]) : null,
+      original: at(cKind) || null,
+      reason: at(cReason) || null,
+      applicant: at(cWho) || null,
+      appliedAt: at(cWhen) || null,
+      resultRaw: resultRaw || null,
+      result,
+    });
+  }
+
+  return { rows, skipped };
+}
