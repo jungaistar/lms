@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { studentDb } from '../lib/session';
+import PageHero from '../components/PageHero';
 
 interface Item {
   activity_id: string;
@@ -49,14 +50,14 @@ export default function Feedback() {
   if (loading) return <div className="container"><div className="empty">불러오는 중…</div></div>;
 
   return (
+    <>
+    <PageHero
+      crumbs={['학생', '받은 피드백']}
+      title="내가 받은 피드백"
+      en="MY FEEDBACK"
+      desc="누가 썼는지는 표시되지 않습니다. 점수는 공개되지 않습니다."
+    />
     <div className="container">
-      <div className="card tight">
-        <h2 style={{ margin: 0 }}>내가 받은 피드백</h2>
-        <p className="small muted" style={{ margin: '6px 0 0' }}>
-          누가 썼는지는 표시되지 않습니다. 점수는 공개되지 않습니다.
-        </p>
-      </div>
-
       {error && <div className="alert alert-error">{error}</div>}
 
       {items.length === 0 ? (
@@ -79,7 +80,10 @@ export default function Feedback() {
         ))
       )}
 
-      <button className="btn-ghost btn-block" onClick={() => nav('/me')}>돌아가기</button>
+      <div style={{ marginTop: 20 }}>
+        <button className="btn-ghost btn-block" onClick={() => nav('/me')}>돌아가기</button>
+      </div>
     </div>
+    </>
   );
 }

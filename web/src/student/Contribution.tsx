@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { loadStudentSession, studentDb } from '../lib/session';
 import type { Student } from '../lib/types';
+import PageHero from '../components/PageHero';
 
 const TOTAL = 100;
 
@@ -142,16 +143,19 @@ export default function Contribution() {
   }
 
   return (
+    <>
+    <PageHero
+      crumbs={['학생', '팀 기여도']}
+      title={title}
+      en="TEAM CONTRIBUTION"
+      desc={
+        instruction ??
+        `팀원 ${mates.length}명에게 총 ${TOTAL}점을 나눠 주세요. 똑같이 기여했다면 한 사람당 ${Math.round(TOTAL / Math.max(mates.length, 1))}점입니다.`
+      }
+    />
     <div className="container">
-      <div className="card">
-        <h2>{title}</h2>
-        <p className="small muted">
-          {instruction ??
-            `팀원 ${mates.length}명에게 총 ${TOTAL}점을 나눠 주세요. 똑같이 기여했다면 한 사람당 ${Math.round(TOTAL / Math.max(mates.length, 1))}점입니다.`}
-        </p>
-        <p className="small muted" style={{ marginBottom: 0 }}>
-          본인은 배분 대상이 아닙니다. 배분 내역은 팀원에게 공개되지 않습니다.
-        </p>
+      <div className="alert alert-info small">
+        본인은 배분 대상이 아닙니다. 배분 내역은 팀원에게 공개되지 않습니다.
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
@@ -202,5 +206,6 @@ export default function Contribution() {
         </div>
       </div>
     </div>
+    </>
   );
 }

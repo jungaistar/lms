@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { studentDb } from '../lib/session';
 import { KIND_LABEL, type ActivityKind, type RubricItem } from '../lib/types';
+import PageHero from '../components/PageHero';
 
 interface Loaded {
   activityTitle: string;
@@ -150,19 +151,22 @@ export default function Evaluate() {
   if (!data) return <div className="container"><div className="alert alert-error">{error}</div></div>;
 
   return (
+    <>
+    <PageHero
+      crumbs={['학생', '평가']}
+      title={data.targetTitle}
+      en={`${KIND_LABEL[data.activityKind]} · ${data.activityTitle}`}
+      desc={data.instruction ?? undefined}
+    />
     <div className="container">
-      <div className="card">
-        <div className="small muted">
-          <span className="badge badge-kind">{KIND_LABEL[data.activityKind]}</span> {data.activityTitle}
-        </div>
-        <h2 style={{ marginTop: 8 }}>{data.targetTitle}</h2>
-        {data.instruction && <p className="small muted">{data.instruction}</p>}
-        {data.targetContent && (
-          <div style={{ whiteSpace: 'pre-wrap', background: '#fafcfe', border: '1px solid var(--line)', borderRadius: 9, padding: 14, marginTop: 10, fontSize: 14.5 }}>
+      {data.targetContent && (
+        <div className="card soft">
+          <div className="eyebrow">평가 대상</div>
+          <div style={{ whiteSpace: 'pre-wrap', marginTop: 8, fontSize: 14.5, lineHeight: 1.75 }}>
             {data.targetContent}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {error && <div className="alert alert-error">{error}</div>}
 
@@ -218,6 +222,7 @@ export default function Evaluate() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

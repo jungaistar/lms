@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { teacherClient } from '../lib/supabase';
 import { ADMIN_EMAIL } from '../lib/types';
+import PageHero from '../components/PageHero';
 
 export default function TeacherSignup() {
   const nav = useNavigate();
@@ -42,9 +43,11 @@ export default function TeacherSignup() {
   if (done) {
     const isAdmin = form.email.trim().toLowerCase() === ADMIN_EMAIL;
     return (
-      <div className="container" style={{ maxWidth: 460 }}>
+      <>
+      <PageHero crumbs={['교수', '회원가입']} title="가입 완료" en="SIGN UP COMPLETE" />
+      <div className="container narrow">
         <div className="card">
-          <h2>가입 완료</h2>
+          <h2>가입이 접수되었습니다</h2>
           {isAdmin ? (
             <div className="alert alert-ok">
               관리자 계정입니다. 바로 사용할 수 있습니다.
@@ -60,18 +63,20 @@ export default function TeacherSignup() {
           <Link className="btn btn-navy btn-block" to="/teacher/login">로그인하러 가기</Link>
         </div>
       </div>
+      </>
     );
   }
 
   return (
-    <div className="container" style={{ maxWidth: 460 }}>
+    <>
+    <PageHero
+      crumbs={['교수', '회원가입']}
+      title="교수 회원가입"
+      en="INSTRUCTOR SIGN UP"
+      desc="가입 후 관리자 승인을 받으면 과목을 만들 수 있습니다. 학생은 가입하지 않습니다 — 수업코드와 학번으로 바로 들어옵니다."
+    />
+    <div className="container narrow">
       <div className="card">
-        <h2>교수 회원가입</h2>
-        <p className="small muted">
-          가입 후 관리자 승인을 받으면 과목을 만들 수 있습니다.
-          학생은 가입하지 않습니다 — 수업코드와 학번으로 바로 들어옵니다.
-        </p>
-
         {error && <div className="alert alert-error">{error}</div>}
 
         <form onSubmit={submit}>
@@ -111,5 +116,6 @@ export default function TeacherSignup() {
         </p>
       </div>
     </div>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { loadStudentSession, studentDb } from '../lib/session';
+import PageHero from '../components/PageHero';
 
 interface Post {
   id: string;
@@ -92,15 +93,22 @@ export default function Discussion() {
   if (loading) return <div className="container"><div className="empty">불러오는 중…</div></div>;
 
   return (
+    <>
+    <PageHero
+      crumbs={['학생', '토론방']}
+      title={title}
+      en="DISCUSSION"
+      desc={instruction ?? undefined}
+    />
     <div className="container">
-      <div className="card">
-        <h2>{title}</h2>
-        {instruction && <p className="small muted" style={{ marginBottom: 0 }}>{instruction}</p>}
-      </div>
-
       {error && <div className="alert alert-error">{error}</div>}
 
-      {roots.length === 0 && <div className="card center muted">아직 글이 없습니다. 첫 글을 남겨보세요.</div>}
+      {roots.length === 0 && (
+        <div className="empty">
+          <div className="big">💬</div>
+          아직 글이 없습니다. 첫 글을 남겨보세요.
+        </div>
+      )}
 
       {roots.map((p) => (
         <div className="card tight" key={p.id}>
@@ -151,5 +159,6 @@ export default function Discussion() {
         </div>
       </div>
     </div>
+    </>
   );
 }

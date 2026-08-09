@@ -5,6 +5,7 @@ import type { Course } from '../lib/types';
 import RosterTab from './RosterTab';
 import RubricTab from './RubricTab';
 import ActivityTab from './ActivityTab';
+import PageHero from '../components/PageHero';
 
 type Tab = 'roster' | 'rubric' | 'activity';
 
@@ -33,21 +34,16 @@ export default function CourseView() {
   if (!course) return <div className="container"><div className="empty">불러오는 중…</div></div>;
 
   return (
+    <>
+    <PageHero
+      crumbs={['교수', '과목']}
+      title={course.title}
+      en={`${course.term}${course.class_no ? ` · ${course.class_no}분반` : ''}`}
+      desc={`수업코드 ${course.join_code} — 학생이 학번과 함께 입력합니다.`}
+      actions={<Link className="btn btn-on-hero btn-sm" to="/teacher">← 내 과목</Link>}
+      gradient
+    />
     <div className="container wide">
-      <div className="card tight">
-        <div className="row" style={{ alignItems: 'center' }}>
-          <div className="grow" style={{ flex: 1 }}>
-            <Link to="/teacher" className="small muted" style={{ textDecoration: 'none' }}>← 내 과목</Link>
-            <h2 style={{ margin: '4px 0 2px' }}>{course.title}</h2>
-            <div className="small muted">
-              {course.term}
-              {course.class_no && ` · ${course.class_no}분반`} · 수업코드{' '}
-              <b className="mono" style={{ color: 'var(--orange)' }}>{course.join_code}</b>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="tabs">
         <button aria-selected={tab === 'roster'} onClick={() => setTab('roster')}>명단 · 팀</button>
         <button aria-selected={tab === 'rubric'} onClick={() => setTab('rubric')}>루브릭</button>
@@ -58,5 +54,6 @@ export default function CourseView() {
       {tab === 'rubric' && <RubricTab courseId={course.id} />}
       {tab === 'activity' && <ActivityTab courseId={course.id} />}
     </div>
+    </>
   );
 }

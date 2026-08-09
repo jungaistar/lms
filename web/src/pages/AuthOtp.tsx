@@ -50,7 +50,7 @@ export default function AuthOtp() {
   }, [params, nav]);
 
   return (
-    <div className="container" style={{ maxWidth: 460 }}>
+    <div className="container narrow" style={{ paddingTop: 48 }}>
       <div className="card">
         {error ? (
           <>

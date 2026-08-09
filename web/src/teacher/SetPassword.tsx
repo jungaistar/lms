@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { teacherClient } from '../lib/supabase';
+import PageHero from '../components/PageHero';
 
 /**
  * 비밀번호 설정 · 변경.
@@ -43,7 +44,7 @@ export default function SetPassword() {
 
   if (done) {
     return (
-      <div className="container" style={{ maxWidth: 460 }}>
+      <div className="container narrow">
         <div className="card">
           <h2>비밀번호 설정 완료</h2>
           <div className="alert alert-ok">
@@ -58,9 +59,14 @@ export default function SetPassword() {
   }
 
   return (
-    <div className="container" style={{ maxWidth: 460 }}>
+    <>
+    <PageHero
+      crumbs={['교수', '비밀번호']}
+      title={isFirstTime ? '비밀번호 정하기' : '비밀번호 변경'}
+      en="PASSWORD"
+    />
+    <div className="container narrow">
       <div className="card">
-        <h2>{isFirstTime ? '비밀번호 정하기' : '비밀번호 변경'}</h2>
         {isFirstTime && (
           <div className="alert alert-ok">
             로그인되었습니다. 다음부터 링크 없이 들어오시려면 비밀번호를 정해두세요.
@@ -95,5 +101,6 @@ export default function SetPassword() {
         )}
       </div>
     </div>
+    </>
   );
 }

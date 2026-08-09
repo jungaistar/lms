@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { teacherClient } from '../lib/supabase';
 import { MEMBER_STATUS_LABEL, type Member, type MemberStatus } from '../lib/types';
+import PageHero from '../components/PageHero';
 
 const FILTERS: Array<{ key: MemberStatus | 'all'; label: string }> = [
   { key: 'pending', label: '승인 대기' },
@@ -65,16 +66,15 @@ export default function AdminMembers() {
   if (loading) return <div className="container"><div className="empty">불러오는 중…</div></div>;
 
   return (
+    <>
+    <PageHero
+      crumbs={['교수', '회원관리']}
+      title="회원관리"
+      en="MEMBERS"
+      desc={`전체 ${members.length}명${pendingCount > 0 ? ` · 승인 대기 ${pendingCount}명` : ''}`}
+      actions={<Link className="btn btn-on-hero btn-sm" to="/teacher">← 내 과목</Link>}
+    />
     <div className="container wide">
-      <div className="card tight">
-        <Link to="/teacher" className="small muted" style={{ textDecoration: 'none' }}>← 내 과목</Link>
-        <h2 style={{ margin: '4px 0 2px' }}>회원관리</h2>
-        <div className="small muted">
-          전체 {members.length}명
-          {pendingCount > 0 && <> · <b style={{ color: 'var(--warn)' }}>승인 대기 {pendingCount}명</b></>}
-        </div>
-      </div>
-
       {error && <div className="alert alert-error">{error}</div>}
       {notice && <div className="alert alert-ok">{notice}</div>}
 
@@ -167,5 +167,6 @@ export default function AdminMembers() {
         회원과 데이터를 완전히 지우려면 Supabase 대시보드에서 해당 계정을 삭제하세요.
       </div>
     </div>
+    </>
   );
 }

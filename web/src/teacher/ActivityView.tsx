@@ -5,6 +5,7 @@ import {
   KIND_LABEL, STATUS_LABEL, isRubricKind,
   type Activity, type ActivityStatus, type ResultRow, type Student, type Target, type Team,
 } from '../lib/types';
+import PageHero from '../components/PageHero';
 
 interface Progress { assigned: number; submitted: number; targets: number; evaluators: number; min_per_target: number }
 
@@ -135,17 +136,18 @@ export default function ActivityView() {
   const pct = progress && progress.assigned > 0 ? Math.round((progress.submitted / progress.assigned) * 100) : 0;
 
   return (
+    <>
+    <PageHero
+      crumbs={['교수', '평가 활동']}
+      title={act.title}
+      en={`${KIND_LABEL[act.kind]} · ${STATUS_LABEL[act.status]} · 만점 ${Number(act.max_points)}점`}
+      actions={
+        <Link className="btn btn-on-hero btn-sm" to={`/teacher/course/${act.course_id}`}>
+          ← 과목으로
+        </Link>
+      }
+    />
     <div className="container wide">
-      <div className="card tight">
-        <Link to={`/teacher/course/${act.course_id}`} className="small muted" style={{ textDecoration: 'none' }}>← 과목으로</Link>
-        <h2 style={{ margin: '4px 0 2px' }}>{act.title}</h2>
-        <div className="small muted">
-          <span className="badge badge-kind">{KIND_LABEL[act.kind]}</span>{' '}
-          <span className={`badge badge-${act.status}`}>{STATUS_LABEL[act.status]}</span>
-          {' · '}만점 {Number(act.max_points)}점
-        </div>
-      </div>
-
       {error && <div className="alert alert-error">{error}</div>}
       {notice && <div className="alert alert-ok">{notice}</div>}
 
@@ -301,5 +303,6 @@ export default function ActivityView() {
         )}
       </div>
     </div>
+    </>
   );
 }

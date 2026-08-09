@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { teacherClient } from '../lib/supabase';
 import { MEMBER_STATUS_LABEL, type Course, type Profile } from '../lib/types';
+import PageHero from '../components/PageHero';
 
 /** 학생이 손으로 입력할 코드라 헷갈리는 글자(O/0, I/1)를 뺀다. */
 function randomJoinCode(): string {
@@ -80,39 +81,22 @@ export default function TeacherHome() {
   if (!ready) return <div className="container"><div className="empty">불러오는 중…</div></div>;
 
   return (
-    <div className="container">
-      <div className="card tight">
-        <div className="row" style={{ alignItems: 'center' }}>
-          <div style={{ flex: 1 }}>
-            <h2 style={{ margin: 0 }}>내 과목</h2>
-            {profile && (
-              <div className="small muted">
-                {profile.name ?? profile.email}
-                {profile.role === 'admin' && <span className="badge badge-finalized" style={{ marginLeft: 6 }}>관리자</span>}
-              </div>
-            )}
-          </div>
-          {profile?.role === 'admin' && (
-            <Link className="btn btn-navy btn-sm" to="/teacher/members" style={{ flex: '0 0 auto' }}>
-              회원관리{pendingCount > 0 && ` (${pendingCount})`}
-            </Link>
-          )}
-          <Link className="btn btn-ghost btn-sm" to="/teacher/password" style={{ flex: '0 0 auto' }}>
-            비밀번호
+    <>
+    <PageHero
+      crumbs={['교수', '내 과목']}
+      title="내 과목"
+      en="MY COURSES"
+      desc={profile ? `${profile.name ?? profile.email} 님, 과목을 열어 명단·루브릭·평가를 관리하세요.` : undefined}
+      actions={
+        profile?.role === 'admin' ? (
+          <Link className="btn btn-on-hero btn-sm" to="/teacher/members">
+            회원관리{pendingCount > 0 && ` (${pendingCount})`}
           </Link>
-          <button
-            className="btn-ghost btn-sm"
-            style={{ flex: '0 0 auto' }}
-            onClick={async () => {
-              await teacherClient.auth.signOut();
-              nav('/teacher/login', { replace: true });
-            }}
-          >
-            로그아웃
-          </button>
-        </div>
-      </div>
-
+        ) : undefined
+      }
+      gradient
+    />
+    <div className="container">
       {error && <div className="alert alert-error">{error}</div>}
 
       {profile && profile.status !== 'approved' && (
@@ -141,7 +125,7 @@ export default function TeacherHome() {
               <div className="sub">
                 {c.term}
                 {c.class_no && ` · ${c.class_no}분반`} · 수업코드{' '}
-                <b className="mono" style={{ color: 'var(--orange)' }}>{c.join_code}</b>
+                <b className="mono" style={{ color: 'var(--accent)' }}>{c.join_code}</b>
               </div>
             </div>
             <Link className="btn btn-navy btn-sm" to={`/teacher/course/${c.id}`}>
@@ -217,5 +201,6 @@ export default function TeacherHome() {
         </button>
       )}
     </div>
+    </>
   );
 }

@@ -23,6 +23,9 @@ exports/
 supabase/.branches/
 supabase/.temp/
 
+# 디자인 근거 자료 (목업 HTML · 스크린샷) — 로컬에만 둔다
+univ-design/
+
 # 로그
 logs/
 *.log

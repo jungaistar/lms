@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loadStudentSession, studentDb } from '../lib/session';
 import { KIND_LABEL, type ActivityKind, type MyTask } from '../lib/types';
+import PageHero from '../components/PageHero';
 
 interface OpenActivity {
   id: string;
@@ -49,32 +50,37 @@ export default function StudentHome() {
   if (loading) return <div className="container"><div className="empty">불러오는 중…</div></div>;
 
   return (
+    <>
+    <PageHero
+      crumbs={['학생', '내 평가']}
+      title={session.course.title}
+      en={`${session.course.term}${session.course.class_no ? ` · ${session.course.class_no}분반` : ''}`}
+      desc={`${session.student.name} (${session.student.student_no}) 님, 아래 목록에서 해야 할 평가를 확인하세요.`}
+      actions={
+        <button className="btn btn-on-hero btn-sm" onClick={() => nav('/feedback')}>
+          내가 받은 피드백
+        </button>
+      }
+      gradient
+    />
     <div className="container">
       {error && <div className="alert alert-error">{error}</div>}
 
-      <div className="card tight">
-        <div className="row" style={{ alignItems: 'center' }}>
-          <div className="grow">
-            <div className="small muted">{session.course.term} · {session.course.title}</div>
-            <b>{session.student.name}</b> <span className="muted small">({session.student.student_no})</span>
-          </div>
-          <button className="btn-ghost btn-sm" style={{ flex: '0 0 auto' }} onClick={() => nav('/feedback')}>
-            내가 받은 피드백
-          </button>
-        </div>
-        {tasks.length > 0 && (
-          <>
-            <div className="spacer" />
-            <div className="progress">
-              <i style={{ width: `${Math.round((done.length / tasks.length) * 100)}%` }} />
-            </div>
-            <div className="small muted" style={{ marginTop: 6 }}>
+      {tasks.length > 0 && (
+        <div className="card tight">
+          <div className="row" style={{ alignItems: 'baseline', gap: 8 }}>
+            <b style={{ flex: 1 }}>평가 진행률</b>
+            <span className="small muted" style={{ flex: '0 0 auto' }}>
               {done.length} / {tasks.length} 완료
               {pending.length > 0 && ` · ${pending.length}건 남음`}
-            </div>
-          </>
-        )}
-      </div>
+            </span>
+          </div>
+          <div className="spacer" />
+          <div className="progress">
+            <i style={{ width: `${Math.round((done.length / tasks.length) * 100)}%` }} />
+          </div>
+        </div>
+      )}
 
       {special.length > 0 && (
         <>
@@ -101,9 +107,14 @@ export default function StudentHome() {
         </>
       )}
 
-      <div className="section-title">해야 할 평가 {pending.length > 0 && `(${pending.length})`}</div>
+      <div className="section-title">
+        해야 할 평가{pending.length > 0 && <span className="count">({pending.length})</span>}
+      </div>
       {pending.length === 0 ? (
-        <div className="card center muted">지금 해야 할 평가가 없습니다.</div>
+        <div className="empty">
+          <div className="big">✅</div>
+          지금 해야 할 평가가 없습니다.
+        </div>
       ) : (
         <ul className="list">
           {pending.map((t) => (
@@ -125,7 +136,9 @@ export default function StudentHome() {
 
       {done.length > 0 && (
         <>
-          <div className="section-title">완료 ({done.length})</div>
+          <div className="section-title">
+            완료<span className="count">({done.length})</span>
+          </div>
           <ul className="list">
             {done.map((t) => (
               <li key={t.assignment_id}>
@@ -142,5 +155,6 @@ export default function StudentHome() {
         </>
       )}
     </div>
+    </>
   );
 }
