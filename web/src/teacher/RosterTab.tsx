@@ -2,29 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
 import type { Student, Team } from '../lib/types';
 import { errText } from '../lib/errors';
-
-/**
- * 명단은 학교 LMS에서 받아온 목록을 붙여넣어 만든다.
- * 한 줄에 "학번  이름  팀" — 탭/쉼표/여러 칸 어느 걸로 나눠도 받는다.
- * 엑셀에서 그대로 긁어 붙이는 게 제일 흔한 경로라서.
- */
-function parseRoster(text: string): Array<{ student_no: string; name: string; team: string | null }> {
-  return text
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const cols = line.split(/\t|,|\s{2,}|\s+/).filter(Boolean);
-      return {
-        student_no: cols[0] ?? '',
-        name: cols[1] ?? '',
-        team: cols[2] ?? null,
-      };
-    })
-    .filter((r) => r.student_no && r.name)
-    // 헤더 줄("학번 이름")이 섞여 들어오는 경우가 잦아서 걸러낸다.
-    .filter((r) => /\d/.test(r.student_no));
-}
+import { parseRoster } from '../lib/roster';
 
 export default function RosterTab({ courseId }: { courseId: string }) {
   const [students, setStudents] = useState<Student[]>([]);
@@ -46,6 +24,11 @@ export default function RosterTab({ courseId }: { courseId: string }) {
   }, [courseId]);
 
   useEffect(() => { load(); }, [load]);
+
+  // 학년·학과 칸은 값이 하나라도 있을 때만 보여 준다. 엑셀로 학번·이름만
+  // 넣은 과목에 빈 칸 두 개가 늘 붙어 있으면 표만 넓어진다.
+  const anyGrade = students.some((s) => s.grade != null);
+  const anyDept = students.some((s) => s.dept != null);
 
   async function importRoster() {
     const rows = parseRoster(paste);
@@ -69,18 +52,36 @@ export default function RosterTab({ courseId }: { courseId: string }) {
 
       // 2) 학생 upsert — 학번이 같으면 이름·팀만 갱신한다.
       //    기존 학생을 지우지 않는 이유: 이미 남긴 평가가 딸려 삭제되기 때문.
-      const { error: sErr } = await teacherClient.from('students').upsert(
-        rows.map((r) => ({
-          course_id: courseId,
-          student_no: r.student_no,
-          name: r.name,
-          team_id: r.team ? teamId.get(r.team) ?? null : null,
-        })),
-        { onConflict: 'course_id,student_no' },
-      );
+      const base = rows.map((r) => ({
+        course_id: courseId,
+        student_no: r.student_no,
+        name: r.name,
+        team_id: r.team ? teamId.get(r.team) ?? null : null,
+      }));
+
+      // 학년·학과는 0011 마이그레이션이 올라가야 있는 열이다.
+      // 아직이면 PGRST204 가 오는데, 그때는 학번·이름만으로 한 번 더 넣는다 —
+      // 마이그레이션 때문에 명단 넣기가 막히면 안 된다.
+      const withExtra = base.map((b, i) => ({ ...b, grade: rows[i]!.grade, dept: rows[i]!.dept }));
+      const hasExtra = rows.some((r) => r.grade !== null || r.dept !== null);
+
+      let degraded = false;
+      let { error: sErr } = await teacherClient
+        .from('students')
+        .upsert(hasExtra ? withExtra : base, { onConflict: 'course_id,student_no' });
+
+      if (sErr && /grade|dept|PGRST204/i.test(`${sErr.code ?? ''} ${sErr.message ?? ''}`)) {
+        degraded = true;
+        ({ error: sErr } = await teacherClient
+          .from('students')
+          .upsert(base, { onConflict: 'course_id,student_no' }));
+      }
       if (sErr) throw sErr;
 
-      setNotice(`${rows.length}명 반영했습니다.`);
+      setNotice(
+        `${rows.length}명 반영했습니다.` +
+          (degraded ? ' (학년·학과는 0011 마이그레이션을 올린 뒤 다시 붙여넣으면 저장됩니다.)' : ''),
+      );
       setPaste('');
       setShowImport(false);
       await load();
@@ -125,8 +126,11 @@ export default function RosterTab({ courseId }: { courseId: string }) {
         <div className="card">
           <h3 style={{ marginTop: 0 }}>명단 붙여넣기</h3>
           <p className="small muted">
-            엑셀이나 학교 LMS 명단에서 <b>학번 · 이름 · 팀</b> 순서로 긁어 붙이세요.
-            팀 칸은 비워도 됩니다. 학번이 같으면 덮어쓰고, 없던 학생은 추가됩니다.
+            학교 LMS <b>성적산출/결과</b> 표를 <b>그대로 긁어 붙여도</b> 됩니다 —
+            NO · 학과 · 학년 · 학번 · 이름 순서를 알아서 읽고, 뒤에 붙는
+            "점 · 추가점수 저장 · 출석미달" 은 버립니다.
+            엑셀에서 <b>학번 · 이름 · 팀</b> 순서로 붙여넣던 방식도 그대로 됩니다.
+            학번이 같으면 덮어쓰고, 없던 학생은 추가됩니다.
           </p>
           <textarea
             value={paste}
@@ -134,7 +138,7 @@ export default function RosterTab({ courseId }: { courseId: string }) {
             rows={8}
             className="mono"
             style={{ fontSize: 14 }}
-            placeholder={'202458001\t김민준\t1조\n202458002\t이서연\t1조\n202458003\t박도윤\t2조'}
+            placeholder={'1\t성악(보컬)과\t3\t201936083\t전예찬\n2\t방송극작과\t3\t202126002\t고재욱\n\n또는  202458001\t김민준\t1조'}
           />
           <div className="spacer" />
           <button className="btn-primary btn-block" onClick={importRoster} disabled={busy || !paste.trim()}>
@@ -152,6 +156,8 @@ export default function RosterTab({ courseId }: { courseId: string }) {
               <tr>
                 <th>학번</th>
                 <th>이름</th>
+                {anyGrade && <th style={{ width: 56 }}>학년</th>}
+                {anyDept && <th>학과</th>}
                 <th>팀</th>
                 <th style={{ width: 90 }}>상태</th>
               </tr>
@@ -161,6 +167,8 @@ export default function RosterTab({ courseId }: { courseId: string }) {
                 <tr key={s.id} style={{ opacity: s.active ? 1 : 0.45 }}>
                   <td className="mono">{s.student_no}</td>
                   <td>{s.name}</td>
+                  {anyGrade && <td className="small muted">{s.grade ?? '—'}</td>}
+                  {anyDept && <td className="small muted">{s.dept ?? '—'}</td>}
                   <td>
                     <select
                       value={s.team_id ?? ''}

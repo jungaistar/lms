@@ -105,6 +105,9 @@ export interface Student {
   name: string;
   team_id: string | null;
   active: boolean;
+  /** 학년 · 학과. 0011 마이그레이션 뒤부터 채워진다 — 없을 수 있다. */
+  grade?: number | null;
+  dept?: string | null;
 }
 
 export interface Team {
