@@ -759,6 +759,15 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-fam
   margin-top: 14px; font-size: 13.5px; font-weight: 700; color: var(--accent);
 }
 
+/* 평가 방식 카드 — 같은 자리에 놓이지만 누를 것이 없다.
+   왼쪽 강조 줄을 빼고 바탕을 눕혀서 "이건 링크가 아니다" 를 눈으로 알린다. */
+.course-card.info {
+  border-left-color: var(--line); background: var(--surface);
+}
+.course-card.info:hover { box-shadow: none; }
+.course-card.info .k { color: var(--fg-disabled); }
+.course-card.info .cls { color: var(--accent); }
+
 /* ── 숫자 타일 (대시보드) ─────────────────────────────── */
 .stat-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));

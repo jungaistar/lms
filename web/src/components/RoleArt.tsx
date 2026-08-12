@@ -26,8 +26,6 @@ function Student() {
       <circle cx="60" cy="74" r="13" className="role-art-solid" />
       {/* 어깨 */}
       <path d="M32 112c0-14 12-22 28-22s28 8 28 22z" className="role-art-mid" />
-      {/* 펼친 책 */}
-      <path d="M38 96h18v18H38z" className="role-art-solid" opacity="0.001" />
     </svg>
   );
 }

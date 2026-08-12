@@ -74,15 +74,21 @@ export default function Landing() {
       </div>
 
       <div className="container wide">
-        {/* ── 개설 과목 ─────────────────────────────────
-            누르면 로그인으로 가고, 로그인하면 그 수업으로 이어진다.
+        {/* ── 평가 활동 ─────────────────────────────────
+            개설 과목 6개와 평가 2가지를 **한 화면**에 둔다.
+
+            과목 카드는 누르면 로그인으로 가고, 로그인하면 그 수업으로 이어진다.
             여기서 고른다고 아무 수업이나 열리는 게 아니다 — 명단에 있고
-            교수가 승인한 수업만 열린다. */}
-        <h2 className="section-title">개설 과목</h2>
+            교수가 승인한 수업만 열린다.
+
+            평가 카드는 링크가 아니다. 무엇을 하는 수업인지 알려 주는 설명이라
+            누를 것이 없다. 그래서 왼쪽 강조 줄도 '들어가기'도 없다. */}
+        <h2 className="section-title">평가 활동</h2>
         <p className="small muted" style={{ margin: '-6px 0 14px' }}>
           자기가 듣는 수업을 누르세요. 로그인하면 그 수업으로 이어집니다.
           <b> 명단에 있는 수업만</b> 열립니다.
         </p>
+
         <div className="course-grid">
           {COURSES.map((c) => (
             <Link className="course-card" key={c.key} to={s ? '/home' : `/login?c=${c.key}`}>
@@ -93,14 +99,12 @@ export default function Landing() {
               <span className="go" aria-hidden="true">들어가기 →</span>
             </Link>
           ))}
-        </div>
 
-        <h2 className="section-title">평가 활동</h2>
-        <div className="feature-grid">
           {ACTIVITIES.map((a) => (
-            <div className="feature" key={a.kind}>
-              <div className="k">{a.en}</div>
-              <h3>{KIND_LABEL[a.kind]}</h3>
+            <div className="course-card info" key={a.kind}>
+              <span className="k">{a.en}</span>
+              <b>{KIND_LABEL[a.kind]}</b>
+              <span className="cls">평가 방식</span>
               <p>{a.desc}</p>
             </div>
           ))}
