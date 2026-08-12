@@ -1,5 +1,7 @@
 node_modules/
 dist/
+# tsc -b 가 남기는 캐시. 빌드할 때마다 바뀌어 커밋에 잡음이 낀다.
+*.tsbuildinfo
 .env
 .env.local
 .env.*.local

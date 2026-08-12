@@ -11,6 +11,7 @@ import type {
   TaskSubmission,
 } from '../lib/types';
 import PageHero from '../components/PageHero';
+import StudentNav from './StudentNav';
 
 const STATUS_LABEL: Record<string, string> = {
   present: '출석',
@@ -130,6 +131,7 @@ export default function MyRecord() {
         gradient
       />
       <div className="container">
+        <StudentNav />
         {error && <div className="alert alert-error">{error}</div>}
 
         {/* ── 출결 ─────────────────────────────────── */}

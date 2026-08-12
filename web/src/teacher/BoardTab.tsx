@@ -11,13 +11,22 @@ import {
 /**
  * 과목공지 · 학습자료실 · 강의계획서.
  *
- * 참고한 관리자 화면은 '자료 관리'와 '공지사항'을 나눠 뒀지만 여기서는 합쳤다.
- * 둘 다 "주차에 붙는 읽을거리"라 한 화면에서 주차별로 보는 편이 옮겨 담기 쉽다.
+ * 왼쪽 메뉴에서는 '과목 공지'와 '자료 관리'를 따로 부른다 —
+ * 참고한 관리자 화면이 그렇게 나눠 뒀고, 학교 LMS 도 과목공지와 학습자료실이
+ * 다른 메뉴다. `only` 로 한쪽만 그린다. 데이터를 읽는 길은 하나로 둔다 —
+ * 두 벌로 나누면 한쪽이 반드시 뒤처진다.
  *
  * 공지는 published_at 이 null 이면 초안이고, 자료는 published 로 켜고 끈다.
  * 학교 LMS 에서 가져온 줄(locked)은 여기서 고치면 다음 가져오기가 덮어쓰지 않는다.
  */
-export default function BoardTab({ courseId }: { courseId: string }) {
+export default function BoardTab({
+  courseId,
+  only,
+}: {
+  courseId: string;
+  /** 없으면 둘 다 그린다. */
+  only?: 'notices' | 'materials';
+}) {
   const [weeks, setWeeks] = useState<CourseWeek[]>([]);
   const [notices, setNotices] = useState<Notice[]>([]);
   const [materials, setMaterials] = useState<Material[]>([]);
@@ -118,11 +127,16 @@ export default function BoardTab({ courseId }: { courseId: string }) {
     else await load();
   }
 
+  const showNotices = only !== 'materials';
+  const showMaterials = only !== 'notices';
+
   return (
     <>
       {error && <div className="alert alert-error">{error}</div>}
 
       {/* ── 공지 ────────────────────────────────────────── */}
+      {showNotices && (
+      <>
       <div className="section-title">과목공지</div>
 
       <div className="card tight">
@@ -188,9 +202,13 @@ export default function BoardTab({ courseId }: { courseId: string }) {
           </table>
         </div>
       )}
+      </>
+      )}
 
       {/* ── 자료 ────────────────────────────────────────── */}
-      <div className="section-title" style={{ marginTop: 28 }}>학습자료실 · 강의계획서</div>
+      {showMaterials && (
+      <>
+      <div className="section-title" style={{ marginTop: showNotices ? 28 : 0 }}>학습자료실 · 강의계획서</div>
 
       <div className="card tight">
         <div className="row" style={{ gap: 8 }}>
@@ -261,6 +279,8 @@ export default function BoardTab({ courseId }: { courseId: string }) {
             </tbody>
           </table>
         </div>
+      )}
+      </>
       )}
     </>
   );

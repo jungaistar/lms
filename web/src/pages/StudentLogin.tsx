@@ -19,7 +19,8 @@ export default function StudentLogin() {
     try {
       const r = await studentLogin(joinCode, studentNo);
       saveStudentProfile({ student: r.student, course: r.course });
-      nav('/me', { replace: true });
+      // 로그인하면 강의홈으로 간다 — 과제·설문·출결까지 한 화면에서 보이는 자리다.
+      nav('/home', { replace: true });
     } catch (e) {
       setError(e instanceof Error ? e.message : '로그인에 실패했습니다.');
     } finally {

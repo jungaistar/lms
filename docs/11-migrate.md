@@ -1,6 +1,9 @@
 # 마이그레이션 적용하기
 
-`0001` ~ `0005` 는 이미 적용되어 있다. 여기서는 **`0006` · `0007` · `0008` 과 시드**를 올린다.
+`0001` ~ `0008` 은 이미 적용되어 있다. **지금 올려야 할 것은 `0009` 하나다** —
+[3-1. 0009](#3-1-0009--관리자-콘솔) 로 바로 가면 된다.
+
+아래 `0006` ~ `0008` 설명은 처음부터 다시 깔 때를 위해 남겨 둔다.
 
 Supabase CLI 는 이 PC 에 깔려 있지 않아서 **대시보드 SQL Editor** 로 간다.
 (CLI 를 쓰고 싶으면 맨 아래 참고)
@@ -70,6 +73,47 @@ SQL Editor 는 `postgres` 역할로 돌아서 `auth.uid()` 가 **NULL** 이다.
 같은 이유로 시드는 `seed_deduction_kinds()` 를 부르지 않고 감점 항목을 직접
 넣는다 — 그 함수는 `owns_course()` 로 소유자를 확인하는데 SQL Editor 에서는
 `auth.uid()` 가 NULL 이라 걸리기 때문이다.
+
+## 3-1. `0009` — 관리자 콘솔
+
+`supabase/migrations/0009_admin_console.sql` 을 같은 방식으로 붙여넣고 실행한다.
+**`0006` · `0007` 이 먼저 올라가 있어야 한다** — `deduction_kinds` 와
+`task_submissions` 를 고치기 때문이다.
+
+무엇이 생기나 — 설문 네 표, `task_sync_log`, `activities.phase`,
+`task_submissions` 의 `origin`·`ext_state`, 결석 감점 항목,
+그리고 함수 다섯 개(`deduction_summary` 재작성 · `survey_summary` ·
+`project_eval_summary` · `project_eval_totals` · `course_overview`).
+
+자세한 설명은 [`50-admin-console.md`](50-admin-console.md) 에 있다.
+
+확인 질의:
+
+```sql
+-- 설문 표 4 개
+select count(*) from information_schema.tables
+ where table_schema = 'public'
+   and table_name in ('surveys','survey_questions','survey_responses','survey_answers');
+
+-- 과제 제출에 새 칸이 붙었나 (3 줄)
+select column_name from information_schema.columns
+ where table_name = 'task_submissions'
+   and column_name in ('origin','ext_state','ext_synced_at');
+
+-- 과목마다 결석 항목이 생겼나
+select course_id, label, points from deduction_kinds where code = 'absent';
+
+-- 대시보드 함수가 도나 (과목 id 를 하나 넣어 본다)
+select course_overview((select id from courses limit 1));
+```
+
+`survey_answers` 에 교수용 정책이 **없는 것이 정상**이다. 익명 설문의 답을
+데이터 계층에서 막는 방식이라 정책을 아예 만들지 않았다.
+
+```sql
+-- 아래는 한 줄만 나와야 한다 (학생용 정책 하나)
+select policyname from pg_policies where tablename = 'survey_answers';
+```
 
 ## 4. 잘 올라갔는지 확인
 

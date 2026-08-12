@@ -10,6 +10,7 @@ import {
   type TaskSubmission,
 } from '../lib/types';
 import PageHero from '../components/PageHero';
+import StudentNav from './StudentNav';
 
 /**
  * 학생이 보는 수업 화면 — 주차별 공지 · 자료 · 과제.
@@ -87,6 +88,7 @@ export default function Lessons() {
         gradient
       />
       <div className="container">
+        <StudentNav />
         {error && <div className="alert alert-error">{error}</div>}
 
         {pinned.length > 0 && (

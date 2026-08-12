@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { loadStudentSession, studentDb } from '../lib/session';
 import { KIND_LABEL, type ActivityKind, type MyTask } from '../lib/types';
 import PageHero from '../components/PageHero';
+import StudentNav from './StudentNav';
 
 interface OpenActivity {
   id: string;
@@ -66,6 +67,7 @@ export default function StudentHome() {
       gradient
     />
     <div className="container">
+      <StudentNav />
       {error && <div className="alert alert-error">{error}</div>}
 
       {tasks.length > 0 && (

@@ -1,25 +1,43 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { teacherClient } from '../lib/supabase';
 import { PROJECT_MODE_LABEL, type Course } from '../lib/types';
+import AdminShell from './AdminShell';
+import { buildMenu, isMenuKey, type MenuKey } from './adminMenu';
+
+import DashboardTab from './DashboardTab';
 import RosterTab from './RosterTab';
-import RubricTab from './RubricTab';
-import ActivityTab from './ActivityTab';
+import RosterMatchTab from './RosterMatchTab';
+import TeamsTab from './TeamsTab';
 import WeeksTab from './WeeksTab';
 import BoardTab from './BoardTab';
 import TasksTab from './TasksTab';
+import TaskSyncTab from './TaskSyncTab';
+import SurveyTab from './SurveyTab';
 import AttendanceTab from './AttendanceTab';
+import LiveCheckTab from './LiveCheckTab';
 import DeductionTab from './DeductionTab';
+import RubricTab from './RubricTab';
+import ActivityTab from './ActivityTab';
+import ProjectEvalTab from './ProjectEvalTab';
 import GradesTab from './GradesTab';
 import PageHero from '../components/PageHero';
 
-type Tab = 'roster' | 'weeks' | 'board' | 'tasks' | 'attendance' | 'deduction' | 'rubric' | 'activity' | 'grades';
-
+/**
+ * 과목 관리 콘솔.
+ *
+ * 예전에는 가로 탭이었다. 화면이 열여덟 개로 늘면서 탭이 화면 밖으로 밀려
+ * 지금 어디에 있는지 알 수 없게 됐다. 그래서 왼쪽 세로 메뉴로 바꿨다 —
+ * 참고한 관리자 화면(rest.dreamitbiz.com)의 짜임새다.
+ *
+ * 지금 메뉴는 주소(`?m=...`)에 남긴다. 새로고침해도 보던 화면이 그대로 열리고,
+ * 특정 화면 링크를 그대로 붙여 쓸 수 있다. HashRouter 라 주소는 `#/...?m=...` 이 된다.
+ */
 export default function CourseView() {
   const { courseId } = useParams<{ courseId: string }>();
   const nav = useNavigate();
+  const [params, setParams] = useSearchParams();
   const [course, setCourse] = useState<Course | null>(null);
-  const [tab, setTab] = useState<Tab>('roster');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -36,26 +54,26 @@ export default function CourseView() {
     })();
   }, [courseId, nav]);
 
+  const groups = useMemo(() => (course ? buildMenu(course) : []), [course]);
+
+  // 주소에 이상한 값이 와도 튕기지 않게 대시보드로 떨어뜨린다.
+  const raw = params.get('m') ?? 'dashboard';
+  const current: MenuKey = course && isMenuKey(groups, raw) ? raw : 'dashboard';
+
+  const go = (key: MenuKey) => {
+    setParams({ m: key }, { replace: false });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   if (error) return <div className="container"><div className="alert alert-error">{error}</div></div>;
   if (!course) return <div className="container"><div className="empty">불러오는 중…</div></div>;
 
-  // 상호평가를 안 쓰는 과목은 루브릭·평가 활동 탭을 아예 감춘다.
-  // 감춰도 권한은 RLS 가 판단한다 — 이건 화면 정리일 뿐이다.
-  const tabs: Array<[Tab, string]> = [
-    ['roster', '명단 · 팀'],
-    ['weeks', '주차'],
-    ['board', '공지 · 자료'],
-    ['tasks', '과제'],
-    ['attendance', '출석'],
-    ['deduction', '감점'],
-    ...(course.peer_assessment ? ([['rubric', '루브릭'], ['activity', '평가 활동']] as Array<[Tab, string]>) : []),
-    ['grades', '성적'],
-  ];
+  const item = groups.flatMap((g) => g.items).find((i) => i.key === current);
 
   return (
     <>
       <PageHero
-        crumbs={['교수', '과목']}
+        crumbs={['교수', '과목', item?.label ?? '대시보드']}
         title={course.title}
         en={`${course.term}${course.class_no ? ` · ${course.class_no}반` : ''}`}
         desc={
@@ -67,21 +85,35 @@ export default function CourseView() {
         gradient
       />
       <div className="container wide">
-        <div className="tabs">
-          {tabs.map(([key, label]) => (
-            <button key={key} aria-selected={tab === key} onClick={() => setTab(key)}>{label}</button>
-          ))}
-        </div>
+        <AdminShell groups={groups} current={current} onSelect={go}>
+          <div className="admin-head">
+            <h2>{item?.label ?? '대시보드'}</h2>
+            {item?.hint && <p>{item.hint}</p>}
+          </div>
 
-        {tab === 'roster' && <RosterTab courseId={course.id} />}
-        {tab === 'weeks' && <WeeksTab courseId={course.id} />}
-        {tab === 'board' && <BoardTab courseId={course.id} />}
-        {tab === 'tasks' && <TasksTab courseId={course.id} />}
-        {tab === 'attendance' && <AttendanceTab courseId={course.id} />}
-        {tab === 'deduction' && <DeductionTab courseId={course.id} courseTitle={course.title} />}
-        {tab === 'rubric' && <RubricTab courseId={course.id} />}
-        {tab === 'activity' && <ActivityTab courseId={course.id} />}
-        {tab === 'grades' && <GradesTab course={course} />}
+          {current === 'dashboard' && <DashboardTab course={course} onGo={go} />}
+          {current === 'roster' && <RosterTab courseId={course.id} />}
+          {current === 'match' && <RosterMatchTab courseId={course.id} courseTitle={course.title} />}
+          {current === 'teams' && <TeamsTab courseId={course.id} courseTitle={course.title} />}
+          {current === 'weeks' && <WeeksTab courseId={course.id} />}
+          {current === 'notices' && <BoardTab courseId={course.id} only="notices" />}
+          {current === 'materials' && <BoardTab courseId={course.id} only="materials" />}
+          {current === 'tasks' && <TasksTab courseId={course.id} />}
+          {current === 'tasksync' && <TaskSyncTab courseId={course.id} courseTitle={course.title} onGo={go} />}
+          {current === 'surveys' && <SurveyTab courseId={course.id} courseTitle={course.title} />}
+          {current === 'attendance' && <AttendanceTab courseId={course.id} />}
+          {current === 'live' && <LiveCheckTab courseId={course.id} />}
+          {current === 'deduction' && <DeductionTab courseId={course.id} courseTitle={course.title} />}
+          {current === 'rubric' && <RubricTab courseId={course.id} />}
+          {current === 'activity' && <ActivityTab courseId={course.id} />}
+          {current === 'pre' && (
+            <ProjectEvalTab courseId={course.id} courseTitle={course.title} phase="pre" onGo={go} />
+          )}
+          {current === 'result' && (
+            <ProjectEvalTab courseId={course.id} courseTitle={course.title} phase="result" onGo={go} />
+          )}
+          {current === 'grades' && <GradesTab course={course} />}
+        </AdminShell>
       </div>
     </>
   );

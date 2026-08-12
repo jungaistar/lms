@@ -86,6 +86,9 @@ export default function SiteHeader() {
 
             {student ? (
               <>
+                <Link to="/home" aria-current={here('/home')}>
+                  강의홈
+                </Link>
                 <Link to="/me" aria-current={here('/me')}>
                   내 평가
                 </Link>

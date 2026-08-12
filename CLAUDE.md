@@ -63,6 +63,18 @@ docs/      설계·설치·운영 문서
 | 성적 산출 | `compute_final_grades()` 하나가 유일한 경로. 구성비 합은 DB CHECK 로 100 강제 |
 | 배포 | GitHub Actions → GitHub Pages (`web/dist`) |
 | 라우팅 | HashRouter (Pages에 SPA 리라이트를 걸 수 없어서) |
+| 설문 익명성 | **익명 설문의 답은 교수도 못 읽는다.** `survey_answers` 에 교수용 RLS 정책을 만들지 말 것 — `survey_summary()` 만 통과한다 |
+| 학교 LMS 과제 | 두 경로가 있다. ① 제출수만 있는 표 → 감점 항목 건수, ② 과제별 목록 → `task_submissions.ext_state`. **둘을 같은 과제에 겹쳐 쓰면 두 번 깎인다** |
+
+## 화면 짜임새
+
+교수는 **왼쪽 세로 메뉴**(`teacher/AdminShell` + `adminMenu.ts`), 학생은
+**가로로 밀리는 줄**(`student/StudentNav`)이다. 근거는 `docs/50-admin-console.md`.
+
+- 교수 화면을 새로 만들면 `adminMenu.ts` 에 항목을 넣고 `CourseView` 에 연결한다.
+  **가로 탭(`.tabs`)으로 되돌리지 말 것** — 화면이 열여덟 개라 밖으로 밀린다.
+- 지금 메뉴는 주소 `?m=<key>` 에 남긴다. 새로고침·링크 공유가 되어야 한다.
+- 메뉴에서 항목을 감추는 것은 화면 정리일 뿐이다. 권한은 RLS 가 판단한다.
 
 ## 화면 작업 규칙
 
@@ -109,14 +121,22 @@ cd bridge && npm run auth      # 사람이 로그인 → 세션 저장
 cd bridge && npm run push -- --csv "...성적.csv" --dry-run
 ```
 
-## 현재 상태 (2026-08-07)
+## 현재 상태 (2026-08-12)
 
-- Supabase 프로젝트 `aujvpcpjpgxghxmsheur` 에 마이그레이션 4개 적용 완료,
+- Supabase 프로젝트 `aujvpcpjpgxghxmsheur` 에 `0001`~`0008` 적용 완료,
   `student-login` 함수 배포 완료, 공개 회원가입 차단 완료
 - GitHub Pages 배포 동작 중 (저장소 Secrets 에 URL/anon key 등록됨)
 - **실제 프로젝트 대상 end-to-end 검증 27항목 통과** — 배정(자기 팀 제외),
   학생 로그인, 평가 제출, 만점 초과 거부, RLS 격리, 집계·감점 계산,
   점수 비공개, 과목 격리
-- 학교 LMS 성적 입력만 화면 셀렉터 미확인으로 잠김 (`SELECTORS_VERIFIED = false`)
+- `npm test` 126항목 통과 (헤이영 39 · 가로형 31 · 내보내기 27 · 학교 LMS 과제 29)
 
-`TODO(selector)` 주석이 남은 곳이 유일한 미구현 지점이다.
+### 아직 안 된 것
+
+1. **`0009_admin_console.sql` 미적용.** 대시보드·설문·프로젝트 집계표·
+   과제 제출현황은 이 마이그레이션이 올라가야 동작한다. 절차는
+   `docs/11-migrate.md` 3-1 절.
+2. 학교 LMS **성적 입력**은 화면 셀렉터 미확인으로 잠김
+   (`SELECTORS_VERIFIED = false`). `TODO(selector)` 주석이 남은 자리다.
+
+작업 이력은 `docs/90-worklog.md` 에 날짜순으로 남긴다. 큰 작업을 하면 여기에 한 줄 넣는다.
