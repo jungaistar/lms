@@ -389,8 +389,13 @@ label.field > span {
 }
 label.field > small { display: block; color: var(--fg-disabled); font-size: 12.5px; margin-top: 6px; line-height: 1.55; }
 
-input[type='text'], input[type='number'], input[type='email'],
-input[type='password'], input[type='datetime-local'], select, textarea {
+/* `input:not([type])` 를 빼먹으면 안 된다 — `<input value=… />` 처럼 type 을
+   안 적은 칸이 화면 곳곳에 있고, 그런 칸만 테두리도 너비도 없이 글자 옆에
+   붙어 버린다. 실제로 '수업 중 체크'의 찾기 칸이 그렇게 깨져 있었다. */
+input:not([type]), input[type='text'], input[type='number'], input[type='email'],
+input[type='password'], input[type='datetime-local'], input[type='date'],
+input[type='time'], input[type='search'], input[type='url'], input[type='tel'],
+select, textarea {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--line-strong);
