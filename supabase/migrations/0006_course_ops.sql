@@ -568,3 +568,14 @@ end $$;
 
 revoke all on function compute_final_grades(uuid) from public, anon;
 grant execute on function compute_final_grades(uuid) to authenticated;
+
+-- ════════════════════════════════════════════════════════════
+--  PostgREST 스키마 캐시 새로 읽기
+--
+--  이걸 빼먹으면 SQL 은 분명히 올라갔는데 앱에서는
+--  "Could not find the table 'public.xxx' in the schema cache" 가 계속 난다.
+--  PostgREST 는 표·함수 목록을 캐시에 들고 있고, 대시보드 SQL Editor 로
+--  DDL 을 돌렸을 때 그 캐시가 곧바로 갱신되지 않는 경우가 있다.
+--  실제로 2026-08-12 에 이것 때문에 "안 올라갔다" 고 오판했다.
+-- ════════════════════════════════════════════════════════════
+notify pgrst, 'reload schema';

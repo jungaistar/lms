@@ -209,6 +209,57 @@ select c.title, count(*) filter (where a.status = 'approved') as approved, count
 바로 들어가면 ②·③ 이 제대로 된 것이다. "승인을 기다리는 중" 이 나오면 ② 가
 안 된 것이고, "수업코드 또는 학번이…" 가 나오면 ③ 이 안 된 것이다.
 
+## 3-9. "분명히 올렸는데 앱에서는 안 보인다"
+
+2026-08-12 에 실제로 겪은 일이다. SQL 을 다 돌렸는데 앱은 계속
+`Could not find the table 'public.course_weeks' in the schema cache` 를 냈다.
+
+원인은 두 가지 중 하나다. **아래 한 덩어리를 SQL Editor 에 붙여 넣으면
+어느 쪽인지 바로 갈린다.**
+
+```sql
+-- ① 표가 실제로 있는지 (없으면 SQL 이 안 돌아간 것)
+select
+  to_regclass('public.course_weeks')   as "0006_주차",
+  to_regclass('public.deduction_kinds') as "0007_감점",
+  to_regclass('public.surveys')         as "0009_설문",
+  to_regclass('public.student_access')  as "0010_입장";
+
+-- ② 있는데 앱이 못 보면 캐시 문제다 — 이 줄로 새로 읽힌다
+notify pgrst, 'reload schema';
+```
+
+| ① 결과 | 뜻 | 할 일 |
+|---|---|---|
+| 네 칸이 전부 `null` | SQL 이 안 돌아갔다 | `0006` 부터 다시. **다른 프로젝트에 돌리지 않았는지** 확인 |
+| 일부만 `null` | 중간에 실패했다 | `null` 인 것부터 순서대로 다시 |
+| 전부 이름이 나옴 | 표는 있다. 캐시 문제였다 | ② 를 돌리고 앱을 새로고침 |
+
+프로젝트를 헷갈리기 쉽다. 앱이 보는 곳은 `web/.env` 의 `VITE_SUPABASE_URL`,
+지금은 **`aujvpcpjpgxghxmsheur`** 다. SQL Editor 왼쪽 위 프로젝트 이름이
+같은지 확인할 것.
+
+`0006` ~ `0010` 파일 맨 끝에는 `notify pgrst, 'reload schema';` 를 넣어 뒀다.
+파일을 통째로 복사해 붙였다면 캐시는 저절로 새로 읽힌다.
+
+### Edge Function 은 따로다
+
+`student-login` 은 **SQL 과 무관하게** 따로 배포해야 한다. 확인하는 법:
+
+```bash
+curl -s -X POST "https://aujvpcpjpgxghxmsheur.supabase.co/functions/v1/student-login" \
+  -H "apikey: <anon key>" -H "Authorization: Bearer <anon key>" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"probe@example.com","student_no":"000000000","name":"없는사람"}'
+```
+
+| 응답 | 뜻 |
+|---|---|
+| `수업코드와 학번을 모두 입력하세요.` | **옛 코드다.** 재배포가 안 됐다 |
+| `명단에서 찾지 못했습니다…` | 새 코드가 올라갔다 |
+
+이 요청은 아무것도 만들지 않는다 — 명단에 없는 학번이라 거절되고 기록만 남는다.
+
 ## 4. 잘 올라갔는지 확인
 
 ```sql

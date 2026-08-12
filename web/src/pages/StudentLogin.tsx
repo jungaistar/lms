@@ -66,7 +66,21 @@ export default function StudentLogin() {
       if (r.kind === 'pending') return setPhase({ at: 'pending', courseLabel: r.courseLabel });
       return setPhase({ at: 'rejected', courseLabel: r.courseLabel });
     } catch (e) {
-      setError(e instanceof Error ? e.message : '들어가지 못했습니다.');
+      const msg = e instanceof Error ? e.message : '들어가지 못했습니다.';
+
+      // 서버(Edge Function)가 아직 옛 코드면 이메일 방식 요청에 대고
+      // "수업코드와 학번을 모두 입력하세요" 를 돌려준다. 학생 입장에서는
+      // 시키는 대로 넣었는데 엉뚱한 소리를 듣는 셈이라 그대로 보여 주면 안 된다.
+      // 무엇이 문제인지 말해 주고 쓸 수 있는 길(수업코드)을 열어 준다.
+      if (msg.includes('수업코드와 학번')) {
+        setShowCode(true);
+        setError(
+          '아직 이메일로 들어올 수 없습니다. 서버 준비가 끝나지 않았습니다. ' +
+            '아래 "수업코드를 받았어요" 로 들어오거나 교수님께 말씀해 주세요.',
+        );
+        return;
+      }
+      setError(msg);
     } finally {
       setBusy(false);
     }
@@ -236,7 +250,7 @@ export default function StudentLogin() {
             </p>
 
             {/* 옛 방식 — 아직 수업코드로 운영하는 과목만 */}
-            <details style={{ marginTop: 10 }}>
+            <details style={{ marginTop: 10 }} open={showCode}>
               <summary className="small" onClick={() => setShowCode(true)}>
                 수업코드를 받았어요
               </summary>
