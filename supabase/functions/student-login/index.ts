@@ -45,8 +45,14 @@ function freshPassword(): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-/** 이름 비교용. 공백을 지우고 본다 — "홍 길동" 과 "홍길동" 은 같은 사람이다. */
-const squash = (s: string) => s.replace(/\s+/g, '');
+/**
+ * 이름 비교용. 공백을 지우고 본다 — "홍 길동" 과 "홍길동" 은 같은 사람이다.
+ *
+ * NFC 로 맞추는 이유: 같은 한글이라도 자모가 풀어진 형태(NFD)로 들어오는 경우가
+ * 있다. 맥에서 만든 파일을 거쳐 온 명단이 특히 그렇다. 눈으로는 똑같은데
+ * 문자열 비교가 어긋나서 "명단에 없습니다" 가 된다.
+ */
+const squash = (s: string) => s.normalize('NFC').replace(/\s+/g, '');
 
 /** 이메일 비교용. 대소문자와 앞뒤 공백만 정리한다. 점·플러스는 건드리지 않는다. */
 const normEmail = (s: string) => s.trim().toLowerCase();
@@ -160,8 +166,32 @@ Deno.serve(async (req) => {
   const pickedCourse = String(body.course_id ?? '').trim();
 
   const url = Deno.env.get('SUPABASE_URL')!;
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+  /*
+   * 키를 두 체계에서 찾는다.
+   *
+   * 이 프로젝트는 2026-08-09 에 **레거시 JWT 키(anon · service_role)를
+   * 비활성화**했다. 그런데 Supabase 가 함수에 자동으로 넣어 주는
+   * SUPABASE_SERVICE_ROLE_KEY 는 그 레거시 값이라 이제 아무 권한이 없다.
+   *
+   * 무서운 건 **조용히 실패한다**는 것이다. 죽은 키로 만든 클라이언트는
+   * 오류를 내지 않고 그냥 익명으로 동작한다 → RLS 에 걸려 명단이 0건으로
+   * 보이고 → 학생은 "명단에서 찾지 못했습니다" 를 듣는다. 학번을 백 번
+   * 다시 넣어도 안 된다. 실제로 이것 때문에 한참 헤맸다.
+   *
+   * 그래서 새 키(sb_secret_… / sb_publishable_…)를 먼저 보고,
+   * 없으면 레거시로 떨어진다. 새 키는 Edge Functions → Secrets 에 넣는다.
+   */
+  const serviceKey =
+    Deno.env.get('SB_SECRET_KEY') ?? Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+  const anonKey =
+    Deno.env.get('SB_PUBLISHABLE_KEY') ?? Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+
+  if (!serviceKey || !anonKey) {
+    console.error('키가 없습니다. SB_SECRET_KEY / SB_PUBLISHABLE_KEY 를 확인하세요.');
+    return json({ error: '서버 설정이 끝나지 않았습니다. 교수님께 알려주세요.' }, 500);
+  }
+
   const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
 
   // ════════════════════════════════════════════════════════
@@ -221,50 +251,129 @@ Deno.serve(async (req) => {
   }
 
   // 학번으로 후보를 모은 뒤 이름으로 거른다. 이름은 공백을 지우고 본다.
-  const { data: rows } = await admin
+  const { data: rows, error: lookupError } = await admin
     .from('students')
     .select('id, name, student_no, active, auth_user_id, course_id, courses(id, title, term, class_no, entry_mode)')
     .eq('student_no', studentNo)
     .eq('active', true);
 
-  type Row = Student & { course_id: string; courses: (Course & { entry_mode: string }) | null };
-  const candidates = ((rows ?? []) as unknown as Row[])
-    .filter((r) => r.courses && r.courses.entry_mode === 'approval')
-    .filter((r) => squash(r.name) === squash(name));
+  // 조회 자체가 실패한 것을 "명단에 없다" 로 뭉뚱그리면 안 된다.
+  // 학생은 학번을 백 번 다시 넣어 보고, 교수는 왜 안 되는지 알 수 없다.
+  if (lookupError) {
+    console.error('명단 조회 실패:', lookupError.message);
+    return json({ error: '명단을 확인하지 못했습니다. 교수님께 알려주세요.' }, 500);
+  }
+
+  type CourseRow = Course & { entry_mode: string };
+  type Row = Student & { course_id: string; courses: CourseRow | CourseRow[] | null };
+
+  /**
+   * 붙여 온 과목을 꺼낸다.
+   *
+   * PostgREST 는 다대일 관계를 보통 **객체**로 주지만, 관계를 못 알아보면
+   * 한 칸짜리 **배열**로 준다. 배열로 왔을 때 `.entry_mode` 를 읽으면 undefined 라
+   * 후보가 통째로 걸러지고, 학생에게는 "명단에 없습니다" 로 보인다.
+   * 어느 쪽으로 와도 받도록 한다.
+   */
+  const courseOf = (r: Row): CourseRow | null => {
+    const c = r.courses;
+    return Array.isArray(c) ? (c[0] ?? null) : c;
+  };
+
+  /*
+   * 왜 못 찾았는지를 갈라서 알려 준다.
+   *
+   * 전부 "명단에서 찾지 못했습니다" 로 뭉뚱그리면 학생은 무엇을 고쳐야 할지
+   * 모른 채 같은 값을 계속 다시 넣는다. 학번이 틀린 것과 이름이 틀린 것은
+   * 학생이 스스로 고칠 수 있는 서로 다른 문제다.
+   */
+  const byNo = (rows ?? []) as unknown as Row[];
+  const withCourse = byNo
+    .map((r) => ({ row: r, course: courseOf(r) }))
+    .filter((x): x is { row: Row; course: CourseRow } => x.course !== null);
+  const nameMatched = withCourse.filter((x) => squash(x.row.name) === squash(name));
+  const candidates = nameMatched.filter((x) => x.course.entry_mode === 'approval');
 
   if (candidates.length === 0) {
+    /*
+     * 진짜 명단에 없는 것과 **명단을 통째로 못 읽는 것**을 가른다.
+     *
+     * 권한 키가 죽어 있으면 이 함수는 익명으로 동작하고, RLS 때문에 명단이
+     * 0건으로 보인다. 그 상태를 "명단에 없습니다" 로 돌려보내면 학생은
+     * 학번을 백 번 다시 넣고 교수는 원인을 영영 모른다.
+     * 명단이 통째로 비어 보이면 그건 학생 문제가 아니라 서버 문제다.
+     */
+    const { count } = await admin
+      .from('students')
+      .select('id', { count: 'exact', head: true })
+      .eq('active', true);
+
+    if (!count) {
+      console.error('명단이 통째로 비어 보입니다 — 권한 키를 확인하세요 (SB_SECRET_KEY).');
+      return json({
+        error: '서버가 명단을 읽지 못했습니다. 학생 잘못이 아닙니다 — 교수님께 알려주세요.',
+      }, 500);
+    }
+
     // 명단에 없는 시도도 남긴다. 교수가 "누가 못 들어왔나" 를 볼 수 있어야 한다.
     // 표를 따로 만들지 않는 이유 — 아무나 줄을 만들 수 있으면 그게 스팸이 된다.
     await admin.from('audit_log').insert({
       actor: `anon:${studentNo}`,
       action: 'student_login_unmatched',
-      detail: { student_no: studentNo, name, email },
+      detail: {
+        student_no: studentNo,
+        name,
+        email,
+        // 어디서 걸렸는지 남긴다. 교수가 로그만 보고 원인을 알 수 있어야 한다.
+        by_no: byNo.length,
+        with_course: withCourse.length,
+        name_matched: nameMatched.length,
+      },
     });
+
+    if (byNo.length === 0) {
+      return json({
+        error: '이 학번을 명단에서 찾지 못했습니다. 학번을 다시 확인해 주세요.',
+      }, 401);
+    }
+    if (withCourse.length === 0) {
+      // 학번은 찾았는데 그 줄에 과목이 안 붙어 왔다. 학생이 고칠 수 있는 게 없다.
+      console.error('명단 줄에 과목이 붙지 않았습니다:', JSON.stringify(byNo[0]));
+      return json({
+        error: '서버가 수업 정보를 읽지 못했습니다. 학생 잘못이 아닙니다 — 교수님께 알려주세요.',
+      }, 500);
+    }
+    if (nameMatched.length === 0) {
+      return json({
+        error: '학번은 명단에 있는데 이름이 다릅니다. 명단에 적힌 이름 그대로 넣어 주세요.',
+      }, 401);
+    }
     return json({
-      error: '명단에서 찾지 못했습니다. 학번과 이름을 다시 확인하고, 그래도 안 되면 교수님께 말씀하세요.',
+      error: '이 수업은 아직 이메일로 들어올 수 없습니다. 교수님께 말씀해 주세요.',
     }, 401);
   }
 
   // 여러 과목에 같은 학번·이름이 있으면 학생이 고른다.
-  let picked = candidates[0]!;
+  let chosen = candidates[0]!;
   if (candidates.length > 1) {
     if (!pickedCourse) {
       return json({
         need_course: true,
-        courses: candidates.map((c) => ({
-          id: c.courses!.id,
-          title: c.courses!.title,
-          term: c.courses!.term,
-          class_no: c.courses!.class_no,
+        courses: candidates.map((x) => ({
+          id: x.course.id,
+          title: x.course.title,
+          term: x.course.term,
+          class_no: x.course.class_no,
         })),
       });
     }
-    const hit = candidates.find((c) => c.course_id === pickedCourse);
+    const hit = candidates.find((x) => x.course.id === pickedCourse);
     if (!hit) return json({ error: '고른 과목을 찾지 못했습니다.' }, 400);
-    picked = hit;
+    chosen = hit;
   }
 
-  const course = picked.courses!;
+  const picked = chosen.row;
+  const course = chosen.course;
 
   const { data: access } = await admin
     .from('student_access')

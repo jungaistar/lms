@@ -93,8 +93,12 @@ export default function CourseView() {
         title={course.title}
         en={`${course.term}${course.class_no ? ` · ${course.class_no}반` : ''}`}
         desc={
-          `수업코드 ${course.join_code} — 학생이 학번과 함께 입력합니다. · ` +
-          `${PROJECT_MODE_LABEL[course.project_mode] ?? '프로젝트 설정 없음'}` +
+          // 입장 방식에 따라 문구가 달라야 한다. 승인 방식인데 "수업코드로
+          // 들어옵니다" 라고 적혀 있으면 교수가 학생에게 코드를 알려 주게 된다.
+          (course.entry_mode === 'code'
+            ? `수업코드 ${course.join_code} — 학생이 학번과 함께 입력합니다.`
+            : '학생은 이메일 · 학번 · 이름으로 들어옵니다. 승인해야 입장됩니다.') +
+          ` · ${PROJECT_MODE_LABEL[course.project_mode] ?? '프로젝트 설정 없음'}` +
           `${course.peer_assessment ? ' · 상호평가 사용' : ' · 상호평가 없음'}`
         }
         actions={<Link className="btn btn-on-hero btn-sm" to="/teacher">← 내 과목</Link>}
