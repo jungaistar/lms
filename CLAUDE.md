@@ -160,12 +160,25 @@ cd bridge && npm run push -- --csv "...성적.csv" --dry-run
 
 ## 현재 상태 (2026-08-12)
 
-- Supabase 프로젝트 `aujvpcpjpgxghxmsheur` 에는 **`0001`~`0005` 만 올라가 있다.**
-  2026-08-12 에 앱에서 직접 확인했다 — 주차 화면이
-  `Could not find the table 'public.course_weeks'` 를 낸다.
-  문서에 "적용 완료" 라고 적혀 있어도 **DB 를 믿을 것.**
-  `student-login` 함수 배포 완료, 공개 회원가입 차단 완료
-- 과목 6개는 시드가 아니라 앱에서 직접 만든 것이다 (학기 `202620`)
+- Supabase 프로젝트 `aujvpcpjpgxghxmsheur` 에 **`0001`~`0010` 적용 완료**,
+  `student-login` **재배포 완료**(승인 방식), 공개 회원가입 차단 완료
+- 과목 6개는 시드가 아니라 앱에서 직접 만든 것이다 (학기 `202620`).
+  **명단이 비어 있어** 과목마다 명단을 넣고 `입장 승인 → 명단 전원 승인` 을
+  한 번 눌러야 학생이 들어온다
+- `ZZ_테스트_삭제예정` 은 검증용 과목이다. 지워도 된다
+
+### 검증 삽질에서 남긴 것 — 반복하지 말 것
+
+- **문서보다 DB 를 믿을 것.** "적용 완료" 라고 적혀 있어도 아니었다.
+  확인은 `supabase/apply-pending.sql` 끝의 `to_regclass` 질의로.
+- **`Could not find the table … in the schema cache`** 는 "표가 없다" 와
+  "캐시가 낡았다" 를 구분하지 못한다. 마이그레이션 끝의 `notify pgrst` 가 그것 때문이다.
+- **Supabase 오류는 `Error` 인스턴스가 아니다.** `e instanceof Error` 로 거르면
+  진짜 이유가 통째로 사라진다. `lib/errors.ts` 의 `errText()` 를 쓸 것.
+- **부분 유니크 인덱스에는 `upsert` 를 걸 수 없다.**
+  `task_submissions` 가 그렇다 — 있는 줄은 update, 없는 줄만 insert.
+- **Windows Git Bash 에서 `curl -d '{"name":"한글"}'` 은 깨진다.**
+  JSON 을 파일로 만들어 `--data-binary @file` 로 보낼 것.
 - GitHub Pages 배포 동작 중 (저장소 Secrets 에 URL/anon key 등록됨)
 - **실제 프로젝트 대상 end-to-end 검증 27항목 통과** — 배정(자기 팀 제외),
   학생 로그인, 평가 제출, 만점 초과 거부, RLS 격리, 집계·감점 계산,
@@ -174,13 +187,14 @@ cd bridge && npm run push -- --csv "...성적.csv" --dry-run
 
 ### 아직 안 된 것
 
-1. **`0006` ~ `0010` 미적용.** 수업 운영(주차·공지·자료·과제·출석·성적),
-   관리자 콘솔의 새 화면, 학생 입장 승인이 전부 여기에 걸려 있다.
-   순서대로 올려야 한다 — 절차는 `docs/11-migrate.md`.
-   · `0006` 뒤 팀 프로젝트 과목의 `project_mode` 를 `team` 으로
-   · `0010` 뒤 **`student-login` 함수를 다시 배포**하고, 과목마다
-     `입장 승인 → 명단 전원 승인` 을 한 번 눌러 둘 것 (안 그러면 전원 대기)
-2. 학교 LMS **성적 입력**은 화면 셀렉터 미확인으로 잠김
+1. **`feat/admin-console` 브랜치가 `main` 에 안 합쳐졌다.**
+   GitHub Pages 는 `main` 에서만 다시 빌드된다 — 그래서 실제 사이트는
+   아직 옛 화면이다. 합치면 바로 반영된다.
+2. 실제 6과목의 **명단이 비어 있다.** 명단을 넣고 과목마다
+   `입장 승인 → 명단 전원 승인` 을 눌러야 학생이 들어온다.
+3. 팀 프로젝트 과목의 `project_mode` 가 아직 `individual` 이다
+   (`0006` 기본값). 문화예술콘텐츠창업 Y5·Y6 은 `team` 으로 바꿀 것.
+4. 학교 LMS **성적 입력**은 화면 셀렉터 미확인으로 잠김
    (`SELECTORS_VERIFIED = false`). `TODO(selector)` 주석이 남은 자리다.
 
 작업 이력은 `docs/90-worklog.md` 에 날짜순으로 남긴다. 큰 작업을 하면 여기에 한 줄 넣는다.
