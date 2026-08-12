@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { studentDb } from '../lib/session';
 import { KIND_LABEL, type ActivityKind, type RubricItem } from '../lib/types';
 import PageHero from '../components/PageHero';
+import { errText } from '../lib/errors';
 
 interface Loaded {
   activityTitle: string;
@@ -82,7 +83,7 @@ export default function Evaluate() {
         setScores(existing);
         setComment((ev as any)?.comment ?? '');
       } catch (e) {
-        setError(e instanceof Error ? e.message : '불러오지 못했습니다.');
+        setError(errText(e, '불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }
@@ -141,7 +142,7 @@ export default function Evaluate() {
 
       nav('/me', { replace: true });
     } catch (e) {
-      setError(e instanceof Error ? e.message : '저장하지 못했습니다.');
+      setError(errText(e, '저장하지 못했습니다.'));
     } finally {
       setBusy(false);
     }

@@ -115,23 +115,28 @@ alter table attendance_requests enable row level security;
 alter table deduction_kinds     enable row level security;
 alter table deductions          enable row level security;
 
+drop policy if exists att_req_owner_all on attendance_requests;
 create policy att_req_owner_all on attendance_requests
   for all using (owns_course(course_id)) with check (owns_course(course_id));
 
+drop policy if exists ded_kind_owner_all on deduction_kinds;
 create policy ded_kind_owner_all on deduction_kinds
   for all using (owns_course(course_id)) with check (owns_course(course_id));
 
 -- 감점 항목 이름은 학생도 봐야 왜 깎였는지 안다. 점수(points)까지 보인다.
+drop policy if exists ded_kind_student_read on deduction_kinds;
 create policy ded_kind_student_read on deduction_kinds
   for select using (in_course(course_id) and active);
 
 -- 감점 기록은 **본인 것만** 보인다. 과제 점수·출결과 같은 수준으로 공개한다.
+drop policy if exists ded_owner_all on deductions;
 create policy ded_owner_all on deductions
   for all using (exists (
         select 1 from deduction_kinds k where k.id = kind_id and owns_course(k.course_id)))
   with check (exists (
         select 1 from deduction_kinds k where k.id = kind_id and owns_course(k.course_id)));
 
+drop policy if exists ded_student_read on deductions;
 create policy ded_student_read on deductions
   for select using (student_id = jwt_student_id());
 
@@ -425,3 +430,14 @@ end $$;
 
 revoke all on function compute_final_grades(uuid) from public, anon;
 grant execute on function compute_final_grades(uuid) to authenticated;
+
+-- ════════════════════════════════════════════════════════════
+--  PostgREST 스키마 캐시 새로 읽기
+--
+--  이걸 빼먹으면 SQL 은 분명히 올라갔는데 앱에서는
+--  "Could not find the table 'public.xxx' in the schema cache" 가 계속 난다.
+--  PostgREST 는 표·함수 목록을 캐시에 들고 있고, 대시보드 SQL Editor 로
+--  DDL 을 돌렸을 때 그 캐시가 곧바로 갱신되지 않는 경우가 있다.
+--  실제로 2026-08-12 에 이것 때문에 "안 올라갔다" 고 오판했다.
+-- ════════════════════════════════════════════════════════════
+notify pgrst, 'reload schema';

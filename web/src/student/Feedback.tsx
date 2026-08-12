@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { studentDb } from '../lib/session';
 import PageHero from '../components/PageHero';
+import { errText } from '../lib/errors';
 
 interface Item {
   activity_id: string;
@@ -35,7 +36,7 @@ export default function Feedback() {
         if (b.error) throw b.error;
         setItems([...((a.data ?? []) as Item[]), ...((b.data ?? []) as Item[])]);
       } catch (e) {
-        setError(e instanceof Error ? e.message : '불러오지 못했습니다.');
+        setError(errText(e, '불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }

@@ -10,6 +10,8 @@ import {
   type TaskSubmission,
 } from '../lib/types';
 import PageHero from '../components/PageHero';
+import StudentNav from './StudentNav';
+import { errText } from '../lib/errors';
 
 /**
  * 학생이 보는 수업 화면 — 주차별 공지 · 자료 · 과제.
@@ -47,7 +49,7 @@ export default function Lessons() {
         setTasks((t.data ?? []) as Task[]);
         setSubs((s.data ?? []) as TaskSubmission[]);
       } catch (e) {
-        setError(e instanceof Error ? e.message : '불러오지 못했습니다.');
+        setError(errText(e, '불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }
@@ -87,6 +89,7 @@ export default function Lessons() {
         gradient
       />
       <div className="container">
+        <StudentNav />
         {error && <div className="alert alert-error">{error}</div>}
 
         {pinned.length > 0 && (

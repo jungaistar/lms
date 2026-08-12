@@ -6,6 +6,7 @@ import {
   type Activity, type ActivityStatus, type ResultRow, type Student, type Target, type Team,
 } from '../lib/types';
 import PageHero from '../components/PageHero';
+import { errText } from '../lib/errors';
 
 interface Progress { assigned: number; submitted: number; targets: number; evaluators: number; min_per_target: number }
 
@@ -59,7 +60,7 @@ export default function ActivityView() {
       setNotice(ok);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '실패했습니다.');
+      setError(errText(e, '실패했습니다.'));
     } finally {
       setBusy(null);
     }

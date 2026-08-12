@@ -61,16 +61,25 @@ export default function SiteHeader() {
       <div className="masthead">
         <div className="inner">
           <Link className="brand" to="/">
-            <span className="brand-mark" aria-hidden="true">
-              {ORG.mark}
-            </span>
+            {/* ORG.mark 가 비어 있으면 심볼 자체를 그리지 않는다. 빈 네모가 남지 않게. */}
+            {ORG.mark && (
+              <span className="brand-mark" aria-hidden="true">
+                {ORG.mark}
+              </span>
+            )}
             <span className="brand-text">
               <span className="ko">{SERVICE.name}</span>
               <span className="en">{SERVICE.nameEn}</span>
             </span>
           </Link>
 
-          {(student || teacherEmail) && (
+          {/*
+            교수 이메일은 **교수 화면에서만** 보인다.
+            홈과 학생 화면은 학생 전원에게 보이는 자리다 — 거기에 개인 메일 주소를
+            띄워 둘 이유가 없다. 어느 계정으로 들어와 있는지는 교수 화면에서
+            확인하면 된다. 학생 이름은 본인에게만 보이므로 그대로 둔다.
+          */}
+          {(student || (teacherEmail && isTeacherArea)) && (
             <div className="session">
               <div className="who">
                 <b>{student ? student.student.name : (teacherEmail ?? '')}</b>
@@ -86,6 +95,9 @@ export default function SiteHeader() {
 
             {student ? (
               <>
+                <Link to="/home" aria-current={here('/home')}>
+                  강의홈
+                </Link>
                 <Link to="/me" aria-current={here('/me')}>
                   내 평가
                 </Link>

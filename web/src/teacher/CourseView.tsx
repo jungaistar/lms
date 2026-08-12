@@ -1,26 +1,47 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { teacherClient } from '../lib/supabase';
 import { PROJECT_MODE_LABEL, type Course } from '../lib/types';
+import AdminShell from './AdminShell';
+import { buildMenu, isMenuKey, type MenuKey } from './adminMenu';
+
+import DashboardTab from './DashboardTab';
 import RosterTab from './RosterTab';
-import RubricTab from './RubricTab';
-import ActivityTab from './ActivityTab';
+import RosterMatchTab from './RosterMatchTab';
+import AccessTab from './AccessTab';
+import TeamsTab from './TeamsTab';
 import WeeksTab from './WeeksTab';
 import BoardTab from './BoardTab';
 import TasksTab from './TasksTab';
+import TaskSyncTab from './TaskSyncTab';
+import SurveyTab from './SurveyTab';
 import AttendanceTab from './AttendanceTab';
+import LiveCheckTab from './LiveCheckTab';
 import DeductionTab from './DeductionTab';
+import RubricTab from './RubricTab';
+import ActivityTab from './ActivityTab';
+import ProjectEvalTab from './ProjectEvalTab';
 import GradesTab from './GradesTab';
 import PageHero from '../components/PageHero';
 
-type Tab = 'roster' | 'weeks' | 'board' | 'tasks' | 'attendance' | 'deduction' | 'rubric' | 'activity' | 'grades';
-
+/**
+ * 과목 관리 콘솔.
+ *
+ * 예전에는 가로 탭이었다. 화면이 열여덟 개로 늘면서 탭이 화면 밖으로 밀려
+ * 지금 어디에 있는지 알 수 없게 됐다. 그래서 왼쪽 세로 메뉴로 바꿨다 —
+ * 참고한 관리자 화면(rest.dreamitbiz.com)의 짜임새다.
+ *
+ * 지금 메뉴는 주소(`?m=...`)에 남긴다. 새로고침해도 보던 화면이 그대로 열리고,
+ * 특정 화면 링크를 그대로 붙여 쓸 수 있다. HashRouter 라 주소는 `#/...?m=...` 이 된다.
+ */
 export default function CourseView() {
   const { courseId } = useParams<{ courseId: string }>();
   const nav = useNavigate();
+  const [params, setParams] = useSearchParams();
   const [course, setCourse] = useState<Course | null>(null);
-  const [tab, setTab] = useState<Tab>('roster');
   const [error, setError] = useState<string | null>(null);
+  /** 0006 이 아직 안 올라간 프로젝트인지. 화면마다 다른 오류가 나기 전에 한 번 알려 준다. */
+  const [opsReady, setOpsReady] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -31,57 +52,102 @@ export default function CourseView() {
         .select('*')
         .eq('id', courseId!)
         .single();
-      if (err) setError(err.message);
-      else setCourse(data as Course);
+      if (err) return setError(err.message);
+
+      // 0006 이 안 올라간 프로젝트에서는 이 칸들이 아예 오지 않는다.
+      // 그대로 쓰면 화면에 "undefined" 가 찍히고 메뉴가 엉뚱하게 갈린다.
+      // DB 기본값과 같은 값으로 메워 두고, 안 올라갔다는 사실은 따로 알린다.
+      const row = data as Partial<Course> & Course;
+      setOpsReady(row.project_mode !== undefined);
+      setCourse({
+        ...row,
+        peer_assessment: row.peer_assessment ?? true,
+        project_mode: row.project_mode ?? 'individual',
+        ext_lms_url: row.ext_lms_url ?? null,
+        // 0010 이 안 올라갔으면 아직 옛 방식이다.
+        entry_mode: row.entry_mode ?? 'code',
+      });
     })();
   }, [courseId, nav]);
+
+  const groups = useMemo(() => (course ? buildMenu(course) : []), [course]);
+
+  // 주소에 이상한 값이 와도 튕기지 않게 대시보드로 떨어뜨린다.
+  const raw = params.get('m') ?? 'dashboard';
+  const current: MenuKey = course && isMenuKey(groups, raw) ? raw : 'dashboard';
+
+  const go = (key: MenuKey) => {
+    setParams({ m: key }, { replace: false });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (error) return <div className="container"><div className="alert alert-error">{error}</div></div>;
   if (!course) return <div className="container"><div className="empty">불러오는 중…</div></div>;
 
-  // 상호평가를 안 쓰는 과목은 루브릭·평가 활동 탭을 아예 감춘다.
-  // 감춰도 권한은 RLS 가 판단한다 — 이건 화면 정리일 뿐이다.
-  const tabs: Array<[Tab, string]> = [
-    ['roster', '명단 · 팀'],
-    ['weeks', '주차'],
-    ['board', '공지 · 자료'],
-    ['tasks', '과제'],
-    ['attendance', '출석'],
-    ['deduction', '감점'],
-    ...(course.peer_assessment ? ([['rubric', '루브릭'], ['activity', '평가 활동']] as Array<[Tab, string]>) : []),
-    ['grades', '성적'],
-  ];
+  const item = groups.flatMap((g) => g.items).find((i) => i.key === current);
 
   return (
     <>
       <PageHero
-        crumbs={['교수', '과목']}
+        crumbs={['교수', '과목', item?.label ?? '대시보드']}
         title={course.title}
         en={`${course.term}${course.class_no ? ` · ${course.class_no}반` : ''}`}
         desc={
-          `수업코드 ${course.join_code} — 학생이 학번과 함께 입력합니다. · ` +
-          `${PROJECT_MODE_LABEL[course.project_mode]}` +
+          // 입장 방식에 따라 문구가 달라야 한다. 승인 방식인데 "수업코드로
+          // 들어옵니다" 라고 적혀 있으면 교수가 학생에게 코드를 알려 주게 된다.
+          (course.entry_mode === 'code'
+            ? `수업코드 ${course.join_code} — 학생이 학번과 함께 입력합니다.`
+            : '학생은 이메일 · 학번 · 이름으로 들어옵니다. 승인해야 입장됩니다.') +
+          ` · ${PROJECT_MODE_LABEL[course.project_mode] ?? '프로젝트 설정 없음'}` +
           `${course.peer_assessment ? ' · 상호평가 사용' : ' · 상호평가 없음'}`
         }
         actions={<Link className="btn btn-on-hero btn-sm" to="/teacher">← 내 과목</Link>}
         gradient
       />
       <div className="container wide">
-        <div className="tabs">
-          {tabs.map(([key, label]) => (
-            <button key={key} aria-selected={tab === key} onClick={() => setTab(key)}>{label}</button>
-          ))}
-        </div>
+        {!opsReady && (
+          <div className="alert alert-warn">
+            <b>수업 운영 표가 아직 없습니다.</b>
+            <p className="small" style={{ margin: '6px 0 0' }}>
+              이 Supabase 프로젝트에는 <code>0001</code>~<code>0005</code> 만 올라가 있습니다.
+              주차 · 공지 · 자료 · 과제 · 출석 · 성적 · 설문 화면은 표가 없어서 동작하지 않습니다.
+              Supabase SQL Editor 에서 <b>0006 → 0007 → 0008 → 0009</b> 를 순서대로 실행해 주세요
+              (<code>docs/11-migrate.md</code>).
+              지금 쓸 수 있는 것은 <b>수강생 관리 · 명단 대조 · 팀 편성 · 루브릭 · 평가 활동</b> 입니다.
+            </p>
+          </div>
+        )}
 
-        {tab === 'roster' && <RosterTab courseId={course.id} />}
-        {tab === 'weeks' && <WeeksTab courseId={course.id} />}
-        {tab === 'board' && <BoardTab courseId={course.id} />}
-        {tab === 'tasks' && <TasksTab courseId={course.id} />}
-        {tab === 'attendance' && <AttendanceTab courseId={course.id} />}
-        {tab === 'deduction' && <DeductionTab courseId={course.id} courseTitle={course.title} />}
-        {tab === 'rubric' && <RubricTab courseId={course.id} />}
-        {tab === 'activity' && <ActivityTab courseId={course.id} />}
-        {tab === 'grades' && <GradesTab course={course} />}
+        <AdminShell groups={groups} current={current} onSelect={go}>
+          <div className="admin-head">
+            <h2>{item?.label ?? '대시보드'}</h2>
+            {item?.hint && <p>{item.hint}</p>}
+          </div>
+
+          {current === 'dashboard' && <DashboardTab course={course} onGo={go} />}
+          {current === 'roster' && <RosterTab courseId={course.id} />}
+          {current === 'match' && <RosterMatchTab courseId={course.id} courseTitle={course.title} />}
+          {current === 'access' && <AccessTab course={course} />}
+          {current === 'teams' && <TeamsTab courseId={course.id} courseTitle={course.title} />}
+          {current === 'weeks' && <WeeksTab courseId={course.id} />}
+          {current === 'notices' && <BoardTab courseId={course.id} only="notices" />}
+          {current === 'materials' && <BoardTab courseId={course.id} only="materials" />}
+          {current === 'tasks' && <TasksTab courseId={course.id} />}
+          {current === 'tasksync' && <TaskSyncTab courseId={course.id} courseTitle={course.title} onGo={go} />}
+          {current === 'surveys' && <SurveyTab courseId={course.id} courseTitle={course.title} />}
+          {current === 'attendance' && <AttendanceTab courseId={course.id} />}
+          {current === 'live' && <LiveCheckTab courseId={course.id} />}
+          {current === 'deduction' && <DeductionTab courseId={course.id} courseTitle={course.title} />}
+          {current === 'rubric' && <RubricTab courseId={course.id} />}
+          {current === 'activity' && <ActivityTab courseId={course.id} />}
+          {current === 'pre' && (
+            <ProjectEvalTab courseId={course.id} courseTitle={course.title} phase="pre" onGo={go} />
+          )}
+          {current === 'result' && (
+            <ProjectEvalTab courseId={course.id} courseTitle={course.title} phase="result" onGo={go} />
+          )}
+          {current === 'grades' && <GradesTab course={course} />}
+        </AdminShell>
       </div>
     </>
   );

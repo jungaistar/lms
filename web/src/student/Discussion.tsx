@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { loadStudentSession, studentDb } from '../lib/session';
 import PageHero from '../components/PageHero';
+import { errText } from '../lib/errors';
 
 interface Post {
   id: string;
@@ -57,7 +58,7 @@ export default function Discussion() {
         setInstruction(act.instruction);
         await load();
       } catch (e) {
-        setError(e instanceof Error ? e.message : '불러오지 못했습니다.');
+        setError(errText(e, '불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }
@@ -81,7 +82,7 @@ export default function Discussion() {
       setReplyTo(null);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '등록하지 못했습니다.');
+      setError(errText(e, '등록하지 못했습니다.'));
     } finally {
       setBusy(false);
     }

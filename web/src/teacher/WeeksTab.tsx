@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
 import type { CourseWeek, CourseSession } from '../lib/types';
+import { errText } from '../lib/errors';
 
 /**
  * 주차 · 회차 관리.
@@ -70,7 +71,7 @@ export default function WeeksTab({ courseId }: { courseId: string }) {
       setNotice(`${rows.length}개 주차를 만들었습니다.`);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '만들지 못했습니다.');
+      setError(errText(e, '만들지 못했습니다.'));
     } finally {
       setBusy(false);
     }

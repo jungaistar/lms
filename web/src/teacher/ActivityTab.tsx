@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { teacherClient } from '../lib/supabase';
+import { errText } from '../lib/errors';
 import {
   KIND_LABEL, STATUS_LABEL, isRubricKind,
   type Activity, type ActivityKind, type Rubric,
@@ -68,7 +69,7 @@ export default function ActivityTab({ courseId }: { courseId: string }) {
       setForm({ ...form, title: '', instruction: '', closes_at: '' });
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '만들지 못했습니다.');
+      setError(errText(e, '만들지 못했습니다.'));
     } finally {
       setBusy(false);
     }

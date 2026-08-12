@@ -9,7 +9,9 @@ import SiteFooter from './components/SiteFooter';
 /* 학생 화면은 수업 중 휴대폰 데이터로 들어온다 — 곧바로 필요하니 같이 묶는다. */
 import Landing from './pages/Landing';
 import StudentLogin from './pages/StudentLogin';
+import CourseHome from './student/CourseHome';
 import StudentHome from './student/StudentHome';
+import SurveyAnswer from './student/SurveyAnswer';
 import Evaluate from './student/Evaluate';
 import Contribution from './student/Contribution';
 import Discussion from './student/Discussion';
@@ -82,7 +84,9 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<StudentLogin />} />
 
+          <Route path="/home" element={<RequireStudent><CourseHome /></RequireStudent>} />
           <Route path="/me" element={<RequireStudent><StudentHome /></RequireStudent>} />
+          <Route path="/survey/:surveyId" element={<RequireStudent><SurveyAnswer /></RequireStudent>} />
           <Route path="/evaluate/:assignmentId" element={<RequireStudent><Evaluate /></RequireStudent>} />
           <Route path="/contribution/:activityId" element={<RequireStudent><Contribution /></RequireStudent>} />
           <Route path="/discussion/:activityId" element={<RequireStudent><Discussion /></RequireStudent>} />

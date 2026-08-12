@@ -389,8 +389,13 @@ label.field > span {
 }
 label.field > small { display: block; color: var(--fg-disabled); font-size: 12.5px; margin-top: 6px; line-height: 1.55; }
 
-input[type='text'], input[type='number'], input[type='email'],
-input[type='password'], input[type='datetime-local'], select, textarea {
+/* `input:not([type])` 를 빼먹으면 안 된다 — `<input value=… />` 처럼 type 을
+   안 적은 칸이 화면 곳곳에 있고, 그런 칸만 테두리도 너비도 없이 글자 옆에
+   붙어 버린다. 실제로 '수업 중 체크'의 찾기 칸이 그렇게 깨져 있었다. */
+input:not([type]), input[type='text'], input[type='number'], input[type='email'],
+input[type='password'], input[type='datetime-local'], input[type='date'],
+input[type='time'], input[type='search'], input[type='url'], input[type='tel'],
+select, textarea {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--line-strong);
@@ -571,6 +576,232 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-fam
 }
 .tabs button:hover { color: var(--fg); }
 .tabs button[aria-selected='true'] { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ════════════════════════════════════════════════════════
+   관리자 콘솔 — 왼쪽 메뉴 + 본문
+
+   참고한 화면(rest.dreamitbiz.com /admin)은 흰 카드 위에 세로 메뉴를 두고
+   선택된 항목만 옅은 강조색으로 채운다. 그 짜임새를 이 디자인 토큰으로 옮겼다.
+   좁은 화면에서는 같은 마크업이 가로로 밀리는 줄이 된다.
+   ════════════════════════════════════════════════════════ */
+.admin-shell {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.admin-nav {
+  position: sticky; top: 96px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 8px;
+}
+
+.admin-nav-head {
+  font-size: 12px; font-weight: 800; letter-spacing: 0.06em;
+  color: var(--accent); text-transform: uppercase;
+  padding: 10px 12px 8px;
+}
+
+.admin-group { padding: 6px 0; border-top: 1px solid var(--line); }
+.admin-group:first-of-type { border-top: 0; }
+.admin-group-title {
+  font-size: 11.5px; font-weight: 700; color: var(--fg-disabled);
+  letter-spacing: 0.04em; padding: 6px 12px 4px;
+}
+.admin-group-end { margin-top: 2px; }
+
+.admin-link {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 9px 12px; min-height: 42px;
+  border: 0; border-radius: 8px; background: none;
+  font-size: 14px; font-weight: 600; color: var(--fg);
+  text-align: left; line-height: 1.35;
+}
+.admin-link:hover { background: var(--surface); color: var(--accent); text-decoration: none; }
+.admin-link[aria-current='page'] { background: var(--accent-50); color: var(--accent); font-weight: 800; }
+
+.admin-link-text { min-width: 0; display: block; }
+.admin-link-text i {
+  display: block; font-style: normal; font-size: 11.5px; font-weight: 500;
+  color: var(--fg-disabled); margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.admin-link[aria-current='page'] .admin-link-text i { color: var(--accent); opacity: 0.75; }
+
+.admin-icon { width: 17px; height: 17px; flex: 0 0 auto; opacity: 0.75; }
+.admin-link[aria-current='page'] .admin-icon { opacity: 1; }
+
+.admin-main { min-width: 0; }
+
+/* 본문 맨 위 제목 줄 — 지금 어느 메뉴에 있는지 알려 준다. */
+.admin-head {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  margin: 0 0 18px;
+}
+.admin-head h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--fg-strong); }
+.admin-head p { margin: 0; font-size: 13.5px; color: var(--fg-disabled); }
+
+/* ── 좁은 화면의 메뉴 ─────────────────────────────────────
+   처음에는 세로 메뉴를 그대로 눕혀 가로로 밀리는 띠로 만들었다.
+   실제 390px 에서 열어 보니 18개 중 3개만 보이고 그룹 이름도 사라져서
+   "학습평가 성적" 하나 찾으려면 한참을 문질러야 했다. 수업 중에 쓸 물건이
+   아니다. 그래서 좁은 화면에서는 **네이티브 select** 로 바꾼다 —
+   iOS·안드로이드 모두 자기 피커를 띄우고, optgroup 으로 그룹 이름도 남는다. */
+.admin-picker { display: none; }
+
+@media (max-width: 900px) {
+  .admin-shell { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .admin-nav { display: none; }
+
+  .admin-picker {
+    display: block;
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--r-md); padding: 12px 14px;
+  }
+  .admin-picker > label {
+    display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.06em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 6px;
+  }
+  .admin-picker-links {
+    display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px;
+    font-size: 13.5px; font-weight: 600;
+  }
+}
+
+/* ── 손가락으로 쓰는 화면 ─────────────────────────────────
+   iOS 사파리는 16px 미만 입력에 포커스가 가면 화면을 확대한다. 한 번 확대되면
+   되돌아오지 않아서 그 뒤로 계속 옆으로 밀린 화면을 보게 된다.
+   화면 코드 곳곳에 14px 이 인라인으로 박혀 있어 !important 로 되돌린다 —
+   인라인을 하나씩 지우면 다음에 또 새로 생긴다. 여기 한 줄로 막는다.
+   누르는 것은 44px 이상으로 키운다. */
+@media (max-width: 900px) {
+  input, select, textarea { font-size: 16px !important; }
+  input:not([type='checkbox']):not([type='radio']), select { min-height: 44px; }
+}
+
+/* 수업 중 체크 — 폰에서는 한 학생이 두 줄로 떨어지게 하고
+   출결 버튼 다섯 개를 한 줄에 고르게 편다. 손가락으로 눌러야 한다. */
+@media (max-width: 640px) {
+  .live-row { padding: 10px; gap: 8px; }
+  .live-row .who { flex: 1 1 100%; }
+  .live-row > .btn-row { flex: 1 1 100% !important; gap: 6px; }
+  .live-row > .btn-row > .btn-sm { flex: 1 1 0; min-width: 0; padding: 10px 2px; }
+}
+
+/* ════════════════════════════════════════════════════════
+   홈 — 역할 고르기와 개설 과목
+   ════════════════════════════════════════════════════════ */
+
+/* 그림 전체가 링크다. 손가락으로 누르는 대상은 크면 클수록 좋다. */
+.role-picker {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  margin: 28px 0 8px;
+}
+.role-card {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 2px; padding: 26px 20px 22px;
+  border: 1px solid var(--line); border-radius: var(--r-lg); background: #fff;
+  color: var(--fg); transition: border-color 140ms var(--ease), box-shadow 140ms var(--ease),
+    transform 140ms var(--ease);
+}
+.role-card:hover {
+  border-color: var(--accent); box-shadow: var(--shadow-2);
+  text-decoration: none; color: var(--fg); transform: translateY(-2px);
+}
+.role-card:active { transform: none; }
+.role-card b { font-size: 22px; font-weight: 800; color: var(--fg-strong); letter-spacing: -0.02em; margin-top: 12px; }
+.role-card .en {
+  font-family: var(--latin); font-size: 11.5px; letter-spacing: 0.14em;
+  color: var(--accent); font-weight: 600;
+}
+.role-card .small { margin-top: 8px; }
+
+.role-art { width: 108px; height: 108px; display: block; }
+.role-art-bg { fill: var(--accent-50); }
+.role-art-mid { fill: #b9cdf0; }
+.role-art-solid { fill: var(--accent); }
+.role-card:hover .role-art-bg { fill: #dbe6f8; }
+
+@media (max-width: 560px) {
+  .role-picker { gap: 12px; }
+  .role-card { padding: 18px 10px 16px; }
+  .role-art { width: 80px; height: 80px; }
+  .role-card b { font-size: 18px; margin-top: 8px; }
+}
+
+/* 개설 과목 — 누르면 로그인으로 간다 */
+.course-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px; margin-bottom: 8px;
+}
+.course-card {
+  display: flex; flex-direction: column; gap: 2px;
+  border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  border-radius: var(--r-md); background: #fff; padding: 18px 18px 16px;
+  color: var(--fg);
+  transition: border-color 140ms var(--ease), box-shadow 140ms var(--ease);
+}
+.course-card:hover { box-shadow: var(--shadow-2); text-decoration: none; color: var(--fg); }
+.course-card .k {
+  font-family: var(--latin); font-size: 10.5px; letter-spacing: 0.13em;
+  color: var(--accent); font-weight: 600;
+}
+.course-card b {
+  font-size: 17.5px; font-weight: 800; color: var(--fg-strong);
+  letter-spacing: -0.015em; margin-top: 6px; line-height: 1.35;
+}
+.course-card .cls { font-size: 12.5px; color: var(--fg-disabled); font-weight: 700; }
+.course-card p { margin: 10px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--fg-muted); }
+.course-card .go {
+  margin-top: 14px; font-size: 13.5px; font-weight: 700; color: var(--accent);
+}
+
+/* 평가 방식 카드 — 같은 자리에 놓이지만 누를 것이 없다.
+   왼쪽 강조 줄을 빼고 바탕을 눕혀서 "이건 링크가 아니다" 를 눈으로 알린다. */
+.course-card.info {
+  border-left-color: var(--line); background: var(--surface);
+}
+.course-card.info:hover { box-shadow: none; }
+.course-card.info .k { color: var(--fg-disabled); }
+.course-card.info .cls { color: var(--accent); }
+
+/* ── 숫자 타일 (대시보드) ─────────────────────────────── */
+.stat-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px; margin-bottom: 20px;
+}
+.stat {
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: #fff; padding: 14px 16px;
+}
+.stat .k { font-size: 12.5px; font-weight: 700; color: var(--fg-disabled); }
+.stat .v {
+  font-family: var(--latin); font-size: 26px; font-weight: 700;
+  color: var(--fg-strong); line-height: 1.2; margin-top: 4px;
+}
+.stat .v small { font-size: 14px; font-weight: 600; color: var(--fg-disabled); margin-left: 3px; }
+.stat.warn { border-color: #f0d68a; background: var(--warn-bg); }
+.stat.warn .v { color: #78350f; }
+
+/* ── 수업 중 체크 — 손가락으로 누르는 줄 ────────────────── */
+.live-row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: #fff; padding: 10px 12px; margin-bottom: 8px;
+}
+.live-row .who { flex: 1 1 130px; min-width: 0; }
+.live-row .who b { display: block; font-weight: 700; color: var(--fg-strong); }
+.live-row .who span { font-size: 12px; color: var(--fg-disabled); font-family: var(--mono); }
+.live-row.marked { border-color: var(--accent); background: var(--accent-50); }
+
+/* ── 집계표 — 첫 열을 붙여 둔다 ──────────────────────────── */
+.pivot th:first-child, .pivot td:first-child {
+  position: sticky; left: 0; background: #fff; z-index: 1;
+}
+.pivot thead th:first-child { background: var(--primary); }
 
 /* ── 빈 화면 ──────────────────────────────────────────── */
 .empty {

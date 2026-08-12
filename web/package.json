@@ -7,8 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "responsive": "node -e \"const f=require('fs');f.mkdirSync('dist/responsive-check',{recursive:true});f.copyFileSync('tools/responsive-check.html','dist/responsive-check/index.html');console.log('→ http://localhost:4173/lms/responsive-check/  (npm run preview 를 함께 띄우세요)')\"",
     "typecheck": "tsc -b --noEmit",
-    "test": "tsx test/heyyoung.check.ts && tsx test/heyyoung-matrix.check.ts && tsx test/exporters.check.ts"
+    "test": "tsx test/heyyoung.check.ts && tsx test/heyyoung-matrix.check.ts && tsx test/exporters.check.ts && tsx test/exttasks.check.ts && tsx test/responsive.check.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.58.0",

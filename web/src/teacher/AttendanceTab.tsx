@@ -10,6 +10,7 @@ import {
   type MatrixStatus,
 } from '../lib/heyyoung';
 import { downloadCsv, downloadXlsx, printTable, type SheetTable } from '../lib/exporters';
+import { errText } from '../lib/errors';
 import type {
   AttendanceRow,
   CourseSession,
@@ -214,7 +215,7 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
       setFileName('');
       await loadRows(sessionId);
     } catch (e) {
-      setError(e instanceof Error ? e.message : '적재하지 못했습니다.');
+      setError(errText(e, '적재하지 못했습니다.'));
     } finally {
       setBusy(false);
     }
@@ -327,7 +328,7 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
       await loadRows(sessionId);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '적재하지 못했습니다.');
+      setError(errText(e, '적재하지 못했습니다.'));
     } finally {
       setBusy(false);
     }

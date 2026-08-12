@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { loadStudentSession, studentDb } from '../lib/session';
 import type { Student } from '../lib/types';
 import PageHero from '../components/PageHero';
+import { errText } from '../lib/errors';
 
 const TOTAL = 100;
 
@@ -90,7 +91,7 @@ export default function Contribution() {
           setPoints(p);
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : '불러오지 못했습니다.');
+        setError(errText(e, '불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }
@@ -123,7 +124,7 @@ export default function Contribution() {
       if (err) throw err;
       nav('/me', { replace: true });
     } catch (e) {
-      setError(e instanceof Error ? e.message : '저장하지 못했습니다.');
+      setError(errText(e, '저장하지 못했습니다.'));
     } finally {
       setBusy(false);
     }

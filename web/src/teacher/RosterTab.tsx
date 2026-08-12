@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
 import type { Student, Team } from '../lib/types';
+import { errText } from '../lib/errors';
 
 /**
  * 명단은 학교 LMS에서 받아온 목록을 붙여넣어 만든다.
@@ -84,7 +85,7 @@ export default function RosterTab({ courseId }: { courseId: string }) {
       setShowImport(false);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '불러오지 못했습니다.');
+      setError(errText(e, '불러오지 못했습니다.'));
     } finally {
       setBusy(false);
     }

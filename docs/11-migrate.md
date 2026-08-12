@@ -1,6 +1,59 @@
 # 마이그레이션 적용하기
 
-`0001` ~ `0005` 는 이미 적용되어 있다. 여기서는 **`0006` · `0007` · `0008` 과 시드**를 올린다.
+## 지금 상태 (2026-08-12 에 실제 프로젝트에서 확인)
+
+**`0001` ~ `0005` 만 올라가 있다.** 앱에서 주차 화면을 열면
+`Could not find the table 'public.course_weeks' in the schema cache` 가 나온다.
+`courses` 의 `peer_assessment` · `project_mode` 칸도 없다.
+
+## 가장 쉬운 길 — 파일 하나로 끝내기
+
+**`supabase/apply-pending.sql` 하나만** 통째로 복사해 SQL Editor 에 붙여 넣고 Run.
+`0006` ~ `0010` 이 순서대로 들어 있고, 맨 끝에 확인 질의와 스키마 캐시 갱신까지 붙어 있다.
+
+**몇 번을 돌려도 안전하다.** 표는 `create table if not exists`, 정책은
+`drop policy if exists` 를 앞에 두었고 제약·트리거도 마찬가지다.
+이미 올라가 있어도 그냥 다시 지나간다. 그러니 **지금 상태가 뭔지 몰라도 그냥 돌리면 된다.**
+
+Run 뒤에 나오는 표에서 네 칸이 전부 이름을 보여 주면 성공이다.
+
+| 0006_주차 | 0007_감점 | 0009_설문 | 0010_입장 |
+|---|---|---|---|
+| course_weeks | deduction_kinds | surveys | student_access |
+
+`null` 이 하나라도 있으면 그 위에 뜬 오류를 읽는다.
+
+> ⚠️ 이 파일로도 **Edge Function 은 배포되지 않는다.** 학생 로그인을 새 방식으로
+> 바꾸려면 `student-login` 을 따로 배포해야 한다 → 3-2 절 ③
+
+원본을 고쳤으면 다시 만든다: `cd supabase && node concat-pending.mjs`
+
+---
+
+아래는 파일을 하나씩 올릴 때의 설명이다.
+**`0006` → `0007` → `0008` → `0009` → `0010` 순서**를 지킬 것.
+앞 단계가 실패하면 다음으로 넘어가지 말 것 — 뒤 파일이 앞 파일이 만든 표를 고친다.
+
+`0010` 은 **Edge Function 재배포**까지 해야 끝난다. 3-2 절을 꼭 읽을 것.
+
+시드(`2026-1-courses.sql`)는 **실행하지 않아도 된다.** 과목 6개를 이미 앱에서
+직접 만들어 뒀다(학기 `202620`). 시드를 돌리면 같은 과목이 한 벌 더 생긴다.
+
+다만 `0006` 이 올라가면 그 6과목의 `project_mode` 는 전부 기본값
+`individual`(개인 프로젝트), `peer_assessment` 는 `true` 가 된다.
+팀 프로젝트로 쓸 과목(문화예술콘텐츠창업 Y5·Y6)은 올린 뒤 이렇게 고친다.
+
+```sql
+update courses set project_mode = 'team'
+ where title = '문화예술콘텐츠창업';
+
+-- 상호평가를 안 쓰는 과목이 있으면
+update courses set peer_assessment = false
+ where title = '자원관리능력';
+```
+
+그리고 과목마다 감점 항목을 깔아 준다(앱의 `기타 · 감점` 화면에서
+**기본 항목 넣기** 를 눌러도 된다).
 
 Supabase CLI 는 이 PC 에 깔려 있지 않아서 **대시보드 SQL Editor** 로 간다.
 (CLI 를 쓰고 싶으면 맨 아래 참고)
@@ -70,6 +123,167 @@ SQL Editor 는 `postgres` 역할로 돌아서 `auth.uid()` 가 **NULL** 이다.
 같은 이유로 시드는 `seed_deduction_kinds()` 를 부르지 않고 감점 항목을 직접
 넣는다 — 그 함수는 `owns_course()` 로 소유자를 확인하는데 SQL Editor 에서는
 `auth.uid()` 가 NULL 이라 걸리기 때문이다.
+
+## 3-1. `0009` — 관리자 콘솔
+
+`supabase/migrations/0009_admin_console.sql` 을 같은 방식으로 붙여넣고 실행한다.
+**`0006` · `0007` 이 먼저 올라가 있어야 한다** — `deduction_kinds` 와
+`task_submissions` 를 고치기 때문이다.
+
+무엇이 생기나 — 설문 네 표, `task_sync_log`, `activities.phase`,
+`task_submissions` 의 `origin`·`ext_state`, 결석 감점 항목,
+그리고 함수 다섯 개(`deduction_summary` 재작성 · `survey_summary` ·
+`project_eval_summary` · `project_eval_totals` · `course_overview`).
+
+자세한 설명은 [`50-admin-console.md`](50-admin-console.md) 에 있다.
+
+확인 질의:
+
+```sql
+-- 설문 표 4 개
+select count(*) from information_schema.tables
+ where table_schema = 'public'
+   and table_name in ('surveys','survey_questions','survey_responses','survey_answers');
+
+-- 과제 제출에 새 칸이 붙었나 (3 줄)
+select column_name from information_schema.columns
+ where table_name = 'task_submissions'
+   and column_name in ('origin','ext_state','ext_synced_at');
+
+-- 과목마다 결석 항목이 생겼나
+select course_id, label, points from deduction_kinds where code = 'absent';
+
+-- 대시보드 함수가 도나 (과목 id 를 하나 넣어 본다)
+select course_overview((select id from courses limit 1));
+```
+
+`survey_answers` 에 교수용 정책이 **없는 것이 정상**이다. 익명 설문의 답을
+데이터 계층에서 막는 방식이라 정책을 아예 만들지 않았다.
+
+```sql
+-- 아래는 한 줄만 나와야 한다 (학생용 정책 하나)
+select policyname from pg_policies where tablename = 'survey_answers';
+```
+
+## 3-2. `0010` — 학생 입장 승인 ⚠️ 순서가 중요하다
+
+수업코드 대신 **이메일 + 학번 + 이름 + 교수 승인**으로 바꾸는 단계다.
+세 가지를 **이 순서로** 해야 학생이 잠기지 않는다.
+
+### ① SQL 올리기
+
+`supabase/migrations/0010_student_access.sql` 을 SQL Editor 에서 실행한다.
+`courses.entry_mode` (기본 `approval`), `student_access` 표,
+`approve_all_access()` · `access_list()` · `set_access_status()` ·
+`clear_access_email()` 이 생긴다.
+
+**이 순간부터 모든 과목이 승인 방식이 된다.** 아직 아무도 승인돼 있지 않으므로
+학생은 못 들어온다. 그래서 ② 를 바로 이어서 한다.
+
+### ② 과목마다 "명단 전원 승인"
+
+앱에서 과목을 열고 **수강생 → 입장 승인 → 명단 전원 승인**.
+명단에 있는 학생이 전부 `approved` 가 되고, 이메일은 비어 있다.
+학생이 **첫 로그인 할 때 넣는 주소가 그 학생의 이메일로 묶인다.**
+
+SQL 로 한 번에 하려면:
+
+```sql
+-- 모든 과목의 명단을 통째로 미리 승인한다
+insert into student_access (course_id, student_id, status, decided_at)
+select s.course_id, s.id, 'approved', now()
+  from students s where s.active
+on conflict (course_id, student_id) do nothing;
+```
+
+급하면 특정 과목만 옛 방식으로 돌려도 된다:
+
+```sql
+update courses set entry_mode = 'code' where title = '자원관리능력';
+```
+
+### ③ Edge Function 재배포
+
+**SQL 만 올리면 학생 로그인은 옛 코드 그대로다.** 함수를 다시 올려야 한다.
+
+```bash
+npx supabase login
+npx supabase link --project-ref aujvpcpjpgxghxmsheur
+npx supabase functions deploy student-login
+```
+
+CLI 를 안 쓴다면 대시보드 → **Edge Functions → student-login → 코드 붙여넣고 Deploy**.
+`supabase/functions/student-login/index.ts` 를 통째로 복사하면 된다.
+
+### 확인
+
+```sql
+-- 입장 방식 (전부 approval 이어야 한다)
+select title, class_no, entry_mode from courses order by title;
+
+-- 미리 승인이 들어갔나 (명단 인원과 같아야 한다)
+select c.title, count(*) filter (where a.status = 'approved') as approved, count(s.*) as roster
+  from students s
+  join courses c on c.id = s.course_id
+  left join student_access a on a.student_id = s.id
+ where s.active
+ group by c.title order by c.title;
+```
+
+그리고 앱에서 학생 화면으로 들어가 **이메일 · 학번 · 이름**을 넣어 본다.
+바로 들어가면 ②·③ 이 제대로 된 것이다. "승인을 기다리는 중" 이 나오면 ② 가
+안 된 것이고, "수업코드 또는 학번이…" 가 나오면 ③ 이 안 된 것이다.
+
+## 3-9. "분명히 올렸는데 앱에서는 안 보인다"
+
+2026-08-12 에 실제로 겪은 일이다. SQL 을 다 돌렸는데 앱은 계속
+`Could not find the table 'public.course_weeks' in the schema cache` 를 냈다.
+
+원인은 두 가지 중 하나다. **아래 한 덩어리를 SQL Editor 에 붙여 넣으면
+어느 쪽인지 바로 갈린다.**
+
+```sql
+-- ① 표가 실제로 있는지 (없으면 SQL 이 안 돌아간 것)
+select
+  to_regclass('public.course_weeks')   as "0006_주차",
+  to_regclass('public.deduction_kinds') as "0007_감점",
+  to_regclass('public.surveys')         as "0009_설문",
+  to_regclass('public.student_access')  as "0010_입장";
+
+-- ② 있는데 앱이 못 보면 캐시 문제다 — 이 줄로 새로 읽힌다
+notify pgrst, 'reload schema';
+```
+
+| ① 결과 | 뜻 | 할 일 |
+|---|---|---|
+| 네 칸이 전부 `null` | SQL 이 안 돌아갔다 | `0006` 부터 다시. **다른 프로젝트에 돌리지 않았는지** 확인 |
+| 일부만 `null` | 중간에 실패했다 | `null` 인 것부터 순서대로 다시 |
+| 전부 이름이 나옴 | 표는 있다. 캐시 문제였다 | ② 를 돌리고 앱을 새로고침 |
+
+프로젝트를 헷갈리기 쉽다. 앱이 보는 곳은 `web/.env` 의 `VITE_SUPABASE_URL`,
+지금은 **`aujvpcpjpgxghxmsheur`** 다. SQL Editor 왼쪽 위 프로젝트 이름이
+같은지 확인할 것.
+
+`0006` ~ `0010` 파일 맨 끝에는 `notify pgrst, 'reload schema';` 를 넣어 뒀다.
+파일을 통째로 복사해 붙였다면 캐시는 저절로 새로 읽힌다.
+
+### Edge Function 은 따로다
+
+`student-login` 은 **SQL 과 무관하게** 따로 배포해야 한다. 확인하는 법:
+
+```bash
+curl -s -X POST "https://aujvpcpjpgxghxmsheur.supabase.co/functions/v1/student-login" \
+  -H "apikey: <anon key>" -H "Authorization: Bearer <anon key>" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"probe@example.com","student_no":"000000000","name":"없는사람"}'
+```
+
+| 응답 | 뜻 |
+|---|---|
+| `수업코드와 학번을 모두 입력하세요.` | **옛 코드다.** 재배포가 안 됐다 |
+| `명단에서 찾지 못했습니다…` | 새 코드가 올라갔다 |
+
+이 요청은 아무것도 만들지 않는다 — 명단에 없는 학번이라 거절되고 기록만 남는다.
 
 ## 4. 잘 올라갔는지 확인
 
