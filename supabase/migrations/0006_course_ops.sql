@@ -306,46 +306,59 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 -- ── 주차 · 회차 ──────────────────────────────────────────────
+drop policy if exists week_owner_all on course_weeks;
 create policy week_owner_all on course_weeks
   for all using (owns_course(course_id)) with check (owns_course(course_id));
+drop policy if exists week_student_read on course_weeks;
 create policy week_student_read on course_weeks
   for select using (in_course(course_id) and published);
 
+drop policy if exists session_owner_all on course_sessions;
 create policy session_owner_all on course_sessions
   for all using (exists (select 1 from course_weeks w where w.id = week_id and owns_course(w.course_id)))
   with check (exists (select 1 from course_weeks w where w.id = week_id and owns_course(w.course_id)));
+drop policy if exists session_student_read on course_sessions;
 create policy session_student_read on course_sessions
   for select using (week_visible(week_id));
 
 -- ── 공지 · 자료 ──────────────────────────────────────────────
+drop policy if exists notice_owner_all on notices;
 create policy notice_owner_all on notices
   for all using (owns_course(course_id)) with check (owns_course(course_id));
+drop policy if exists notice_student_read on notices;
 create policy notice_student_read on notices
   for select using (in_course(course_id) and published_at is not null and published_at <= now());
 
+drop policy if exists material_owner_all on materials;
 create policy material_owner_all on materials
   for all using (owns_course(course_id)) with check (owns_course(course_id));
+drop policy if exists material_student_read on materials;
 create policy material_student_read on materials
   for select using (in_course(course_id) and published);
 
 -- ── 과제 ─────────────────────────────────────────────────────
+drop policy if exists task_owner_all on tasks;
 create policy task_owner_all on tasks
   for all using (owns_course(course_id)) with check (owns_course(course_id));
+drop policy if exists task_student_read on tasks;
 create policy task_student_read on tasks
   for select using (in_course(course_id) and status <> 'draft');
 
 -- 학생은 **본인(또는 자기 팀) 제출물만** 읽고 쓴다.
 -- score / feedback 도 여기서 함께 보인다 — 과제 점수는 본인 공개가 확정 정책이다.
+drop policy if exists task_sub_owner_all on task_submissions;
 create policy task_sub_owner_all on task_submissions
   for all using (exists (select 1 from tasks t where t.id = task_id and owns_course(t.course_id)))
   with check (exists (select 1 from tasks t where t.id = task_id and owns_course(t.course_id)));
 
+drop policy if exists task_sub_student_read on task_submissions;
 create policy task_sub_student_read on task_submissions
   for select using (
     task_visible(task_id)
     and (student_id = jwt_student_id() or (team_id is not null and team_id = jwt_team_id()))
   );
 
+drop policy if exists task_sub_student_insert on task_submissions;
 create policy task_sub_student_insert on task_submissions
   for insert with check (
     task_open(task_id)
@@ -353,6 +366,7 @@ create policy task_sub_student_insert on task_submissions
   );
 
 -- 채점 뒤에는 학생이 못 고친다. 점수·피드백 칸을 학생이 건드리는 것도 막는다.
+drop policy if exists task_sub_student_update on task_submissions;
 create policy task_sub_student_update on task_submissions
   for update using (
     task_open(task_id)
@@ -365,6 +379,7 @@ create policy task_sub_student_update on task_submissions
   );
 
 -- ── 출석 ─────────────────────────────────────────────────────
+drop policy if exists attendance_owner_all on attendance;
 create policy attendance_owner_all on attendance
   for all using (exists (
         select 1 from course_sessions cs join course_weeks w on w.id = cs.week_id
@@ -374,28 +389,35 @@ create policy attendance_owner_all on attendance
          where cs.id = session_id and owns_course(w.course_id)));
 
 -- 본인 출결만 읽는다. 남의 출결은 못 본다.
+drop policy if exists attendance_student_read on attendance;
 create policy attendance_student_read on attendance
   for select using (student_id = jwt_student_id());
 
+drop policy if exists attimport_owner_all on attendance_imports;
 create policy attimport_owner_all on attendance_imports
   for all using (owns_course(course_id)) with check (owns_course(course_id));
 
 -- ── 시험 ─────────────────────────────────────────────────────
 -- 시험 일정은 학생도 본다. 점수(exam_scores)는 학생 정책이 없다 = 비공개.
+drop policy if exists exam_owner_all on exams;
 create policy exam_owner_all on exams
   for all using (owns_course(course_id)) with check (owns_course(course_id));
+drop policy if exists exam_student_read on exams;
 create policy exam_student_read on exams
   for select using (in_course(course_id));
 
+drop policy if exists exam_score_owner_all on exam_scores;
 create policy exam_score_owner_all on exam_scores
   for all using (exists (select 1 from exams e where e.id = exam_id and owns_course(e.course_id)))
   with check (exists (select 1 from exams e where e.id = exam_id and owns_course(e.course_id)));
 
 -- ── 성적 ─────────────────────────────────────────────────────
 -- grade_policies / final_grades 는 학생 정책이 없다 = 한 줄도 못 읽는다.
+drop policy if exists grade_policy_owner_all on grade_policies;
 create policy grade_policy_owner_all on grade_policies
   for all using (owns_course(course_id)) with check (owns_course(course_id));
 
+drop policy if exists final_grade_owner_all on final_grades;
 create policy final_grade_owner_all on final_grades
   for all using (owns_course(course_id)) with check (owns_course(course_id));
 

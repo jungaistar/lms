@@ -115,23 +115,28 @@ alter table attendance_requests enable row level security;
 alter table deduction_kinds     enable row level security;
 alter table deductions          enable row level security;
 
+drop policy if exists att_req_owner_all on attendance_requests;
 create policy att_req_owner_all on attendance_requests
   for all using (owns_course(course_id)) with check (owns_course(course_id));
 
+drop policy if exists ded_kind_owner_all on deduction_kinds;
 create policy ded_kind_owner_all on deduction_kinds
   for all using (owns_course(course_id)) with check (owns_course(course_id));
 
 -- 감점 항목 이름은 학생도 봐야 왜 깎였는지 안다. 점수(points)까지 보인다.
+drop policy if exists ded_kind_student_read on deduction_kinds;
 create policy ded_kind_student_read on deduction_kinds
   for select using (in_course(course_id) and active);
 
 -- 감점 기록은 **본인 것만** 보인다. 과제 점수·출결과 같은 수준으로 공개한다.
+drop policy if exists ded_owner_all on deductions;
 create policy ded_owner_all on deductions
   for all using (exists (
         select 1 from deduction_kinds k where k.id = kind_id and owns_course(k.course_id)))
   with check (exists (
         select 1 from deduction_kinds k where k.id = kind_id and owns_course(k.course_id)));
 
+drop policy if exists ded_student_read on deductions;
 create policy ded_student_read on deductions
   for select using (student_id = jwt_student_id());
 
