@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { studentEnter, studentLogin, type CourseChoice } from '../lib/supabase';
 import { saveStudentProfile } from '../lib/session';
 import PageHero from '../components/PageHero';
-import { NOTICE } from '../brand';
+import { COURSES, NOTICE } from '../brand';
 
 /**
  * 수업 들어가기.
@@ -26,6 +26,13 @@ type Phase =
 
 export default function StudentLogin() {
   const nav = useNavigate();
+  const [params] = useSearchParams();
+
+  // 홈의 과목 카드에서 넘어온 힌트. 과목 id 도 수업코드도 아니라서
+  // 아무 수업이나 열리지 않는다 — 명단에 여러 수업이 걸렸을 때
+  // 어느 쪽을 먼저 볼지 정해 줄 뿐이다.
+  const hinted = COURSES.find((c) => c.key === params.get('c')) ?? null;
+
   const [email, setEmail] = useState('');
   const [studentNo, setStudentNo] = useState('');
   const [name, setName] = useState('');
@@ -47,7 +54,15 @@ export default function StudentLogin() {
         // 들어가면 강의홈으로 — 과제·설문·출결이 한 화면에 보이는 자리다.
         return nav('/home', { replace: true });
       }
-      if (r.kind === 'choose') return setPhase({ at: 'choose', courses: r.courses });
+      if (r.kind === 'choose') {
+        // 홈에서 과목을 눌러 왔다면 그걸로 바로 이어 간다. 학생에게 같은 걸
+        // 두 번 묻지 않는다. 힌트와 맞는 게 없으면 그냥 고르게 둔다.
+        const auto = hinted
+          ? r.courses.find((c) => c.title === hinted.title && c.class_no === hinted.classNo)
+          : undefined;
+        if (auto && !courseId) return enter(auto.id);
+        return setPhase({ at: 'choose', courses: r.courses });
+      }
       if (r.kind === 'pending') return setPhase({ at: 'pending', courseLabel: r.courseLabel });
       return setPhase({ at: 'rejected', courseLabel: r.courseLabel });
     } catch (e) {
@@ -156,6 +171,15 @@ export default function StudentLogin() {
             <p className="muted small">
               교수님이 올린 명단과 맞춰 봅니다. 처음 넣으면 교수님 승인을 기다린 뒤 들어옵니다.
             </p>
+
+            {hinted && (
+              <div className="alert alert-info">
+                <b>{hinted.title}</b> ({hinted.classNo}반) 수업으로 들어갑니다.
+                <p className="small" style={{ margin: '6px 0 0' }}>
+                  이 수업 명단에 없으면 들어올 수 없습니다. 다른 수업이면 홈에서 다시 고르세요.
+                </p>
+              </div>
+            )}
 
             {error && <div className="alert alert-error">{error}</div>}
 

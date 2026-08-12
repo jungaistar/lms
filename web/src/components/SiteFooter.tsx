@@ -7,7 +7,7 @@ export default function SiteFooter() {
         <div className="top">
           <div>
             <div className="mark">
-              <span aria-hidden="true">{ORG.mark}</span>
+              {ORG.mark && <span aria-hidden="true">{ORG.mark}</span>}
               <b>{ORG.name}</b>
             </div>
             <div className="desc">
@@ -31,11 +31,14 @@ export default function SiteFooter() {
             ))}
           </div>
 
-          <div className="links">
-            <div className="h">Contact</div>
-            {CONTACT.email && <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>}
-            {CONTACT.phone && <a href={`tel:${CONTACT.phone.replace(/-/g, '')}`}>{CONTACT.phone}</a>}
-          </div>
+          {/* 연락처를 전부 비워 두면 'Contact' 제목만 남는다. 블록째 감춘다. */}
+          {(CONTACT.email || CONTACT.phone) && (
+            <div className="links">
+              <div className="h">Contact</div>
+              {CONTACT.email && <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>}
+              {CONTACT.phone && <a href={`tel:${CONTACT.phone.replace(/-/g, '')}`}>{CONTACT.phone}</a>}
+            </div>
+          )}
         </div>
 
         <div className="bottom">

@@ -691,6 +691,74 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-fam
   .live-row > .btn-row > .btn-sm { flex: 1 1 0; min-width: 0; padding: 10px 2px; }
 }
 
+/* ════════════════════════════════════════════════════════
+   홈 — 역할 고르기와 개설 과목
+   ════════════════════════════════════════════════════════ */
+
+/* 그림 전체가 링크다. 손가락으로 누르는 대상은 크면 클수록 좋다. */
+.role-picker {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  margin: 28px 0 8px;
+}
+.role-card {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 2px; padding: 26px 20px 22px;
+  border: 1px solid var(--line); border-radius: var(--r-lg); background: #fff;
+  color: var(--fg); transition: border-color 140ms var(--ease), box-shadow 140ms var(--ease),
+    transform 140ms var(--ease);
+}
+.role-card:hover {
+  border-color: var(--accent); box-shadow: var(--shadow-2);
+  text-decoration: none; color: var(--fg); transform: translateY(-2px);
+}
+.role-card:active { transform: none; }
+.role-card b { font-size: 22px; font-weight: 800; color: var(--fg-strong); letter-spacing: -0.02em; margin-top: 12px; }
+.role-card .en {
+  font-family: var(--latin); font-size: 11.5px; letter-spacing: 0.14em;
+  color: var(--accent); font-weight: 600;
+}
+.role-card .small { margin-top: 8px; }
+
+.role-art { width: 108px; height: 108px; display: block; }
+.role-art-bg { fill: var(--accent-50); }
+.role-art-mid { fill: #b9cdf0; }
+.role-art-solid { fill: var(--accent); }
+.role-card:hover .role-art-bg { fill: #dbe6f8; }
+
+@media (max-width: 560px) {
+  .role-picker { gap: 12px; }
+  .role-card { padding: 18px 10px 16px; }
+  .role-art { width: 80px; height: 80px; }
+  .role-card b { font-size: 18px; margin-top: 8px; }
+}
+
+/* 개설 과목 — 누르면 로그인으로 간다 */
+.course-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px; margin-bottom: 8px;
+}
+.course-card {
+  display: flex; flex-direction: column; gap: 2px;
+  border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  border-radius: var(--r-md); background: #fff; padding: 18px 18px 16px;
+  color: var(--fg);
+  transition: border-color 140ms var(--ease), box-shadow 140ms var(--ease);
+}
+.course-card:hover { box-shadow: var(--shadow-2); text-decoration: none; color: var(--fg); }
+.course-card .k {
+  font-family: var(--latin); font-size: 10.5px; letter-spacing: 0.13em;
+  color: var(--accent); font-weight: 600;
+}
+.course-card b {
+  font-size: 17.5px; font-weight: 800; color: var(--fg-strong);
+  letter-spacing: -0.015em; margin-top: 6px; line-height: 1.35;
+}
+.course-card .cls { font-size: 12.5px; color: var(--fg-disabled); font-weight: 700; }
+.course-card p { margin: 10px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--fg-muted); }
+.course-card .go {
+  margin-top: 14px; font-size: 13.5px; font-weight: 700; color: var(--accent);
+}
+
 /* ── 숫자 타일 (대시보드) ─────────────────────────────── */
 .stat-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));

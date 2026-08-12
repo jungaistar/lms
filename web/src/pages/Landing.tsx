@@ -1,9 +1,16 @@
 import { Link } from 'react-router-dom';
-import { CONTACT, NOTICE, OWNER, SERVICE } from '../brand';
+import { COURSES, NOTICE, OWNER, SERVICE } from '../brand';
 import { loadStudentSession } from '../lib/session';
 import { KIND_LABEL, type ActivityKind } from '../lib/types';
+import RoleArt from '../components/RoleArt';
 
-/** 홈에서 소개하는 평가 활동 4종. KIND_LABEL 과 짝을 맞춰 둔다. */
+/**
+ * 홈에서 소개하는 평가 활동.
+ *
+ * 시스템은 네 가지를 모두 지원하지만(토론 참여 · 과제 동료 첨삭 포함),
+ * 홈에서는 실제로 운영하는 두 가지만 내건다. 쓰지 않는 것을 앞세우면
+ * 학생이 없는 화면을 찾아다니게 된다. 다시 내걸려면 여기에 줄을 되살리면 된다.
+ */
 const ACTIVITIES: Array<{ kind: ActivityKind; en: string; desc: string }> = [
   {
     kind: 'presentation',
@@ -11,19 +18,9 @@ const ACTIVITIES: Array<{ kind: ActivityKind; en: string; desc: string }> = [
     desc: '발표를 들은 동료들이 루브릭 항목별로 점수를 매기고 짧은 코멘트를 남깁니다.',
   },
   {
-    kind: 'discussion',
-    en: 'DISCUSSION',
-    desc: '토론방에 글과 답글을 남기고, 참여도를 기준으로 평가가 이루어집니다.',
-  },
-  {
     kind: 'team_contribution',
     en: 'TEAM CONTRIBUTION',
     desc: '같은 팀원끼리 100점을 나눠 배분해 실제 기여도를 드러냅니다.',
-  },
-  {
-    kind: 'peer_review',
-    en: 'PEER REVIEW',
-    desc: '동료의 과제를 읽고 고칠 점을 짚어 주는 첨삭 활동입니다.',
   },
 ];
 
@@ -54,39 +51,50 @@ export default function Landing() {
         </div>
       </section>
 
-      <nav className="quick-links">
-        <div className="inner">
-          <Link to={s ? '/me' : '/login'}>
-            <span>
-              <span className="ko">{s ? `${s.student.name} 님으로 계속하기` : '학생 들어가기'}</span>
-              <span className="en">STUDENT</span>
-            </span>
-            <span className="arrow" aria-hidden="true">
-              →
-            </span>
-          </Link>
-          <Link to="/teacher">
-            <span>
-              <span className="ko">교수 로그인</span>
-              <span className="en">INSTRUCTOR</span>
-            </span>
-            <span className="arrow" aria-hidden="true">
-              →
+      {/* ── 누구로 들어올지 고르기 ─────────────────────────
+          그림 전체가 링크다. 손가락으로 누르는 대상이 크면 클수록 좋다. */}
+      <div className="container wide">
+        <div className="role-picker">
+          <Link className="role-card" to={s ? '/home' : '/login'}>
+            <RoleArt role="student" />
+            <b>학생</b>
+            <span className="en">STUDENT</span>
+            <span className="small muted">
+              {s ? `${s.student.name} 님으로 계속하기` : '눌러서 들어가기'}
             </span>
           </Link>
-          <a href={CONTACT.site} target="_blank" rel="noreferrer">
-            <span>
-              <span className="ko">직업미래연구소</span>
-              <span className="en">INSTITUTE</span>
-            </span>
-            <span className="arrow" aria-hidden="true">
-              ↗
-            </span>
-          </a>
+
+          <Link className="role-card" to="/teacher">
+            <RoleArt role="teacher" />
+            <b>교수</b>
+            <span className="en">INSTRUCTOR</span>
+            <span className="small muted">눌러서 들어가기</span>
+          </Link>
         </div>
-      </nav>
+      </div>
 
       <div className="container wide">
+        {/* ── 개설 과목 ─────────────────────────────────
+            누르면 로그인으로 가고, 로그인하면 그 수업으로 이어진다.
+            여기서 고른다고 아무 수업이나 열리는 게 아니다 — 명단에 있고
+            교수가 승인한 수업만 열린다. */}
+        <h2 className="section-title">개설 과목</h2>
+        <p className="small muted" style={{ margin: '-6px 0 14px' }}>
+          자기가 듣는 수업을 누르세요. 로그인하면 그 수업으로 이어집니다.
+          <b> 명단에 있는 수업만</b> 열립니다.
+        </p>
+        <div className="course-grid">
+          {COURSES.map((c) => (
+            <Link className="course-card" key={c.key} to={s ? '/home' : `/login?c=${c.key}`}>
+              <span className="k">{c.en}</span>
+              <b>{c.title}</b>
+              <span className="cls">{c.classNo}반</span>
+              <p>{c.desc}</p>
+              <span className="go" aria-hidden="true">들어가기 →</span>
+            </Link>
+          ))}
+        </div>
+
         <h2 className="section-title">평가 활동</h2>
         <div className="feature-grid">
           {ACTIVITIES.map((a) => (
@@ -103,9 +111,18 @@ export default function Landing() {
           <div className="card">
             <h3>학생</h3>
             <p className="small">{NOTICE.student}</p>
-            <Link className="btn btn-primary btn-block" to={s ? '/me' : '/login'}>
-              {s ? `${s.student.name} 님으로 계속하기` : '수업 들어가기'}
-            </Link>
+            <p className="small muted">
+              처음이라면 <b>등록 신청</b>을 먼저 하세요. 교수님이 명단과 맞춰 승인하면
+              그 다음부터는 바로 들어옵니다. 비밀번호는 없습니다.
+            </p>
+            <div className="btn-row">
+              <Link className="btn btn-primary" style={{ flex: 2 }} to={s ? '/home' : '/login'}>
+                {s ? `${s.student.name} 님으로 계속하기` : '들어가기'}
+              </Link>
+              <Link className="btn btn-ghost" style={{ flex: 1 }} to="/login">
+                등록 신청
+              </Link>
+            </div>
           </div>
 
           <div className="card">
