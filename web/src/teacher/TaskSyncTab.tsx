@@ -18,6 +18,7 @@ import {
   type TaskSubmission,
 } from '../lib/types';
 import type { MenuKey } from './adminMenu';
+import { errText } from '../lib/errors';
 
 /**
  * 과제 제출현황 — 학교 LMS 에서 가져오기.
@@ -188,7 +189,7 @@ export default function TaskSyncTab({
       setPaste('');
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '반영하지 못했습니다.');
+      setError(errText(e, '반영하지 못했습니다.'));
     } finally {
       setBusy(false);
     }
@@ -230,10 +231,50 @@ export default function TaskSyncTab({
         );
       }
 
-      for (let i = 0; i < payload.length; i += 200) {
+      /*
+       * upsert 를 쓰지 못한다.
+       *
+       * task_submissions 의 유니크 인덱스는 **부분 인덱스**다
+       * (`... (task_id, student_id) where student_id is not null`).
+       * Postgres 는 부분 인덱스를 ON CONFLICT 의 판단 근거로 삼지 못해서
+       * "there is no unique or exclusion constraint matching the ON CONFLICT
+       * specification" 으로 통째로 실패한다. 실제로 그래서 한 줄도 안 들어갔다.
+       *
+       * 그래서 있는 줄은 고치고 없는 줄만 넣는다.
+       * 지우고 다시 넣지 않는 이유 — 이미 매긴 점수와 피드백이 날아간다.
+       */
+      const { data: existing, error: exErr } = await teacherClient
+        .from('task_submissions')
+        .select('id, student_id')
+        .eq('task_id', task.id);
+      if (exErr) throw exErr;
+
+      const idOf = new Map(
+        ((existing ?? []) as Array<{ id: string; student_id: string | null }>)
+          .filter((r) => r.student_id)
+          .map((r) => [r.student_id as string, r.id]),
+      );
+
+      const toInsert = payload.filter((p) => !idOf.has(p.student_id));
+      const toUpdate = payload.filter((p) => idOf.has(p.student_id));
+
+      for (let i = 0; i < toInsert.length; i += 200) {
         const { error: err } = await teacherClient
           .from('task_submissions')
-          .upsert(payload.slice(i, i + 200), { onConflict: 'task_id,student_id' });
+          .insert(toInsert.slice(i, i + 200));
+        if (err) throw err;
+      }
+
+      for (const p of toUpdate) {
+        const { error: err } = await teacherClient
+          .from('task_submissions')
+          .update({
+            submitted_at: p.submitted_at,
+            origin: p.origin,
+            ext_state: p.ext_state,
+            ext_synced_at: p.ext_synced_at,
+          })
+          .eq('id', idOf.get(p.student_id)!);
         if (err) throw err;
       }
 
@@ -257,7 +298,7 @@ export default function TaskSyncTab({
       setPaste('');
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '반영하지 못했습니다.');
+      setError(errText(e, '반영하지 못했습니다.'));
     } finally {
       setBusy(false);
     }

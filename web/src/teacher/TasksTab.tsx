@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
+import { errText } from '../lib/errors';
 import {
   TASK_STATUS_LABEL,
   type CourseWeek,
@@ -87,7 +88,7 @@ export default function TasksTab({ courseId }: { courseId: string }) {
       setNotice('과제를 만들었습니다. 준비중 상태라 아직 학생에게 보이지 않습니다.');
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '만들지 못했습니다.');
+      setError(errText(e, '만들지 못했습니다.'));
     } finally {
       setBusy(false);
     }

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
 import { downloadCsv, downloadXlsx, printTable, type SheetTable } from '../lib/exporters';
 import type { Student, Team } from '../lib/types';
+import { errText } from '../lib/errors';
 
 /**
  * 팀 편성.
@@ -114,7 +115,7 @@ export default function TeamsTab({ courseId, courseTitle }: { courseId: string; 
       setNotice(`${count}개 팀으로 나눴습니다.`);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '배정하지 못했습니다.');
+      setError(errText(e, '배정하지 못했습니다.'));
     } finally {
       setBusy(false);
     }

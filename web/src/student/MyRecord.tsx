@@ -12,6 +12,7 @@ import type {
 } from '../lib/types';
 import PageHero from '../components/PageHero';
 import StudentNav from './StudentNav';
+import { errText } from '../lib/errors';
 
 const STATUS_LABEL: Record<string, string> = {
   present: '출석',
@@ -73,7 +74,7 @@ export default function MyRecord() {
           setSessions((cs ?? []) as CourseSession[]);
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : '불러오지 못했습니다.');
+        setError(errText(e, '불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }

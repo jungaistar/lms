@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
 import { downloadCsv, downloadXlsx, type SheetTable } from '../lib/exporters';
+import { errText } from '../lib/errors';
 import {
   QUESTION_KIND_LABEL,
   SURVEY_STATUS_LABEL,
@@ -88,7 +89,7 @@ export default function SurveyTab({ courseId, courseTitle }: { courseId: string;
       await load();
       await openSurvey((data as Survey).id);
     } catch (e) {
-      setError(e instanceof Error ? e.message : '만들지 못했습니다.');
+      setError(errText(e, '만들지 못했습니다.'));
     } finally {
       setBusy(false);
     }

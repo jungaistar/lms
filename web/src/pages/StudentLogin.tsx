@@ -4,6 +4,7 @@ import { studentEnter, studentLogin, type CourseChoice } from '../lib/supabase';
 import { saveStudentProfile } from '../lib/session';
 import PageHero from '../components/PageHero';
 import { COURSES, NOTICE } from '../brand';
+import { errText } from '../lib/errors';
 
 /**
  * 수업 들어가기.
@@ -66,7 +67,7 @@ export default function StudentLogin() {
       if (r.kind === 'pending') return setPhase({ at: 'pending', courseLabel: r.courseLabel });
       return setPhase({ at: 'rejected', courseLabel: r.courseLabel });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : '들어가지 못했습니다.';
+      const msg = errText(e, '들어가지 못했습니다.');
 
       // 서버(Edge Function)가 아직 옛 코드면 이메일 방식 요청에 대고
       // "수업코드와 학번을 모두 입력하세요" 를 돌려준다. 학생 입장에서는
@@ -95,7 +96,7 @@ export default function StudentLogin() {
       saveStudentProfile({ student: r.student, course: r.course });
       nav('/home', { replace: true });
     } catch (e) {
-      setError(e instanceof Error ? e.message : '들어가지 못했습니다.');
+      setError(errText(e, '들어가지 못했습니다.'));
     } finally {
       setBusy(false);
     }

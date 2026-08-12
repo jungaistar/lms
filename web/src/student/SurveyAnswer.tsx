@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { studentDb } from '../lib/session';
 import { type Survey, type SurveyQuestion } from '../lib/types';
 import PageHero from '../components/PageHero';
+import { errText } from '../lib/errors';
 
 /**
  * 설문 참여.
@@ -38,7 +39,7 @@ export default function SurveyAnswer() {
         setQuestions((q.data ?? []) as SurveyQuestion[]);
         setDone(!!r.data);
       } catch (e) {
-        setError(e instanceof Error ? e.message : '불러오지 못했습니다.');
+        setError(errText(e, '불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }
@@ -76,7 +77,7 @@ export default function SurveyAnswer() {
       }
       setDone(true);
     } catch (e) {
-      setError(e instanceof Error ? e.message : '제출하지 못했습니다.');
+      setError(errText(e, '제출하지 못했습니다.'));
     } finally {
       setBusy(false);
     }

@@ -4,6 +4,7 @@ import { loadStudentSession, studentDb } from '../lib/session';
 import { KIND_LABEL, type ActivityKind, type MyTask } from '../lib/types';
 import PageHero from '../components/PageHero';
 import StudentNav from './StudentNav';
+import { errText } from '../lib/errors';
 
 interface OpenActivity {
   id: string;
@@ -38,7 +39,7 @@ export default function StudentHome() {
         setTasks((t.data ?? []) as MyTask[]);
         setSpecial((a.data ?? []) as OpenActivity[]);
       } catch (e) {
-        setError(e instanceof Error ? e.message : '불러오지 못했습니다.');
+        setError(errText(e, '불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
+import { errText } from '../lib/errors';
 import {
   MATERIAL_KIND_LABEL,
   type CourseWeek,
@@ -78,7 +79,7 @@ export default function BoardTab({
       setNBody('');
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '올리지 못했습니다.');
+      setError(errText(e, '올리지 못했습니다.'));
     } finally {
       setBusy(false);
     }
@@ -102,7 +103,7 @@ export default function BoardTab({
       setMUrl('');
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '올리지 못했습니다.');
+      setError(errText(e, '올리지 못했습니다.'));
     } finally {
       setBusy(false);
     }

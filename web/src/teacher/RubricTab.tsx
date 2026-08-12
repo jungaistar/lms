@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
 import type { Rubric, RubricItem } from '../lib/types';
+import { errText } from '../lib/errors';
 
 interface Draft { label: string; description: string; max_score: number; weight: number }
 
@@ -101,7 +102,7 @@ export default function RubricTab({ courseId }: { courseId: string }) {
       setItems([]);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : '저장하지 못했습니다.');
+      setError(errText(e, '저장하지 못했습니다.'));
     } finally {
       setBusy(false);
     }

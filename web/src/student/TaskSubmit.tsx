@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { loadStudentSession, studentDb } from '../lib/session';
 import type { Task, TaskSubmission } from '../lib/types';
 import PageHero from '../components/PageHero';
+import { errText } from '../lib/errors';
 
 /**
  * 과제 제출.
@@ -49,7 +50,7 @@ export default function TaskSubmit() {
           setUrl(row.url ?? '');
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : '불러오지 못했습니다.');
+        setError(errText(e, '불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }
@@ -93,7 +94,7 @@ export default function TaskSubmit() {
       setSub((data ?? null) as TaskSubmission | null);
       setNotice(overdue ? '지각 제출로 처리되었습니다.' : '제출했습니다.');
     } catch (e) {
-      setError(e instanceof Error ? e.message : '제출하지 못했습니다.');
+      setError(errText(e, '제출하지 못했습니다.'));
     } finally {
       setBusy(false);
     }
