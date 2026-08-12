@@ -24,7 +24,7 @@ import { normalizeDate, normalizeTime, type SkippedRow } from './heyyoung';
 export type ExtState = 'submitted' | 'late' | 'missing';
 
 /** 한 줄을 칸으로 가른다. 탭 → 여러 칸 공백 → 쉼표 순서로 본다. */
-function splitCells(line: string): string[] {
+export function splitCells(line: string): string[] {
   if (line.includes('\t')) return line.split('\t').map((c) => c.trim());
   if (/\s{2,}/.test(line)) return line.split(/\s{2,}/).map((c) => c.trim());
   if (line.includes(',')) return line.split(',').map((c) => c.trim());
@@ -50,7 +50,7 @@ const NOT_A_NAME = new Set([
   '조회', '보기', '채점', '완료', '없음',
 ]);
 
-function findStudentNo(cells: string[]): string | null {
+export function findStudentNo(cells: string[]): string | null {
   return cells.find((c) => STUDENT_NO.test(c.replace(/\s/g, ''))) ?? null;
 }
 
