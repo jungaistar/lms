@@ -63,6 +63,39 @@ export interface Course {
   peer_assessment: boolean;
   project_mode: ProjectMode;
   ext_lms_url: string | null;
+  /** 0010 — 학생이 들어오는 방식. 옛 줄에는 없어서 옵션으로 둔다. */
+  entry_mode?: EntryMode;
+}
+
+// ── 학생 입장 (0010) ─────────────────────────────────────────
+export type EntryMode = 'code' | 'approval';
+
+export const ENTRY_MODE_LABEL: Record<EntryMode, string> = {
+  code: '수업코드 + 학번',
+  approval: '이메일 · 학번 · 이름 + 승인',
+};
+
+/** 'none' 은 표에 줄이 없는 상태 — 아직 한 번도 신청하지 않았다. */
+export type AccessStatus = 'none' | 'pending' | 'approved' | 'rejected';
+
+export const ACCESS_STATUS_LABEL: Record<AccessStatus, string> = {
+  none: '미신청',
+  pending: '승인 대기',
+  approved: '승인됨',
+  rejected: '거절',
+};
+
+/** access_list() RPC 가 돌려주는 한 줄. 명단 전원이 나온다. */
+export interface AccessRow {
+  student_id: string;
+  student_no: string;
+  name: string;
+  team_name: string | null;
+  email: string | null;
+  status: AccessStatus;
+  requested_at: string | null;
+  decided_at: string | null;
+  last_login_at: string | null;
 }
 
 export interface Student {

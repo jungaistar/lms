@@ -39,18 +39,35 @@ export const studentClient: SupabaseClient = createClient(SAFE_URL, SAFE_ANON, {
   },
 });
 
-export interface StudentLoginResult {
+export interface StudentSession {
   access_token: string;
   refresh_token: string;
   student: { id: string; name: string; student_no: string };
   course: { id: string; title: string; term: string; class_no: string | null };
 }
 
+export interface CourseChoice {
+  id: string;
+  title: string;
+  term: string;
+  class_no: string | null;
+}
+
 /**
- * 학번 + 수업코드로 로그인.
- * Edge Function 이 명단을 대조하고 정상 세션을 발급한다.
+ * 로그인 시도의 결과.
+ *
+ * 새 방식(이메일 + 학번 + 이름)은 **바로 못 들어가는 경우가 정상**이다 —
+ * 처음 신청하면 승인을 기다려야 한다. 그래서 예외가 아니라 값으로 돌린다.
+ * 예외는 "잘못됐다" 는 뜻으로만 남겨 둔다.
  */
-export async function studentLogin(joinCode: string, studentNo: string): Promise<StudentLoginResult> {
+export type StudentLoginOutcome =
+  | { kind: 'session'; session: StudentSession }
+  | { kind: 'pending'; courseLabel: string }
+  | { kind: 'rejected'; courseLabel: string }
+  /** 같은 학번·이름이 여러 과목에 있다. 학생이 골라야 한다. */
+  | { kind: 'choose'; courses: CourseChoice[] };
+
+async function callLogin(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
   const res = await fetch(`${SAFE_URL}/functions/v1/student-login`, {
     method: 'POST',
     headers: {
@@ -58,7 +75,7 @@ export async function studentLogin(joinCode: string, studentNo: string): Promise
       apikey: SAFE_ANON,
       Authorization: `Bearer ${SAFE_ANON}`,
     },
-    body: JSON.stringify({ join_code: joinCode, student_no: studentNo }),
+    body: JSON.stringify(payload),
   });
 
   let body: Record<string, unknown>;
@@ -68,15 +85,59 @@ export async function studentLogin(joinCode: string, studentNo: string): Promise
     throw new Error(`로그인 서버가 응답하지 않습니다 (HTTP ${res.status}).`);
   }
   if (!res.ok) throw new Error(String(body?.error ?? '로그인에 실패했습니다.'));
+  return body;
+}
 
-  const result = body as unknown as StudentLoginResult;
-
-  // 받은 세션을 클라이언트에 심는다. 이후 모든 질의가 이 세션으로 나간다.
+/** 받은 세션을 클라이언트에 심는다. 이후 모든 질의가 이 세션으로 나간다. */
+async function adopt(body: Record<string, unknown>): Promise<StudentSession> {
+  const result = body as unknown as StudentSession;
   const { error } = await studentClient.auth.setSession({
     access_token: result.access_token,
     refresh_token: result.refresh_token,
   });
   if (error) throw new Error(`세션을 저장하지 못했습니다: ${error.message}`);
-
   return result;
+}
+
+const courseLabel = (c: { title?: unknown; class_no?: unknown } | undefined) =>
+  c ? `${String(c.title ?? '')}${c.class_no ? ` (${String(c.class_no)}반)` : ''}` : '';
+
+/**
+ * 이메일 + 학번 + 이름으로 들어오기 (기본 방식).
+ *
+ * Edge Function 이 명단을 대조하고, 교수가 승인한 뒤에만 세션을 준다.
+ * 같은 학번·이름이 여러 과목에 있으면 `choose` 가 돌아온다 —
+ * 학생이 고른 과목 id 를 `courseId` 로 다시 부르면 된다.
+ */
+export async function studentEnter(
+  email: string,
+  studentNo: string,
+  name: string,
+  courseId?: string,
+): Promise<StudentLoginOutcome> {
+  const body = await callLogin({
+    email,
+    student_no: studentNo,
+    name,
+    ...(courseId ? { course_id: courseId } : {}),
+  });
+
+  if (body.need_course) {
+    return { kind: 'choose', courses: (body.courses ?? []) as CourseChoice[] };
+  }
+  if (body.status === 'pending') {
+    return { kind: 'pending', courseLabel: courseLabel(body.course as never) };
+  }
+  if (body.status === 'rejected') {
+    return { kind: 'rejected', courseLabel: courseLabel(body.course as never) };
+  }
+  return { kind: 'session', session: await adopt(body) };
+}
+
+/**
+ * 학번 + 수업코드로 로그인 (옛 방식).
+ * 과목의 `entry_mode` 가 `code` 인 동안만 통한다.
+ */
+export async function studentLogin(joinCode: string, studentNo: string): Promise<StudentSession> {
+  return adopt(await callLogin({ join_code: joinCode, student_no: studentNo }));
 }

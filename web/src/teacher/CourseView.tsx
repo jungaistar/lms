@@ -8,6 +8,7 @@ import { buildMenu, isMenuKey, type MenuKey } from './adminMenu';
 import DashboardTab from './DashboardTab';
 import RosterTab from './RosterTab';
 import RosterMatchTab from './RosterMatchTab';
+import AccessTab from './AccessTab';
 import TeamsTab from './TeamsTab';
 import WeeksTab from './WeeksTab';
 import BoardTab from './BoardTab';
@@ -63,6 +64,8 @@ export default function CourseView() {
         peer_assessment: row.peer_assessment ?? true,
         project_mode: row.project_mode ?? 'individual',
         ext_lms_url: row.ext_lms_url ?? null,
+        // 0010 이 안 올라갔으면 아직 옛 방식이다.
+        entry_mode: row.entry_mode ?? 'code',
       });
     })();
   }, [courseId, nav]);
@@ -120,6 +123,7 @@ export default function CourseView() {
           {current === 'dashboard' && <DashboardTab course={course} onGo={go} />}
           {current === 'roster' && <RosterTab courseId={course.id} />}
           {current === 'match' && <RosterMatchTab courseId={course.id} courseTitle={course.title} />}
+          {current === 'access' && <AccessTab course={course} />}
           {current === 'teams' && <TeamsTab courseId={course.id} courseTitle={course.title} />}
           {current === 'weeks' && <WeeksTab courseId={course.id} />}
           {current === 'notices' && <BoardTab courseId={course.id} only="notices" />}

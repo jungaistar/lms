@@ -1,5 +1,10 @@
 // ════════════════════════════════════════════════════════════════
-//  학생 로그인 — 학번 + 수업코드
+//  학생 로그인
+//
+//  두 가지 방식이 있고, 과목의 `entry_mode` 가 어느 쪽인지 정한다.
+//
+//   · approval (기본) — 이메일 + 학번 + 이름 → 명단 대조 → 교수 승인 → 입장
+//   · code            — 수업코드 + 학번 (옛 방식). 쓰고 싶은 과목만 켠다
 //
 //  학생은 회원가입을 하지 않는다. 이 함수가 명단을 대조한 뒤,
 //  그 학생에 대응하는 auth 사용자로 **정상 Supabase 세션**을 만들어 준다.
@@ -12,13 +17,12 @@
 //  학생 식별자는 app_metadata 에 넣는다. app_metadata 는 서버만 쓸 수 있어
 //  학생이 자기 토큰을 고쳐 남의 student_id 를 주장할 수 없다.
 //
-//  ⚠️ 이건 "본인 확인"이 아니라 "명단 확인"이다. 같은 수업 학생끼리는 서로의
-//     학번을 알 수 있으므로 사칭이 이론적으로 가능하다. 그래서 (a) 수업코드는
-//     수업 중에만 알려주고, (b) 교수 화면에서 제출 시각을 볼 수 있게 하고,
-//     (c) 성적 확정 전 교수가 검토한다.
+//  ⚠️ 승인 판정은 **여기서만** 한다. 화면에서 버튼을 감추는 방식이 아니다.
+//     `student_access` 에는 학생용 RLS 정책이 아예 없어서 학생 토큰으로는
+//     읽을 수도 없다.
 // ════════════════════════════════════════════════════════════════
 
-import { createClient } from 'jsr:@supabase/supabase-js@2';
+import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -33,7 +37,7 @@ const json = (body: unknown, status = 200) =>
   });
 
 /** 이 학생만 쓰는 내부 주소. .invalid 는 실제로 존재할 수 없는 TLD (RFC 2606). */
-const emailFor = (studentId: string) => `s.${studentId}@students.invalid`;
+const authEmailFor = (studentId: string) => `s.${studentId}@students.invalid`;
 
 /** 로그인할 때마다 새로 만들어 바로 쓰고 버리는 비밀번호. 저장하지 않는다. */
 function freshPassword(): string {
@@ -41,49 +45,41 @@ function freshPassword(): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
-  if (req.method !== 'POST') return json({ error: 'POST 요청만 허용됩니다.' }, 405);
+/** 이름 비교용. 공백을 지우고 본다 — "홍 길동" 과 "홍길동" 은 같은 사람이다. */
+const squash = (s: string) => s.replace(/\s+/g, '');
 
-  let joinCode: string, studentNo: string;
-  try {
-    const body = await req.json();
-    joinCode = String(body.join_code ?? '').trim().toUpperCase();
-    studentNo = String(body.student_no ?? '').trim();
-  } catch {
-    return json({ error: '요청 형식이 올바르지 않습니다.' }, 400);
-  }
-  if (!joinCode || !studentNo) {
-    return json({ error: '수업코드와 학번을 모두 입력하세요.' }, 400);
-  }
+/** 이메일 비교용. 대소문자와 앞뒤 공백만 정리한다. 점·플러스는 건드리지 않는다. */
+const normEmail = (s: string) => s.trim().toLowerCase();
 
-  const url = Deno.env.get('SUPABASE_URL')!;
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-  const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
+interface Course {
+  id: string;
+  title: string;
+  term: string;
+  class_no: string | null;
+}
 
-  const { data: course } = await admin
-    .from('courses')
-    .select('id, title, term, class_no')
-    .eq('join_code', joinCode)
-    .maybeSingle();
+interface Student {
+  id: string;
+  name: string;
+  student_no: string;
+  active: boolean;
+  auth_user_id: string | null;
+}
 
-  // 수업코드가 틀렸는지 학번이 틀렸는지 구분해 알려주지 않는다.
-  // 코드 하나만 가지고 명단을 캐내는 걸 막기 위해서.
-  const denied = () => json({ error: '수업코드 또는 학번이 명단과 맞지 않습니다.' }, 401);
-  if (!course) return denied();
-
-  const { data: student } = await admin
-    .from('students')
-    .select('id, name, student_no, active, auth_user_id')
-    .eq('course_id', course.id)
-    .eq('student_no', studentNo)
-    .maybeSingle();
-
-  if (!student || !student.active) return denied();
-
-  const email = emailFor(student.id);
+/**
+ * 명단이 맞은 학생에게 세션을 만들어 준다.
+ * 두 방식이 마지막에 함께 지나가는 길이다.
+ */
+async function issueSession(
+  admin: SupabaseClient,
+  url: string,
+  anonKey: string,
+  student: Student,
+  course: Course,
+) {
+  const email = authEmailFor(student.id);
   const password = freshPassword();
   const appMeta = {
     student_id: student.id,
@@ -92,7 +88,7 @@ Deno.serve(async (req) => {
     user_kind: 'student',
   };
 
-  let authUserId = student.auth_user_id as string | null;
+  let authUserId = student.auth_user_id;
 
   if (authUserId) {
     // 이미 만들어진 사용자 — 비밀번호를 새로 돌리고 클레임을 최신으로 맞춘다.
@@ -117,7 +113,7 @@ Deno.serve(async (req) => {
     });
     if (error || !created.user) {
       console.error('createUser 실패:', error?.message);
-      return json({ error: '계정을 준비하지 못했습니다. 교수님께 알려주세요.' }, 500);
+      return { error: json({ error: '계정을 준비하지 못했습니다. 교수님께 알려주세요.' }, 500) };
     }
     authUserId = created.user.id;
     await admin.from('students').update({ auth_user_id: authUserId }).eq('id', student.id);
@@ -132,20 +128,213 @@ Deno.serve(async (req) => {
 
   if (signInError || !session.session) {
     console.error('signInWithPassword 실패:', signInError?.message);
-    return json({ error: '로그인에 실패했습니다. 교수님께 알려주세요.' }, 500);
+    return { error: json({ error: '로그인에 실패했습니다. 교수님께 알려주세요.' }, 500) };
   }
 
+  return {
+    ok: {
+      access_token: session.session.access_token,
+      refresh_token: session.session.refresh_token,
+      student: { id: student.id, name: student.name, student_no: student.student_no },
+      course: { id: course.id, title: course.title, term: course.term, class_no: course.class_no },
+    },
+  };
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
+  if (req.method !== 'POST') return json({ error: 'POST 요청만 허용됩니다.' }, 405);
+
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return json({ error: '요청 형식이 올바르지 않습니다.' }, 400);
+  }
+
+  const joinCode = String(body.join_code ?? '').trim().toUpperCase();
+  const studentNo = String(body.student_no ?? '').trim();
+  const email = normEmail(String(body.email ?? ''));
+  const name = String(body.name ?? '').trim();
+  // 이름·학번이 여러 과목에 걸릴 때 학생이 고른 과목.
+  const pickedCourse = String(body.course_id ?? '').trim();
+
+  const url = Deno.env.get('SUPABASE_URL')!;
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+  const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
+
+  // ════════════════════════════════════════════════════════
+  //  옛 방식 — 수업코드 + 학번
+  // ════════════════════════════════════════════════════════
+  if (joinCode) {
+    if (!studentNo) return json({ error: '수업코드와 학번을 모두 입력하세요.' }, 400);
+
+    const { data: course } = await admin
+      .from('courses')
+      .select('id, title, term, class_no, entry_mode')
+      .eq('join_code', joinCode)
+      .maybeSingle();
+
+    // 수업코드가 틀렸는지 학번이 틀렸는지 구분해 알려주지 않는다.
+    // 코드 하나만 가지고 명단을 캐내는 걸 막기 위해서.
+    const denied = () => json({ error: '수업코드 또는 학번이 명단과 맞지 않습니다.' }, 401);
+    if (!course) return denied();
+
+    if (course.entry_mode === 'approval') {
+      return json({
+        error: '이 과목은 수업코드로 들어오지 않습니다. 이메일 · 학번 · 이름으로 들어오세요.',
+        use_approval: true,
+      }, 409);
+    }
+
+    const { data: student } = await admin
+      .from('students')
+      .select('id, name, student_no, active, auth_user_id')
+      .eq('course_id', course.id)
+      .eq('student_no', studentNo)
+      .maybeSingle();
+
+    if (!student || !student.active) return denied();
+
+    const r = await issueSession(admin, url, anonKey, student as Student, course as Course);
+    if (r.error) return r.error;
+
+    await admin.from('audit_log').insert({
+      actor: `student:${student.id}`,
+      action: 'student_login',
+      course_id: course.id,
+      detail: { student_no: student.student_no, mode: 'code' },
+    });
+
+    return json(r.ok);
+  }
+
+  // ════════════════════════════════════════════════════════
+  //  새 방식 — 이메일 + 학번 + 이름 → 명단 대조 → 승인
+  // ════════════════════════════════════════════════════════
+  if (!email || !studentNo || !name) {
+    return json({ error: '이메일 · 학번 · 이름을 모두 입력하세요.' }, 400);
+  }
+  if (!EMAIL_RE.test(email)) {
+    return json({ error: '이메일 주소를 다시 확인해 주세요.' }, 400);
+  }
+
+  // 학번으로 후보를 모은 뒤 이름으로 거른다. 이름은 공백을 지우고 본다.
+  const { data: rows } = await admin
+    .from('students')
+    .select('id, name, student_no, active, auth_user_id, course_id, courses(id, title, term, class_no, entry_mode)')
+    .eq('student_no', studentNo)
+    .eq('active', true);
+
+  type Row = Student & { course_id: string; courses: (Course & { entry_mode: string }) | null };
+  const candidates = ((rows ?? []) as unknown as Row[])
+    .filter((r) => r.courses && r.courses.entry_mode === 'approval')
+    .filter((r) => squash(r.name) === squash(name));
+
+  if (candidates.length === 0) {
+    // 명단에 없는 시도도 남긴다. 교수가 "누가 못 들어왔나" 를 볼 수 있어야 한다.
+    // 표를 따로 만들지 않는 이유 — 아무나 줄을 만들 수 있으면 그게 스팸이 된다.
+    await admin.from('audit_log').insert({
+      actor: `anon:${studentNo}`,
+      action: 'student_login_unmatched',
+      detail: { student_no: studentNo, name, email },
+    });
+    return json({
+      error: '명단에서 찾지 못했습니다. 학번과 이름을 다시 확인하고, 그래도 안 되면 교수님께 말씀하세요.',
+    }, 401);
+  }
+
+  // 여러 과목에 같은 학번·이름이 있으면 학생이 고른다.
+  let picked = candidates[0]!;
+  if (candidates.length > 1) {
+    if (!pickedCourse) {
+      return json({
+        need_course: true,
+        courses: candidates.map((c) => ({
+          id: c.courses!.id,
+          title: c.courses!.title,
+          term: c.courses!.term,
+          class_no: c.courses!.class_no,
+        })),
+      });
+    }
+    const hit = candidates.find((c) => c.course_id === pickedCourse);
+    if (!hit) return json({ error: '고른 과목을 찾지 못했습니다.' }, 400);
+    picked = hit;
+  }
+
+  const course = picked.courses!;
+
+  const { data: access } = await admin
+    .from('student_access')
+    .select('id, email, status')
+    .eq('course_id', course.id)
+    .eq('student_id', picked.id)
+    .maybeSingle();
+
+  // ── 아직 신청한 적이 없다 → 대기 줄을 만든다 ────────────
+  if (!access) {
+    await admin.from('student_access').insert({
+      course_id: course.id,
+      student_id: picked.id,
+      email,
+      status: 'pending',
+      requested_at: new Date().toISOString(),
+    });
+    await admin.from('audit_log').insert({
+      actor: `student:${picked.id}`,
+      action: 'student_access_requested',
+      course_id: course.id,
+      detail: { student_no: picked.student_no, email },
+    });
+    return json({ status: 'pending', course: { title: course.title, class_no: course.class_no } });
+  }
+
+  if (access.status === 'rejected') {
+    return json({ status: 'rejected', course: { title: course.title, class_no: course.class_no } });
+  }
+
+  if (access.status === 'pending') {
+    // 이메일을 고쳐서 다시 낼 수 있게 열어 둔다. 아직 승인 전이라 안전하다.
+    if (normEmail(access.email ?? '') !== email) {
+      await admin.from('student_access')
+        .update({ email, requested_at: new Date().toISOString() })
+        .eq('id', access.id);
+    }
+    return json({ status: 'pending', course: { title: course.title, class_no: course.class_no } });
+  }
+
+  // ── 승인됨 ───────────────────────────────────────────────
+  // 이메일이 아직 안 묶여 있으면(교수가 미리 승인해 둔 경우) 지금 묶는다.
+  // 이미 묶여 있으면 그것과 같아야 한다 — 승인 뒤의 두 번째 열쇠다.
+  const bound = normEmail(access.email ?? '');
+  if (bound && bound !== email) {
+    await admin.from('audit_log').insert({
+      actor: `student:${picked.id}`,
+      action: 'student_login_email_mismatch',
+      course_id: course.id,
+      detail: { student_no: picked.student_no, tried: email },
+    });
+    return json({
+      error: '승인받은 이메일과 다릅니다. 처음 넣은 주소로 들어오거나, 교수님께 말씀해 주세요.',
+    }, 401);
+  }
+
+  const r = await issueSession(admin, url, anonKey, picked, course);
+  if (r.error) return r.error;
+
+  await admin.from('student_access').update({
+    email: bound ? access.email : email,
+    last_login_at: new Date().toISOString(),
+  }).eq('id', access.id);
+
   await admin.from('audit_log').insert({
-    actor: `student:${student.id}`,
+    actor: `student:${picked.id}`,
     action: 'student_login',
     course_id: course.id,
-    detail: { student_no: student.student_no },
+    detail: { student_no: picked.student_no, mode: 'approval' },
   });
 
-  return json({
-    access_token: session.session.access_token,
-    refresh_token: session.session.refresh_token,
-    student: { id: student.id, name: student.name, student_no: student.student_no },
-    course: { id: course.id, title: course.title, term: course.term, class_no: course.class_no },
-  });
+  return json(r.ok);
 });

@@ -14,6 +14,7 @@ export type MenuKey =
   | 'dashboard'
   | 'roster'
   | 'match'
+  | 'access'
   | 'teams'
   | 'weeks'
   | 'notices'
@@ -47,6 +48,7 @@ export type IconName =
   | 'chart'
   | 'people'
   | 'compare'
+  | 'key'
   | 'team'
   | 'calendar'
   | 'megaphone'
@@ -74,6 +76,7 @@ export function buildMenu(course: Course): MenuGroup[] {
       items: [
         { key: 'roster', label: '수강생 관리', icon: 'people', hint: '명단 · 제외 · 복귀' },
         { key: 'match', label: '명단 대조', icon: 'compare', hint: '학교 LMS 명단과 맞추기' },
+        { key: 'access', label: '입장 승인', icon: 'key', hint: '이메일 · 학번 · 이름 대조' },
         { key: 'teams', label: '팀 편성', icon: 'team', hint: '팀 만들기 · 배정' },
       ],
     },

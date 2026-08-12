@@ -6,8 +6,10 @@
 `Could not find the table 'public.course_weeks' in the schema cache` 가 나온다.
 `courses` 의 `peer_assessment` · `project_mode` 칸도 없다.
 
-그러니 **`0006` → `0007` → `0008` → `0009` 를 순서대로** 올려야 한다.
+그러니 **`0006` → `0007` → `0008` → `0009` → `0010` 을 순서대로** 올려야 한다.
 앞 단계가 실패하면 다음으로 넘어가지 말 것 — 뒤 파일이 앞 파일이 만든 표를 고친다.
+
+`0010` 은 **Edge Function 재배포**까지 해야 끝난다. 아래 3-2 절을 꼭 읽을 것.
 
 시드(`2026-1-courses.sql`)는 **실행하지 않아도 된다.** 과목 6개를 이미 앱에서
 직접 만들어 뒀다(학기 `202620`). 시드를 돌리면 같은 과목이 한 벌 더 생긴다.
@@ -137,6 +139,75 @@ select course_overview((select id from courses limit 1));
 -- 아래는 한 줄만 나와야 한다 (학생용 정책 하나)
 select policyname from pg_policies where tablename = 'survey_answers';
 ```
+
+## 3-2. `0010` — 학생 입장 승인 ⚠️ 순서가 중요하다
+
+수업코드 대신 **이메일 + 학번 + 이름 + 교수 승인**으로 바꾸는 단계다.
+세 가지를 **이 순서로** 해야 학생이 잠기지 않는다.
+
+### ① SQL 올리기
+
+`supabase/migrations/0010_student_access.sql` 을 SQL Editor 에서 실행한다.
+`courses.entry_mode` (기본 `approval`), `student_access` 표,
+`approve_all_access()` · `access_list()` · `set_access_status()` ·
+`clear_access_email()` 이 생긴다.
+
+**이 순간부터 모든 과목이 승인 방식이 된다.** 아직 아무도 승인돼 있지 않으므로
+학생은 못 들어온다. 그래서 ② 를 바로 이어서 한다.
+
+### ② 과목마다 "명단 전원 승인"
+
+앱에서 과목을 열고 **수강생 → 입장 승인 → 명단 전원 승인**.
+명단에 있는 학생이 전부 `approved` 가 되고, 이메일은 비어 있다.
+학생이 **첫 로그인 할 때 넣는 주소가 그 학생의 이메일로 묶인다.**
+
+SQL 로 한 번에 하려면:
+
+```sql
+-- 모든 과목의 명단을 통째로 미리 승인한다
+insert into student_access (course_id, student_id, status, decided_at)
+select s.course_id, s.id, 'approved', now()
+  from students s where s.active
+on conflict (course_id, student_id) do nothing;
+```
+
+급하면 특정 과목만 옛 방식으로 돌려도 된다:
+
+```sql
+update courses set entry_mode = 'code' where title = '자원관리능력';
+```
+
+### ③ Edge Function 재배포
+
+**SQL 만 올리면 학생 로그인은 옛 코드 그대로다.** 함수를 다시 올려야 한다.
+
+```bash
+npx supabase login
+npx supabase link --project-ref aujvpcpjpgxghxmsheur
+npx supabase functions deploy student-login
+```
+
+CLI 를 안 쓴다면 대시보드 → **Edge Functions → student-login → 코드 붙여넣고 Deploy**.
+`supabase/functions/student-login/index.ts` 를 통째로 복사하면 된다.
+
+### 확인
+
+```sql
+-- 입장 방식 (전부 approval 이어야 한다)
+select title, class_no, entry_mode from courses order by title;
+
+-- 미리 승인이 들어갔나 (명단 인원과 같아야 한다)
+select c.title, count(*) filter (where a.status = 'approved') as approved, count(s.*) as roster
+  from students s
+  join courses c on c.id = s.course_id
+  left join student_access a on a.student_id = s.id
+ where s.active
+ group by c.title order by c.title;
+```
+
+그리고 앱에서 학생 화면으로 들어가 **이메일 · 학번 · 이름**을 넣어 본다.
+바로 들어가면 ②·③ 이 제대로 된 것이다. "승인을 기다리는 중" 이 나오면 ② 가
+안 된 것이고, "수업코드 또는 학번이…" 가 나오면 ③ 이 안 된 것이다.
 
 ## 4. 잘 올라갔는지 확인
 
