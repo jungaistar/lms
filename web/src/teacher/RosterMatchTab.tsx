@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
 import { downloadCsv, downloadXlsx, type SheetTable } from '../lib/exporters';
+import { pickName } from '../lib/extTasks';
 import type { Student } from '../lib/types';
 
 /**
@@ -19,6 +20,10 @@ interface Parsed {
   line: number;
 }
 
+/**
+ * 이름 고르기는 `extTasks.pickName` 을 쓴다. 여기서 따로 찾으면 두 곳이 어긋난다 —
+ * 실제로 어긋나서 학교 LMS 표의 이름이 전부 "학부" 로 잡혔다.
+ */
 function parsePaste(text: string): Parsed[] {
   return text
     .split('\n')
@@ -29,8 +34,7 @@ function parsePaste(text: string): Parsed[] {
         ? raw.split('\t').map((c) => c.trim())
         : raw.split(/\s{2,}|,|\s+/).map((c) => c.trim());
       const studentNo = cells.find((c) => /^\d{6,12}$/.test(c));
-      const name = cells.find((c) => c !== studentNo && /^[가-힣]{2,6}$/.test(c)) ?? null;
-      return studentNo ? { studentNo, name, line: i + 1 } : null;
+      return studentNo ? { studentNo, name: pickName(cells, studentNo), line: i + 1 } : null;
     })
     .filter((x): x is Parsed => x !== null);
 }

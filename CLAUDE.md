@@ -123,8 +123,12 @@ cd bridge && npm run push -- --csv "...성적.csv" --dry-run
 
 ## 현재 상태 (2026-08-12)
 
-- Supabase 프로젝트 `aujvpcpjpgxghxmsheur` 에 `0001`~`0008` 적용 완료,
+- Supabase 프로젝트 `aujvpcpjpgxghxmsheur` 에는 **`0001`~`0005` 만 올라가 있다.**
+  2026-08-12 에 앱에서 직접 확인했다 — 주차 화면이
+  `Could not find the table 'public.course_weeks'` 를 낸다.
+  문서에 "적용 완료" 라고 적혀 있어도 **DB 를 믿을 것.**
   `student-login` 함수 배포 완료, 공개 회원가입 차단 완료
+- 과목 6개는 시드가 아니라 앱에서 직접 만든 것이다 (학기 `202620`)
 - GitHub Pages 배포 동작 중 (저장소 Secrets 에 URL/anon key 등록됨)
 - **실제 프로젝트 대상 end-to-end 검증 27항목 통과** — 배정(자기 팀 제외),
   학생 로그인, 평가 제출, 만점 초과 거부, RLS 격리, 집계·감점 계산,
@@ -133,9 +137,10 @@ cd bridge && npm run push -- --csv "...성적.csv" --dry-run
 
 ### 아직 안 된 것
 
-1. **`0009_admin_console.sql` 미적용.** 대시보드·설문·프로젝트 집계표·
-   과제 제출현황은 이 마이그레이션이 올라가야 동작한다. 절차는
-   `docs/11-migrate.md` 3-1 절.
+1. **`0006` · `0007` · `0008` · `0009` 미적용.** 수업 운영(주차·공지·자료·과제·
+   출석·성적)과 관리자 콘솔의 새 화면이 전부 여기에 걸려 있다.
+   순서대로 올려야 한다 — 절차는 `docs/11-migrate.md`.
+   `0006` 을 올린 뒤 팀 프로젝트 과목의 `project_mode` 를 `team` 으로 고칠 것.
 2. 학교 LMS **성적 입력**은 화면 셀렉터 미확인으로 잠김
    (`SELECTORS_VERIFIED = false`). `TODO(selector)` 주석이 남은 자리다.
 

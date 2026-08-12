@@ -37,16 +37,46 @@ const STUDENT_NO = /^\d{6,12}$/;
 /** 한글 이름. 성만 두 글자인 경우까지 보려고 2~6자로 잡는다. */
 const KOREAN_NAME = /^[가-힣]{2,6}$/;
 
+/**
+ * 이름처럼 생겼지만 이름이 아닌 낱말.
+ *
+ * 학교 LMS 표에는 학번 앞에 "학부 · 3" 같은 칸이 붙는다. 이걸 거르지 않으면
+ * 모든 학생 이름이 "학부" 가 된다 — 실제로 그렇게 나왔다.
+ */
+const NOT_A_NAME = new Set([
+  '학부', '대학', '대학교', '학과', '전공', '본교', '분교', '계열',
+  '학년', '학번', '이름', '성명', '구분', '학생', '교수', '조교', '청강',
+  '재학', '휴학', '졸업', '제출', '미제출', '지각', '결석', '출석',
+  '조회', '보기', '채점', '완료', '없음',
+]);
+
 function findStudentNo(cells: string[]): string | null {
   return cells.find((c) => STUDENT_NO.test(c.replace(/\s/g, ''))) ?? null;
 }
 
-function findName(cells: string[], skip: string | null): string | null {
-  return (
-    cells.find(
-      (c) => c !== skip && KOREAN_NAME.test(c) && !['학부', '학과', '제출', '미제출', '지각', '조회', '보기'].includes(c),
-    ) ?? null
-  );
+const looksLikeName = (c: string | undefined): c is string =>
+  !!c && KOREAN_NAME.test(c) && !NOT_A_NAME.has(c);
+
+/**
+ * 학번 칸을 기준으로 이름을 고른다.
+ *
+ * 학교 LMS 표는 예외 없이 **학번 다음 칸이 이름**이다. 그래서 뒤쪽을 먼저 본다.
+ * "이름 학번" 순서로 붙여넣는 경우가 있어 없으면 앞쪽도 훑는다.
+ */
+export function pickName(cells: string[], studentNo: string | null): string | null {
+  const at = studentNo ? cells.indexOf(studentNo) : -1;
+  if (at < 0) return cells.find(looksLikeName) ?? null;
+
+  // 인덱스로 꺼낸 값은 타입이 좁혀지지 않아 한 번 받아서 본다.
+  for (let i = at + 1; i < cells.length; i += 1) {
+    const c = cells[i];
+    if (looksLikeName(c)) return c;
+  }
+  for (let i = at - 1; i >= 0; i -= 1) {
+    const c = cells[i];
+    if (looksLikeName(c)) return c;
+  }
+  return null;
 }
 
 // ════════════════════════════════════════════════════════════
@@ -109,7 +139,7 @@ export function parseTaskCounts(text: string): CountParseResult {
 
     rows.push({
       studentNo: studentNo.replace(/\s/g, ''),
-      name: findName(cells, studentNo),
+      name: pickName(cells, studentNo),
       submitted,
       total,
       missing: total - submitted,
@@ -192,7 +222,7 @@ export function parseTaskDetail(text: string, dueAt?: string | null): DetailPars
       return;
     }
 
-    const name = findName(cells, studentNo);
+    const name = pickName(cells, studentNo);
     const submittedAt = readWhen(cells);
 
     // 학번·이름 칸에서 상태를 읽지 않도록 나머지 칸만 본다.

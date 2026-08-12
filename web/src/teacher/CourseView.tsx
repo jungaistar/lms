@@ -39,6 +39,8 @@ export default function CourseView() {
   const [params, setParams] = useSearchParams();
   const [course, setCourse] = useState<Course | null>(null);
   const [error, setError] = useState<string | null>(null);
+  /** 0006 이 아직 안 올라간 프로젝트인지. 화면마다 다른 오류가 나기 전에 한 번 알려 준다. */
+  const [opsReady, setOpsReady] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -49,8 +51,19 @@ export default function CourseView() {
         .select('*')
         .eq('id', courseId!)
         .single();
-      if (err) setError(err.message);
-      else setCourse(data as Course);
+      if (err) return setError(err.message);
+
+      // 0006 이 안 올라간 프로젝트에서는 이 칸들이 아예 오지 않는다.
+      // 그대로 쓰면 화면에 "undefined" 가 찍히고 메뉴가 엉뚱하게 갈린다.
+      // DB 기본값과 같은 값으로 메워 두고, 안 올라갔다는 사실은 따로 알린다.
+      const row = data as Partial<Course> & Course;
+      setOpsReady(row.project_mode !== undefined);
+      setCourse({
+        ...row,
+        peer_assessment: row.peer_assessment ?? true,
+        project_mode: row.project_mode ?? 'individual',
+        ext_lms_url: row.ext_lms_url ?? null,
+      });
     })();
   }, [courseId, nav]);
 
@@ -78,13 +91,26 @@ export default function CourseView() {
         en={`${course.term}${course.class_no ? ` · ${course.class_no}반` : ''}`}
         desc={
           `수업코드 ${course.join_code} — 학생이 학번과 함께 입력합니다. · ` +
-          `${PROJECT_MODE_LABEL[course.project_mode]}` +
+          `${PROJECT_MODE_LABEL[course.project_mode] ?? '프로젝트 설정 없음'}` +
           `${course.peer_assessment ? ' · 상호평가 사용' : ' · 상호평가 없음'}`
         }
         actions={<Link className="btn btn-on-hero btn-sm" to="/teacher">← 내 과목</Link>}
         gradient
       />
       <div className="container wide">
+        {!opsReady && (
+          <div className="alert alert-warn">
+            <b>수업 운영 표가 아직 없습니다.</b>
+            <p className="small" style={{ margin: '6px 0 0' }}>
+              이 Supabase 프로젝트에는 <code>0001</code>~<code>0005</code> 만 올라가 있습니다.
+              주차 · 공지 · 자료 · 과제 · 출석 · 성적 · 설문 화면은 표가 없어서 동작하지 않습니다.
+              Supabase SQL Editor 에서 <b>0006 → 0007 → 0008 → 0009</b> 를 순서대로 실행해 주세요
+              (<code>docs/11-migrate.md</code>).
+              지금 쓸 수 있는 것은 <b>수강생 관리 · 명단 대조 · 팀 편성 · 루브릭 · 평가 활동</b> 입니다.
+            </p>
+          </div>
+        )}
+
         <AdminShell groups={groups} current={current} onSelect={go}>
           <div className="admin-head">
             <h2>{item?.label ?? '대시보드'}</h2>
