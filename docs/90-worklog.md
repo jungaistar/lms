@@ -7,6 +7,43 @@
 
 ---
 
+## 2026-08-20 (주소) — `lms.miraejob.co.kr` 로 옮길 준비
+
+`miraejob.co.kr` 을 Cloudflare 로 연결해 두었다. 앞으로 저장소마다
+`<저장소명>.miraejob.co.kr` 을 쓴다. 이 저장소는 `lms.miraejob.co.kr`.
+
+### DNS 를 먼저 읽어 봤다 (2026-08-20)
+
+| 이름 | 값 |
+|---|---|
+| `miraejob.co.kr` | A `185.199.108~111.153` — GitHub Pages apex 4개 |
+| `www` | CNAME `jungaistar.github.io` (프록시 꺼짐) |
+| `lms` | **없음 (NXDOMAIN)** — 이것만 없어서 안 떴다 |
+
+apex 와 `www` 는 이미 GitHub 을 가리키는데 `lms` 만 비어 있었다.
+와일드카드도 없다.
+
+### 코드에서 고친 것
+
+- `web/public/CNAME` 을 새로 만들었다. Vite 가 `public/` 을 `dist/` 뿌리로 복사한다.
+- `vite.config.ts` 의 `base` 를 `/lms/` → **상대 경로 `./`** 로 바꿨다.
+  `/lms/` 로 박아 두면 도메인 주소에서 자산이 404 나고, `/` 로 박으면 github.io
+  주소가 깨진다. 상대 경로면 **둘 다 그대로 돌아서 갈아끼우는 동안 화면이 안 죽는다.**
+  HashRouter 라 문서가 언제나 그 자리 index.html 하나뿐이어서 기준점이 안 흔들린다.
+- 반응형 점검 도구가 iframe 주소를 `'/lms/' + route` 로 박고 있었다.
+  지금 경로에서 되짚도록 고쳤다 — 안 그러면 도메인 쪽에서 빈 iframe 이 뜬다.
+- `index.html` 에 `og:url` · `canonical` 을 넣었다.
+- 절차는 `docs/60-domain.md` 에 남겼다.
+
+### 남은 것 — 사람이 눌러야 한다
+
+1. Cloudflare `miraejob.co.kr` → DNS → CNAME `lms` → `jungaistar.github.io`,
+   **DNS only(회색 구름)**. 주황 구름이면 GitHub 이 인증서를 못 받는다.
+2. 저장소 `Settings → Pages → Custom domain` 에 `lms.miraejob.co.kr` → Save →
+   초록불 뒤 `Enforce HTTPS`. **Actions 배포라 `CNAME` 파일만으로는 안 켜진다.**
+
+---
+
 ## 2026-08-12 (명단) — 학교 LMS 에서 6과목 199명 받아 넣기
 
 ### 어디서 받았나

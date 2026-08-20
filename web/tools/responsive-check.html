@@ -11,7 +11,7 @@
 
   쓰는 법
     cd web && npm run build && npm run responsive
-    → http://localhost:4173/lms/responsive-check/ 를 연다
+    → http://localhost:4173/responsive-check/ 를 연다
 
   주소로 바로 지정할 수도 있다.
     ?d=390x844&r=%23/teacher/course/<id>%3Fm%3Dlive
@@ -61,7 +61,11 @@
     box.innerHTML = '<b>' + w + ' x ' + h + '</b>';
     const f = document.createElement('iframe');
     f.width = w; f.height = h;
-    f.src = '/lms/' + route;
+    // 앱의 뿌리는 이 페이지에서 한 칸 위다. 주소를 박아 두면 사용자 지정
+    // 도메인(/responsive-check/)과 github.io(/lms/responsive-check/) 중
+    // 한쪽에서 빈 iframe 이 뜬다 — 그래서 지금 경로에서 되짚는다.
+    const appBase = location.pathname.replace(/responsive-check\/[^/]*$/, '');
+    f.src = appBase + route;
     box.appendChild(f);
     stage.appendChild(box);
   }
