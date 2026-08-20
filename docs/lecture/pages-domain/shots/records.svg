@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" width="100%" preserveAspectRatio="xMidYMid meet">
+<title>레코드 종류</title><desc>루트와 서브도메인의 레코드 차이</desc>
+<style>
+  text{font-family:'Nanum Gothic','Malgun Gothic','Noto Sans KR','Apple SD Gothic Neo',sans-serif;}
+  .m{font-family:'NanumGothicCoding','D2Coding','Consolas','Courier New',monospace;}
+  .b{font-weight:700;}
+  .s10{font-size:10px}.s11{font-size:11px}.s12{font-size:12px}.s13{font-size:13px}
+  .s14{font-size:14px}.s16{font-size:16px}.s18{font-size:18px}.s20{font-size:20px}
+  .s24{font-size:24px}.s28{font-size:28px}
+  .fg{fill:#24292F}.fm{fill:#5B6B7C}.fw{fill:#FFFFFF}.fb{fill:#0969DA}
+  .fo{fill:#F26B21}.fn{fill:#0E2A47}.fgr{fill:#1A7F37}.fr{fill:#C4341C}
+</style>
+<rect x="0" y="0" width="1000" height="400" fill="#FFFFFF"/>
+<rect x="20" y="20" width="470" height="300" rx="12" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><rect x="20" y="20" width="470" height="44" rx="12" fill="#0E2A47"/><rect x="20" y="50" width="470" height="14" fill="#0E2A47"/><text x="44" y="50" class="s14 b fw">루트 도메인 (apex)</text><text x="44" y="100" class="s14 b fn">예)  내도메인.kr</text><text x="44" y="130" class="s12 fm">CNAME 을 쓸 수 없다 (규격상 금지)</text><rect x="44" y="150" width="420" height="150" rx="8" fill="#F4F6F9" stroke="#D9E0E8" stroke-width="1"/><text x="64" y="178" class="s12 b fn">A 레코드 4개</text><text x="64" y="206" class="s12 m fg">185.199.108.153     185.199.110.153</text><text x="64" y="230" class="s12 m fg">185.199.109.153     185.199.111.153</text><text x="64" y="262" class="s11 m fm">AAAA 4개 (선택)  2606:50c0:8000::153 …</text><rect x="510" y="20" width="470" height="300" rx="12" fill="#FFFFFF" stroke="#F26B21" stroke-width="2"/><rect x="510" y="20" width="470" height="44" rx="12" fill="#F26B21"/><rect x="510" y="50" width="470" height="14" fill="#F26B21"/><text x="534" y="50" class="s14 b fw">서브도메인   ← 권장</text><text x="534" y="100" class="s14 b fn">예)  lms.내도메인.kr</text><text x="534" y="130" class="s12 fm">CNAME 한 줄이면 끝. IP 가 바뀌어도 손댈 일 없다</text><rect x="534" y="150" width="420" height="150" rx="8" fill="#FFF8F2" stroke="#F5D3B8" stroke-width="1"/><text x="554" y="178" class="s12 b fn">CNAME 레코드 1개</text><text x="554" y="208" class="s13 m fg">이름   lms</text><text x="554" y="236" class="s13 m fg">값     사용자이름.github.io</text><text x="554" y="272" class="s11 b fo">저장소 이름은 붙이지 않는다</text><rect x="20" y="336" width="960" height="40" rx="10" fill="#FDEEEB" stroke="#F0BDB2" stroke-width="1"/><text x="44" y="362" class="s12 b fr">Cloudflare 를 쓴다면 프록시(주황 구름)를 끄고 DNS only(회색)로 둔다 — 켜두면 인증서가 발급되지 않는다</text>
+</svg>

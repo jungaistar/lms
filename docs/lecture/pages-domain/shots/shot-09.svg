@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="100%" preserveAspectRatio="xMidYMid meet">
+<title>STEP 8 A 레코드 4줄</title><desc>루트 도메인에 A 레코드 넣기</desc>
+<style>
+  text{font-family:'Nanum Gothic','Malgun Gothic','Noto Sans KR','Apple SD Gothic Neo',sans-serif;}
+  .m{font-family:'NanumGothicCoding','D2Coding','Consolas','Courier New',monospace;}
+  .b{font-weight:700;}
+  .s10{font-size:10px}.s11{font-size:11px}.s12{font-size:12px}.s13{font-size:13px}
+  .s14{font-size:14px}.s16{font-size:16px}.s18{font-size:18px}.s20{font-size:20px}
+  .s24{font-size:24px}.s28{font-size:28px}
+  .fg{fill:#24292F}.fm{fill:#5B6B7C}.fw{fill:#FFFFFF}.fb{fill:#0969DA}
+  .fo{fill:#F26B21}.fn{fill:#0E2A47}.fgr{fill:#1A7F37}.fr{fill:#C4341C}
+</style>
+<rect x="0" y="0" width="900" height="560" fill="#FFFFFF"/>
+
+<rect x="8" y="8" width="884" height="544" rx="12" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1.5"/>
+<path d="M8 20a12 12 0 0 1 12-12h860a12 12 0 0 1 12 12v60H8z" fill="#EDF1F5"/>
+<circle cx="34" cy="30" r="6" fill="#FF5F57"/><circle cx="54" cy="30" r="6" fill="#FEBC2E"/><circle cx="74" cy="30" r="6" fill="#28C840"/>
+<rect x="28" y="52" width="836" height="24" rx="12" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/>
+<text x="46" y="69" class="s12 m fm">dash.cloudflare.com  →  DNS  →  Add record</text>
+<rect x="8" y="84" width="884" height="44" fill="#F38020"/>
+<rect x="8" y="128" width="884" height="424" fill="#FFFFFF"/><text x="30" y="112" class="s12 b fw">루트 도메인용 A 레코드</text><rect x="36" y="160" width="828" height="110" rx="10" fill="#FAFBFC" stroke="#D9E0E8" stroke-width="1"/><text x="60" y="192" class="s11 b fm">Type</text><rect x="60" y="202" width="90" height="34" rx="6" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><text x="72" y="224" class="s12 fg">A  ▾</text><text x="176" y="192" class="s11 b fm">Name</text><rect x="176" y="202" width="90" height="34" rx="6" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><text x="188" y="224" class="s12 m fg">@</text><text x="292" y="192" class="s11 b fm">IPv4 address</text><rect x="292" y="202" width="230" height="34" rx="6" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><text x="304" y="224" class="s12 m fg">185.199.108.153</text><rect x="560" y="204" width="56" height="30" rx="15" fill="#E5E9F2"/><circle cx="575" cy="219" r="11" fill="#FFFFFF" stroke="#C7D2E4"/><text x="624" y="224" class="s12 b fgr">DNS only</text><rect x="724" y="202" width="120" height="34" rx="6" fill="#F26B21"/><text x="784" y="224" text-anchor="middle" class="s13 b fw">Save</text><rect x="172" y="198" width="98" height="42" rx="6" fill="none" stroke="#F26B21" stroke-width="3"/><circle cx="221" cy="268" r="14" fill="#F26B21"/><text x="221" y="273" text-anchor="middle" class="s14 b fw">1</text><rect x="288" y="198" width="238" height="42" rx="6" fill="none" stroke="#F26B21" stroke-width="3"/><circle cx="407" cy="268" r="14" fill="#F26B21"/><text x="407" y="273" text-anchor="middle" class="s14 b fw">2</text><rect x="36" y="300" width="828" height="120" rx="8" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><text x="60" y="330" class="s13 b fn">네 번 반복해서 넣는 IP</text><rect x="60" y="346" width="180" height="44" rx="8" fill="#F4F6F9" stroke="#D9E0E8" stroke-width="1"/><text x="150" y="374" text-anchor="middle" class="s12 m fg">185.199.108.153</text><rect x="256" y="346" width="180" height="44" rx="8" fill="#F4F6F9" stroke="#D9E0E8" stroke-width="1"/><text x="346" y="374" text-anchor="middle" class="s12 m fg">185.199.109.153</text><rect x="452" y="346" width="180" height="44" rx="8" fill="#F4F6F9" stroke="#D9E0E8" stroke-width="1"/><text x="542" y="374" text-anchor="middle" class="s12 m fg">185.199.110.153</text><rect x="648" y="346" width="180" height="44" rx="8" fill="#F4F6F9" stroke="#D9E0E8" stroke-width="1"/><text x="738" y="374" text-anchor="middle" class="s12 m fg">185.199.111.153</text><rect x="36" y="450" width="560" height="26" rx="13" fill="#FFF1E7" stroke="#F26B21" stroke-width="1"/><text x="50" y="468" class="s13 b fo">서브도메인만 쓸 거라면 이 장은 건너뛴다</text>
+</svg>

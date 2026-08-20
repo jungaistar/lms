@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="100%" preserveAspectRatio="xMidYMid meet">
+<title>STEP 2 Pages 메뉴</title><desc>Settings 왼쪽 메뉴에서 Pages</desc>
+<style>
+  text{font-family:'Nanum Gothic','Malgun Gothic','Noto Sans KR','Apple SD Gothic Neo',sans-serif;}
+  .m{font-family:'NanumGothicCoding','D2Coding','Consolas','Courier New',monospace;}
+  .b{font-weight:700;}
+  .s10{font-size:10px}.s11{font-size:11px}.s12{font-size:12px}.s13{font-size:13px}
+  .s14{font-size:14px}.s16{font-size:16px}.s18{font-size:18px}.s20{font-size:20px}
+  .s24{font-size:24px}.s28{font-size:28px}
+  .fg{fill:#24292F}.fm{fill:#5B6B7C}.fw{fill:#FFFFFF}.fb{fill:#0969DA}
+  .fo{fill:#F26B21}.fn{fill:#0E2A47}.fgr{fill:#1A7F37}.fr{fill:#C4341C}
+</style>
+<rect x="0" y="0" width="900" height="560" fill="#FFFFFF"/>
+
+<rect x="8" y="8" width="884" height="544" rx="12" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1.5"/>
+<path d="M8 20a12 12 0 0 1 12-12h860a12 12 0 0 1 12 12v60H8z" fill="#EDF1F5"/>
+<circle cx="34" cy="30" r="6" fill="#FF5F57"/><circle cx="54" cy="30" r="6" fill="#FEBC2E"/><circle cx="74" cy="30" r="6" fill="#28C840"/>
+<rect x="28" y="52" width="836" height="24" rx="12" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/>
+<text x="46" y="69" class="s12 m fm">github.com/사용자이름/저장소/settings</text>
+<rect x="8" y="84" width="884" height="44" fill="#24292F"/>
+<circle cx="42" cy="106" r="13" fill="#FFFFFF"/><circle cx="42" cy="106" r="9" fill="#24292F"/>
+<rect x="68" y="94" width="250" height="24" rx="6" fill="#24292F" stroke="#57606A" stroke-width="1"/>
+<text x="82" y="110" class="s11"fill="#8B949E">Type / to search</text>
+<rect x="8" y="128" width="884" height="424" fill="#FFFFFF"/><text x="46" y="170" class="s10 b fm">ACCESS</text><text x="52" y="197" class="s12 fg">Collaborators</text><text x="52" y="225" class="s12 fg">Moderation</text><text x="46" y="252" class="s10 b fm">CODE, PLANNING, AND AUTOMATION</text><text x="52" y="279" class="s12 fg">Branches</text><text x="52" y="307" class="s12 fg">Tags</text><text x="52" y="335" class="s12 fg">Rulesets</text><text x="52" y="363" class="s12 fg">Actions</text><text x="52" y="391" class="s12 fg">Webhooks</text><text x="52" y="419" class="s12 fg">Environments</text><text x="52" y="447" class="s12 fg">Codespaces</text><rect x="36" y="458" width="210" height="26" rx="6" fill="#EFF2F5"/><rect x="34" y="458" width="3" height="26" rx="2" fill="#0969DA"/><text x="52" y="475" class="s12 b fg">Pages</text><rect x="276" y="152" width="588" height="376" rx="8" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><text x="300" y="186" class="s16 b fg">General</text><text x="300" y="222" class="s12 b fg">Repository name</text><rect x="300" y="232" width="240" height="28" rx="6" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><text x="314" y="251" class="s12 fg">저장소</text><text x="300" y="296" class="s14 b fg">Default branch</text><rect x="300" y="308" width="240" height="28" rx="6" fill="#F4F6F9" stroke="#D9E0E8" stroke-width="1"/><text x="314" y="327" class="s12 m fg">main</text><rect x="31" y="455" width="220" height="32" rx="6" fill="none" stroke="#F26B21" stroke-width="3"/><circle cx="272" cy="471" r="14" fill="#F26B21"/><text x="272" y="476" text-anchor="middle" class="s14 b fw">1</text><rect x="300" y="478" width="470" height="26" rx="13" fill="#FFF1E7" stroke="#F26B21" stroke-width="1"/><text x="314" y="496" class="s13 b fo">메뉴가 길다 — Codespaces 바로 아래</text>
+</svg>

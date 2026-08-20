@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="100%" preserveAspectRatio="xMidYMid meet">
+<title>STEP 11 DNS 검사 실패</title><desc>InvalidDNSError 화면과 원인 세 가지</desc>
+<style>
+  text{font-family:'Nanum Gothic','Malgun Gothic','Noto Sans KR','Apple SD Gothic Neo',sans-serif;}
+  .m{font-family:'NanumGothicCoding','D2Coding','Consolas','Courier New',monospace;}
+  .b{font-weight:700;}
+  .s10{font-size:10px}.s11{font-size:11px}.s12{font-size:12px}.s13{font-size:13px}
+  .s14{font-size:14px}.s16{font-size:16px}.s18{font-size:18px}.s20{font-size:20px}
+  .s24{font-size:24px}.s28{font-size:28px}
+  .fg{fill:#24292F}.fm{fill:#5B6B7C}.fw{fill:#FFFFFF}.fb{fill:#0969DA}
+  .fo{fill:#F26B21}.fn{fill:#0E2A47}.fgr{fill:#1A7F37}.fr{fill:#C4341C}
+</style>
+<rect x="0" y="0" width="900" height="560" fill="#FFFFFF"/>
+
+<rect x="8" y="8" width="884" height="544" rx="12" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1.5"/>
+<path d="M8 20a12 12 0 0 1 12-12h860a12 12 0 0 1 12 12v60H8z" fill="#EDF1F5"/>
+<circle cx="34" cy="30" r="6" fill="#FF5F57"/><circle cx="54" cy="30" r="6" fill="#FEBC2E"/><circle cx="74" cy="30" r="6" fill="#28C840"/>
+<rect x="28" y="52" width="836" height="24" rx="12" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/>
+<text x="46" y="69" class="s12 m fm">github.com/사용자이름/저장소/settings/pages</text>
+<rect x="8" y="84" width="884" height="44" fill="#24292F"/>
+<circle cx="42" cy="106" r="13" fill="#FFFFFF"/><circle cx="42" cy="106" r="9" fill="#24292F"/>
+<rect x="68" y="94" width="250" height="24" rx="6" fill="#24292F" stroke="#57606A" stroke-width="1"/>
+<text x="82" y="110" class="s11"fill="#8B949E">Type / to search</text>
+<rect x="8" y="128" width="884" height="424" fill="#FFFFFF"/><rect x="36" y="146" width="828" height="40" rx="8" fill="#FDEEEB" stroke="#F0BDB2" stroke-width="1"/><text x="60" y="171" class="s12 fr">Domain lms.내도메인.kr is not eligible for HTTPS at this time.</text><text x="36" y="222" class="s14 b fg">Custom domain</text><rect x="36" y="236" width="320" height="34" rx="6" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><text x="52" y="259" class="s12 m fg">lms.내도메인.kr</text><rect x="370" y="236" width="80" height="34" rx="6" fill="#F4F6F9" stroke="#D9E0E8" stroke-width="1"/><text x="410" y="259" text-anchor="middle" class="s12 fg">Save</text><rect x="462" y="236" width="92" height="34" rx="6" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><text x="508" y="259" text-anchor="middle" class="s12 fr">Remove</text><text x="36" y="296" class="s12 b fr">⚠ DNS check unsuccessful</text><rect x="36" y="308" width="828" height="64" rx="8" fill="#FFF8E5" stroke="#EAC54F" stroke-width="1"/><text x="60" y="334" class="s12 b"fill="#8A6100">lms.내도메인.kr is improperly configured</text><text x="60" y="356" class="s11"fill="#6B5520">Domain's DNS record could not be retrieved. (InvalidDNSError)</text><rect x="700" y="322" width="140" height="36" rx="6" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><text x="770" y="345" text-anchor="middle" class="s12 fg">Check again</text><rect x="32" y="286" width="300" height="24" rx="12" fill="none" stroke="#F26B21" stroke-width="3"/><circle cx="14" cy="298" r="14" fill="#F26B21"/><text x="14" y="303" text-anchor="middle" class="s14 b fw">1</text><rect x="696" y="318" width="148" height="44" rx="6" fill="none" stroke="#F26B21" stroke-width="3"/><circle cx="886" cy="340" r="14" fill="#F26B21"/><text x="886" y="345" text-anchor="middle" class="s14 b fw">2</text><rect x="36" y="400" width="264" height="112" rx="8" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><circle cx="64" cy="430" r="13" fill="#0E2A47"/><text x="64" y="435" text-anchor="middle" class="s12 b fw">1</text><text x="86" y="435" class="s12 b fn">레코드가 아직 안 퍼졌다</text><text x="56" y="472" class="s11 fm">STEP 9 조회로 확인 → 기다린다</text><rect x="316" y="400" width="264" height="112" rx="8" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><circle cx="344" cy="430" r="13" fill="#0E2A47"/><text x="344" y="435" text-anchor="middle" class="s12 b fw">2</text><text x="366" y="435" class="s12 b fn">프록시가 켜져 있다</text><text x="336" y="472" class="s11 fm">조회가 104·172.67 → 회색 구름</text><rect x="596" y="400" width="264" height="112" rx="8" fill="#FFFFFF" stroke="#D9E0E8" stroke-width="1"/><circle cx="624" cy="430" r="13" fill="#0E2A47"/><text x="624" y="435" text-anchor="middle" class="s12 b fw">3</text><text x="646" y="435" class="s12 b fn">GitHub 이 옛 실패를 캐시</text><text x="616" y="472" class="s11 fm">조회는 정상 → 다음 장 리셋</text>
+</svg>

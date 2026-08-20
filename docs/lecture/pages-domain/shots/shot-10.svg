@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="100%" preserveAspectRatio="xMidYMid meet">
+<title>STEP 9 DNS 조회</title><desc>명령 프롬프트에서 nslookup 으로 확인</desc>
+<style>
+  text{font-family:'Nanum Gothic','Malgun Gothic','Noto Sans KR','Apple SD Gothic Neo',sans-serif;}
+  .m{font-family:'NanumGothicCoding','D2Coding','Consolas','Courier New',monospace;}
+  .b{font-weight:700;}
+  .s10{font-size:10px}.s11{font-size:11px}.s12{font-size:12px}.s13{font-size:13px}
+  .s14{font-size:14px}.s16{font-size:16px}.s18{font-size:18px}.s20{font-size:20px}
+  .s24{font-size:24px}.s28{font-size:28px}
+  .fg{fill:#24292F}.fm{fill:#5B6B7C}.fw{fill:#FFFFFF}.fb{fill:#0969DA}
+  .fo{fill:#F26B21}.fn{fill:#0E2A47}.fgr{fill:#1A7F37}.fr{fill:#C4341C}
+</style>
+<rect x="0" y="0" width="900" height="560" fill="#FFFFFF"/>
+<rect x="8" y="8" width="884" height="544" rx="12" fill="#0E2A47"/><rect x="8" y="8" width="884" height="40" rx="12" fill="#16385C"/><rect x="8" y="36" width="884" height="12" fill="#16385C"/><text x="32" y="34" class="s12 fw">명령 프롬프트</text><text x="36" y="96" class="s13 m" fill="#E7EEF6">C:\Users\사용자> nslookup -type=cname lms.내도메인.kr 8.8.8.8</text><text x="36" y="156" class="s13 m" fill="#9FB3C8">서버:    dns.google</text><text x="36" y="186" class="s13 m" fill="#9FB3C8">Address: 8.8.8.8</text><text x="36" y="246" class="s13 m" fill="#7EE787">lms.내도메인.kr   canonical name = 사용자이름.github.io</text><rect x="28" y="222" width="620" height="34" rx="6" fill="none" stroke="#F26B21" stroke-width="3"/><circle cx="676" cy="239" r="14" fill="#F26B21"/><text x="676" y="244" text-anchor="middle" class="s14 b fw">1</text><text x="700" y="244" class="s12 b fo">이 줄이 나오면 성공</text><rect x="36" y="300" width="264" height="120" rx="8" fill="#16385C"/><text x="54" y="332" class="s12 m" fill="#7EE787">사용자이름.github.io</text><line x1="54" y1="352" x2="282" y2="352" stroke="#2C5580"/><text x="54" y="382" class="s12 b" fill="#FFFFFF">정상 — 다음 단계로</text><rect x="320" y="300" width="264" height="120" rx="8" fill="#16385C"/><text x="338" y="332" class="s12 m" fill="#FFD79A">NXDOMAIN / 찾을 수 없음</text><line x1="338" y1="352" x2="566" y2="352" stroke="#2C5580"/><text x="338" y="382" class="s12 b" fill="#FFFFFF">아직 안 퍼졌다 — 기다린다</text><rect x="604" y="300" width="264" height="120" rx="8" fill="#16385C"/><text x="622" y="332" class="s12 m" fill="#FFB3A7">104.21.x.x / 172.67.x.x</text><line x1="622" y1="352" x2="850" y2="352" stroke="#2C5580"/><text x="622" y="382" class="s12 b" fill="#FFFFFF">프록시 켜짐 — 회색 구름</text><rect x="36" y="446" width="828" height="72" rx="8" fill="#16385C"/><text x="60" y="478" class="s12 m fw">맥·리눅스는  dig +short lms.내도메인.kr</text><text x="60" y="502" class="s12 fw">웹으로 보려면 dnschecker.org 에 주소를 넣는다</text>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" width="100%" preserveAspectRatio="xMidYMid meet">
+<title>실전 사례</title><desc>lms.miraejob.co.kr 타임라인</desc>
+<style>
+  text{font-family:'Nanum Gothic','Malgun Gothic','Noto Sans KR','Apple SD Gothic Neo',sans-serif;}
+  .m{font-family:'NanumGothicCoding','D2Coding','Consolas','Courier New',monospace;}
+  .b{font-weight:700;}
+  .s10{font-size:10px}.s11{font-size:11px}.s12{font-size:12px}.s13{font-size:13px}
+  .s14{font-size:14px}.s16{font-size:16px}.s18{font-size:18px}.s20{font-size:20px}
+  .s24{font-size:24px}.s28{font-size:28px}
+  .fg{fill:#24292F}.fm{fill:#5B6B7C}.fw{fill:#FFFFFF}.fb{fill:#0969DA}
+  .fo{fill:#F26B21}.fn{fill:#0E2A47}.fgr{fill:#1A7F37}.fr{fill:#C4341C}
+</style>
+<rect x="0" y="0" width="1000" height="460" fill="#FFFFFF"/>
+<line x1="60" y1="30" x2="60" y2="430" stroke="#D9E0E8"/><circle cx="60" cy="60" r="15" fill="#F26B21"/><text x="60" y="65" text-anchor="middle" class="s13 b fw">1</text><text x="94" y="56" class="s14 b fn">DNS 부터 읽었다</text><text x="94" y="80" class="s12 fm">apex·www 는 이미 GitHub, lms 만 없었다 (NXDOMAIN)</text><circle cx="60" cy="126" r="15" fill="#F26B21"/><text x="60" y="131" text-anchor="middle" class="s13 b fw">2</text><text x="94" y="122" class="s14 b fn">자산 경로를 상대 경로로</text><text x="94" y="146" class="s12 fm">base: '/lms/' → './'  · 두 주소에서 같은 빌드가 돈다</text><circle cx="60" cy="192" r="15" fill="#F26B21"/><text x="60" y="197" text-anchor="middle" class="s13 b fw">3</text><text x="94" y="188" class="s14 b fn">CNAME 파일 위치</text><text x="94" y="212" class="s12 fm">저장소 뿌리가 아니라 web/public/CNAME (Actions 배포)</text><circle cx="60" cy="258" r="15" fill="#F26B21"/><text x="60" y="263" text-anchor="middle" class="s13 b fw">4</text><text x="94" y="254" class="s14 b fn">Cloudflare 레코드</text><text x="94" y="278" class="s12 fm">lms → jungaistar.github.io · 회색 구름</text><circle cx="60" cy="324" r="15" fill="#C4341C"/><text x="60" y="329" text-anchor="middle" class="s13 b fw">!</text><text x="94" y="320" class="s14 b fn">DNS check unsuccessful</text><text x="94" y="344" class="s12 fm">DNS 는 정상인데 GitHub 이 옛 실패를 캐시하고 있었다</text><circle cx="60" cy="390" r="15" fill="#1A7F37"/><text x="60" y="395" text-anchor="middle" class="s13 b fw">✓</text><text x="94" y="386" class="s14 b fn">해결 — 등록 리셋</text><text x="94" y="410" class="s12 fm">Remove → 10분 → 재입력 → Check again → 초록불</text><rect x="640" y="30" width="330" height="120" rx="10" fill="#F4F6F9" stroke="#D9E0E8" stroke-width="1"/><text x="664" y="62" class="s13 b fn">교훈 한 줄</text><text x="664" y="92" class="s12 fm">레코드를 먼저 넣고,</text><text x="664" y="116" class="s12 fm">GitHub 도메인 저장은 그 다음.</text>
+</svg>
