@@ -5,7 +5,6 @@ on:
     branches: [main]
     paths:
       - 'web/**'
-      - '농협/**'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
@@ -41,16 +40,6 @@ jobs:
           # service_role key 는 절대 여기에 넣지 않는다.
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-
-      # 강의용 실습본(농협/)을 같은 사이트에 얹는다.
-      # 빌드가 필요 없는 정적 HTML 이라 산출물에 그대로 복사한다.
-      # 폴더 이름이 한글이면 주소가 %EB%86%8D%ED%98%91 로 인코딩되므로
-      # 게시 경로만 nonghyup 으로 바꾼다 (저장소 안 폴더 이름은 농협/ 그대로).
-      - name: 강의 실습본을 Pages 산출물에 넣는다
-        run: |
-          mkdir -p web/dist/nonghyup
-          cp 농협/*.html web/dist/nonghyup/
-          ls -la web/dist/nonghyup/
 
       - uses: actions/upload-pages-artifact@v3
         with:
