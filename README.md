@@ -3,7 +3,8 @@
 전문대 수업에서 학생들이 **서로의 발표·토론·팀 기여·과제를 평가**하고,
 그 결과를 집계해 **학교 LMS 성적으로 넘기는** 시스템입니다.
 
-📖 **가이드 사이트**: https://jungaistar.github.io/lms/
+📖 **가이드 사이트**: https://lms.miraejob.co.kr
+(도메인 연결 전 주소는 https://jungaistar.github.io/lms/ 였습니다 — `docs/60-domain.md`)
 
 ---
 

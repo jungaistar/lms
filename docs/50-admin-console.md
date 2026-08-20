@@ -71,7 +71,7 @@
 ```bash
 cd web && npm run build && npm run responsive
 npm run preview          # 다른 터미널에서
-# http://localhost:4173/lms/responsive-check/
+# http://localhost:4173/responsive-check/
 ```
 
 앱을 **고정 폭 iframe** 에 띄운다. iframe 폭이 곧 CSS 뷰포트라 미디어 쿼리가

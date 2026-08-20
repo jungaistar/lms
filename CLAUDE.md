@@ -66,6 +66,7 @@ docs/      설계·설치·운영 문서
 | 학교 LMS 방향 | **학교 LMS 가 원본, 이쪽이 사본.** 주차·공지·자료·과제를 가져온다. `locked=true` 인 줄은 가져오기가 덮어쓰지 않는다 |
 | 성적 산출 | `compute_final_grades()` 하나가 유일한 경로. 구성비 합은 DB CHECK 로 100 강제 |
 | 배포 | GitHub Actions → GitHub Pages (`web/dist`) |
+| 주소 | **`lms.miraejob.co.kr`** — 앞으로 저장소마다 `<저장소명>.miraejob.co.kr`. Cloudflare CNAME(회색 구름) + `web/public/CNAME` + Pages 설정 세 가지가 다 있어야 한다. 자산 경로는 상대 경로라 github.io 주소에서도 같은 빌드가 돈다 — `base` 를 `/lms/` 로 되돌리지 말 것. 근거는 `docs/60-domain.md` |
 | 라우팅 | HashRouter (Pages에 SPA 리라이트를 걸 수 없어서) |
 | 설문 익명성 | **익명 설문의 답은 교수도 못 읽는다.** `survey_answers` 에 교수용 RLS 정책을 만들지 말 것 — `survey_summary()` 만 통과한다 |
 | 학교 LMS 과제 | 두 경로가 있다. ① 제출수만 있는 표 → 감점 항목 건수, ② 과제별 목록 → `task_submissions.ext_state`. **둘을 같은 과제에 겹쳐 쓰면 두 번 깎인다** |
@@ -101,7 +102,7 @@ docs/      설계·설치·운영 문서
 - 좁은 화면용 마크업을 따로 만들지 말 것. 지금은 메뉴만 두 모양인데,
   그 둘도 `adminMenu.ts` 한 배열을 읽는다.
 - 고쳤으면 **눈으로 확인한다.** `cd web && npm run build && npm run responsive`
-  후 `npm run preview` 를 띄우고 `/lms/responsive-check/` 를 연다.
+  후 `npm run preview` 를 띄우고 `/responsive-check/` 를 연다.
   창 크기를 줄이는 것으로는 안 된다 — 뷰포트가 안 따라오는 경우가 있다.
   `npm run build` 는 `dist/` 를 비우므로 빌드 뒤에 `npm run responsive` 를 다시 돌린다.
 - `npm test` 의 `responsive.check.ts` 가 위 규칙들이 살아 있는지 CSS 를 읽어
@@ -196,7 +197,11 @@ cd bridge && npm run push -- --csv "...성적.csv" --dry-run
    붙여넣어야 학년 · 학과가 채워진다 (지금은 학번 · 이름만 들어가 있다).
 2. 과목마다 `입장 승인 → 명단 전원 승인` 을 아직 안 눌렀다.
    누르기 전에는 학생이 로그인해도 승인 대기 줄에만 선다 — 의도한 동작이다.
-3. 학교 LMS **성적 입력**은 화면 셀렉터 미확인으로 잠김
+3. **`lms.miraejob.co.kr` 이 아직 안 뜬다.** 코드 쪽(상대 경로 · `web/public/CNAME`)은
+   되어 있고, 사람이 두 가지를 눌러야 한다 — ① Cloudflare 에 `lms` CNAME →
+   `jungaistar.github.io` (회색 구름), ② 저장소 `Settings → Pages → Custom domain`.
+   절차는 `docs/60-domain.md`.
+4. 학교 LMS **성적 입력**은 화면 셀렉터 미확인으로 잠김
    (`SELECTORS_VERIFIED = false`). `TODO(selector)` 주석이 남은 자리다.
 
 작업 이력은 `docs/90-worklog.md` 에 날짜순으로 남긴다. 큰 작업을 하면 여기에 한 줄 넣는다.
