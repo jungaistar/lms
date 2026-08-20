@@ -27,6 +27,7 @@
 농협/
 ├─ index.html          메인      — 슬라이더 · 퀵메뉴 · 탭 게시판 · 카운트업
 ├─ about.html          회사소개  — 좌측 세로 메뉴 · 연혁 타임라인 · CI · 약도
+├─ instructor.html     강사 소개 — 프로필 · 학력 · 경력 · 핵심역량 · 자격 · 저서
 ├─ products.html       제품소개  — 분류 탭 · 검색 · 정렬 · 상세 모달
 ├─ notice.html         알림마당  — 게시판 · 검색 · 페이지 나누기
 ├─ support.html        고객지원  — FAQ 아코디언 · 폼 검사 · 연동 select
@@ -38,7 +39,7 @@
 │  │  ├─ header.html     공용 헤더
 │  │  └─ footer.html     공용 푸터
 │  ├─ pages/*.html       페이지별 조각 (메타 · 전용 CSS · 본문 · 전용 JS)
-│  └─ build.mjs          위 조각들을 합쳐 위쪽 5개 파일을 만든다
+│  └─ build.mjs          위 조각들을 합쳐 위쪽 6개 파일을 만든다
 │
 ├─ docs/
 │  ├─ 작업기록.md        무엇을 왜 그렇게 했는지, 순서대로
@@ -51,8 +52,8 @@
 ### 왜 `_build/` 가 따로 있나
 
 인라인 방식은 **공용 CSS 를 페이지 수만큼 복사해 넣는다**는 뜻이다.
-5개 페이지면 같은 CSS 가 5벌 들어간다. 손으로 관리하면 한 곳을 고칠 때
-다섯 곳을 고쳐야 하고, 반드시 어긋난다.
+6개 페이지면 같은 CSS 가 6벌 들어간다. 손으로 관리하면 한 곳을 고칠 때
+여섯 곳을 고쳐야 하고, 반드시 어긋난다.
 
 그래서 **원본은 `_build/` 에 한 벌만 두고, 합치는 일은 스크립트에 맡겼다.**
 학생에게 주는 결과물은 여전히 자기완결적인 단일 HTML 이다.
@@ -63,11 +64,12 @@ node _build/build.mjs
 ```
 
 ```
-  ✓ about.html       39.0 KB
-  ✓ index.html       44.4 KB
-  ✓ notice.html      41.2 KB
-  ✓ products.html    40.4 KB
-  ✓ support.html     47.4 KB
+  ✓ about.html       39.6 KB
+  ✓ index.html       45.1 KB
+  ✓ instructor.html  40.0 KB
+  ✓ notice.html      41.9 KB
+  ✓ products.html    41.1 KB
+  ✓ support.html     48.0 KB
 ```
 
 Node 18 이상이면 되고, 설치할 패키지는 없다.
@@ -117,7 +119,7 @@ powershell -ExecutionPolicy Bypass -File setup-local.ps1
 | 탭 아이콘(favicon) | `data:` URI 로 심어 둔 SVG |
 | jQuery · 프레임워크 | 표준 DOM API 만 |
 
-즉 `*.html` 5개 말고는 **아무것도 필요 없다.** USB 로 옮겨도 똑같이 돈다.
+즉 `*.html` 6개 말고는 **아무것도 필요 없다.** USB 로 옮겨도 똑같이 돈다.
 
 ---
 
@@ -141,7 +143,7 @@ powershell -ExecutionPolicy Bypass -File setup-local.ps1
 
 ## 6. 검증 상태
 
-Chromium 으로 5개 페이지 × 3개 폭(360 · 768 · 1440) = **15개 조합 모두 통과**.
+Chromium 으로 6개 페이지 × 3개 폭(360 · 768 · 1440) = **18개 조합 모두 통과**.
 스크립트 오류 0건, 가로 넘침 0px, 16px 미만 입력 필드 0개.
 
 상호작용도 실제 클릭으로 확인했다 — 슬라이더 이동, 탭 전환, 제품 검색과 모달,
@@ -150,7 +152,22 @@ Chromium 으로 5개 페이지 × 3개 폭(360 · 768 · 1440) = **15개 조합 
 
 ---
 
-## 7. 다음에 손댈 만한 곳
+## 7. 웹에 올라간 곳
+
+`main` 에 들어가면 GitHub Actions 가 `농협/*.html` 을 Pages 산출물에 함께 넣는다.
+
+```
+https://lms.miraejob.co.kr/nonghyup/
+```
+
+폴더 이름이 한글이면 주소가 `%EB%86%8D%ED%98%91` 처럼 깨져 보이므로
+**게시 경로만 `nonghyup` 으로** 바꿔 내보낸다. 저장소 안 폴더 이름은 `농협/` 그대로다.
+
+강의는 여전히 로컬 파일로 진행한다 — 웹 주소는 배포 확인과 링크 공유용이다.
+
+---
+
+## 8. 다음에 손댈 만한 곳
 
 - 원본 사이트의 실제 화면 구성을 반영하고 싶다면 → `docs/작업기록.md` 2장 참고
 - 페이지 추가 → `_build/pages/` 에 파일 하나 만들고 `node _build/build.mjs`
