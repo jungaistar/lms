@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" font-family="Pretendard, 'Noto Sans KR', 'Noto Sans KR Thin', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif">
+  <title>STEP 6 CNAME 레코드 채우기</title>
+  <desc>Add record 폼의 다섯 칸을 채우는 방법</desc>
+  <defs>
+  <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#CF222E"/></marker>
+  <marker id="arwB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#0046C8"/></marker>
+</defs>
+  <rect width="1200" height="720" fill="#FFFFFF"/>
+  
+  <g class="step-head">
+    <rect x="40" y="26" width="96" height="34" rx="17" fill="#0046C8"/>
+    <text x="88" y="49" font-size="15" fill="#FFFFFF" font-weight="700" text-anchor="middle">STEP 6</text>
+    <text x="152" y="51" font-size="24" fill="#1B2A4A" font-weight="700">레코드 한 줄을 채운다 (서브도메인)</text>
+    <text x="40" y="82" font-size="13" fill="#6B7280">DNS → Records → Add record → 네 칸을 채우고 Save</text>
+  </g>
+  <g class="browser">
+    <rect x="40" y="110" width="1120" height="330" rx="10" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/>
+    <rect x="40" y="110" width="1120" height="44" rx="10" fill="#F6F8FA"/><rect x="40" y="140" width="1120" height="14" rx="0" fill="#F6F8FA"/>
+    <circle cx="64" cy="132" r="6" fill="#FF5F57"/>
+    <circle cx="84" cy="132" r="6" fill="#FEBC2E"/>
+    <circle cx="104" cy="132" r="6" fill="#28C840"/>
+    <rect x="128" y="120" width="1000" height="24" rx="12" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/>
+    <text x="144" y="137" font-size="12" fill="#59636E" font-family="ui-monospace, Consolas, 'Courier New', monospace">dash.cloudflare.com  →  DNS  →  Records</text>
+  </g><rect x="80" y="186" width="1040" height="230" rx="10" fill="#FAFBFC" stroke="#D1D9E0" stroke-width="1"/><text x="108" y="222" font-size="12" fill="#59636E" font-weight="700">Type</text><rect x="108" y="232" width="150" height="38" rx="6" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/><text x="122" y="256" font-size="13.5" fill="#1F2328">CNAME  ▾</text><text x="278" y="222" font-size="12" fill="#59636E" font-weight="700">Name</text><rect x="278" y="232" width="200" height="38" rx="6" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/><text x="292" y="256" font-size="13.5" fill="#1F2328" font-family="ui-monospace, Consolas, 'Courier New', monospace">lms</text><text x="498" y="222" font-size="12" fill="#59636E" font-weight="700">Target</text><rect x="498" y="232" width="300" height="38" rx="6" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/><text x="512" y="256" font-size="13.5" fill="#1F2328" font-family="ui-monospace, Consolas, 'Courier New', monospace">사용자이름.github.io</text><text x="828" y="222" font-size="12" fill="#59636E" font-weight="700">Proxy status</text><rect x="828" y="234" width="64" height="32" rx="16" fill="#E5E9F2"/><circle cx="844" cy="250" r="12" fill="#FFFFFF" stroke="#C7D2E4"/><text x="902" y="256" font-size="13.5" fill="#1A7F37" font-weight="700">DNS only</text><rect x="988" y="232" width="110" height="38" rx="6" fill="#F38020"/><text x="1043" y="256" font-size="14" fill="#FFFFFF" font-weight="700" text-anchor="middle">Save</text><rect x="103" y="227" width="160" height="48" rx="8" fill="none" stroke="#CF222E" stroke-width="2.5" stroke-dasharray="7 4"/>
+  <g class="callout"><circle cx="183" cy="300" r="15" fill="#CF222E"/>
+  <text x="183" y="305" font-size="13" fill="#FFFFFF" font-weight="700" text-anchor="middle">1</text></g><rect x="273" y="227" width="210" height="48" rx="8" fill="none" stroke="#CF222E" stroke-width="2.5" stroke-dasharray="7 4"/>
+  <g class="callout"><circle cx="378" cy="300" r="15" fill="#CF222E"/>
+  <text x="378" y="305" font-size="13" fill="#FFFFFF" font-weight="700" text-anchor="middle">2</text></g><rect x="493" y="227" width="310" height="48" rx="8" fill="none" stroke="#CF222E" stroke-width="2.5" stroke-dasharray="7 4"/>
+  <g class="callout"><circle cx="648" cy="300" r="15" fill="#CF222E"/>
+  <text x="648" y="305" font-size="13" fill="#FFFFFF" font-weight="700" text-anchor="middle">3</text></g><rect x="823" y="227" width="250" height="48" rx="8" fill="none" stroke="#CF222E" stroke-width="2.5" stroke-dasharray="7 4"/>
+  <g class="callout"><circle cx="948" cy="300" r="15" fill="#CF222E"/>
+  <text x="948" y="305" font-size="13" fill="#FFFFFF" font-weight="700" text-anchor="middle">4</text></g><rect x="983" y="227" width="120" height="48" rx="8" fill="none" stroke="#CF222E" stroke-width="2.5" stroke-dasharray="7 4"/>
+  <g class="callout"><circle cx="1043" cy="300" r="15" fill="#CF222E"/>
+  <text x="1043" y="305" font-size="13" fill="#FFFFFF" font-weight="700" text-anchor="middle">5</text></g><text x="600" y="348" font-size="13.5" fill="#6B7280" text-anchor="middle">↑ 다섯 곳을 이 순서로 채운다</text><text x="600" y="380" font-size="13" fill="#6B7280" text-anchor="middle">값을 붙여넣기보다 직접 타이핑 — 보이지 않는 공백이 섞이면 GitHub 이 못 읽는다</text><rect x="40" y="470" width="1120" height="200" rx="12" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/><rect x="40" y="470" width="1120" height="40" rx="12" fill="#1B2A4A"/><rect x="40" y="498" width="1120" height="12" rx="6" fill="#1B2A4A"/><text x="70" y="496" font-size="13" fill="#FFFFFF" font-weight="700">①  Type</text><text x="292" y="496" font-size="13" fill="#FFFFFF" font-weight="700">②  Name</text><text x="514" y="496" font-size="13" fill="#FFFFFF" font-weight="700">③  Target</text><text x="736" y="496" font-size="13" fill="#FFFFFF" font-weight="700">④  Proxy status</text><text x="958" y="496" font-size="13" fill="#FFFFFF" font-weight="700">⑤  저장</text><text x="70" y="544" font-size="12.5" fill="#1B2A4A" font-weight="700">CNAME 을 고른다</text><text x="292" y="544" font-size="12.5" fill="#1B2A4A" font-weight="700">앞부분만 적는다</text><text x="514" y="544" font-size="12.5" fill="#1B2A4A" font-weight="700">저장소 이름은 붙이지 않는다</text><text x="736" y="544" font-size="12.5" fill="#1B2A4A" font-weight="700">반드시 DNS only</text><text x="958" y="544" font-size="12.5" fill="#1B2A4A" font-weight="700">Save 를 누른다</text><text x="70" y="576" font-size="12.5" fill="#6B7280">서브도메인이니까</text><text x="292" y="576" font-size="12.5" fill="#6B7280">lms  ← 이렇게</text><text x="514" y="576" font-size="12.5" fill="#6B7280">사용자이름.github.io</text><text x="736" y="576" font-size="12.5" fill="#6B7280">회색 구름 = 꺼짐</text><text x="958" y="576" font-size="12.5" fill="#6B7280">표에 한 줄이 생긴다</text><text x="292" y="608" font-size="12.5" fill="#6B7280">내도메인.kr 은 자동으로 붙는다</text><text x="514" y="608" font-size="12.5" fill="#6B7280">주소 앞뒤에 http:// 없이</text><text x="736" y="608" font-size="12.5" fill="#6B7280">주황이면 인증서 실패</text><rect x="70" y="638" width="1060" height="2" rx="6" fill="#EEF1F5"/><text x="70" y="656" font-size="13" fill="#9B2C2C" font-weight="700">루트 도메인(내도메인.kr)을 쓸 거라면 CNAME 대신 A 레코드 4개를 넣는다 — 다음 장</text>
+</svg>

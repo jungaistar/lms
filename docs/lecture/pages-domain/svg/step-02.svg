@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" font-family="Pretendard, 'Noto Sans KR', 'Noto Sans KR Thin', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif">
+  <title>STEP 2 Pages 메뉴 위치</title>
+  <desc>Settings 왼쪽 사이드바에서 Pages 항목을 찾는다</desc>
+  <defs>
+  <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#CF222E"/></marker>
+  <marker id="arwB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#0046C8"/></marker>
+</defs>
+  <rect width="1200" height="700" fill="#FFFFFF"/>
+  
+  <g class="step-head">
+    <rect x="40" y="26" width="96" height="34" rx="17" fill="#0046C8"/>
+    <text x="88" y="49" font-size="15" fill="#FFFFFF" font-weight="700" text-anchor="middle">STEP 2</text>
+    <text x="152" y="51" font-size="24" fill="#1B2A4A" font-weight="700">왼쪽 메뉴에서 Pages 를 찾는다</text>
+    <text x="40" y="82" font-size="13" fill="#6B7280">Settings → 왼쪽 메뉴 → Code, planning, and automation → Pages</text>
+  </g>
+  <g class="browser">
+    <rect x="40" y="110" width="1120" height="520" rx="10" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/>
+    <rect x="40" y="110" width="1120" height="44" rx="10" fill="#F6F8FA"/><rect x="40" y="140" width="1120" height="14" rx="0" fill="#F6F8FA"/>
+    <circle cx="64" cy="132" r="6" fill="#FF5F57"/>
+    <circle cx="84" cy="132" r="6" fill="#FEBC2E"/>
+    <circle cx="104" cy="132" r="6" fill="#28C840"/>
+    <rect x="128" y="120" width="1000" height="24" rx="12" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/>
+    <text x="144" y="137" font-size="12" fill="#59636E" font-family="ui-monospace, Consolas, 'Courier New', monospace">github.com/사용자이름/저장소/settings</text>
+  </g><g class="gh-side"><text x="102" y="206" font-size="11.5" fill="#59636E" font-weight="700">Access</text><text x="124" y="236" font-size="13.5" fill="#1F2328">Collaborators</text><text x="102" y="237" font-size="12" fill="#59636E">👥</text><text x="124" y="268" font-size="13.5" fill="#1F2328">Moderation</text><text x="102" y="269" font-size="12" fill="#59636E">⚑</text><text x="102" y="300" font-size="11.5" fill="#59636E" font-weight="700">Code, planning, and automation</text><text x="124" y="330" font-size="13.5" fill="#1F2328">Branches</text><text x="102" y="331" font-size="12" fill="#59636E">⑂</text><text x="124" y="362" font-size="13.5" fill="#1F2328">Tags</text><text x="102" y="363" font-size="12" fill="#59636E">🏷</text><text x="124" y="394" font-size="13.5" fill="#1F2328">Rulesets</text><text x="102" y="395" font-size="12" fill="#59636E">⚖</text><text x="124" y="426" font-size="13.5" fill="#1F2328">Actions</text><text x="102" y="427" font-size="12" fill="#59636E">▶</text><text x="124" y="458" font-size="13.5" fill="#1F2328">Webhooks</text><text x="102" y="459" font-size="12" fill="#59636E">🔗</text><text x="124" y="490" font-size="13.5" fill="#1F2328">Environments</text><text x="102" y="491" font-size="12" fill="#59636E">▤</text><text x="124" y="522" font-size="13.5" fill="#1F2328">Codespaces</text><text x="102" y="523" font-size="12" fill="#59636E">▣</text><rect x="90" y="534" width="230" height="30" rx="6" fill="#EFF2F5"/><rect x="88" y="534" width="3" height="30" rx="2" fill="#0969DA"/><text x="124" y="554" font-size="13.5" fill="#1F2328" font-weight="700">Pages</text><text x="102" y="555" font-size="12" fill="#59636E">▦</text></g><rect x="360" y="190" width="780" height="400" rx="8" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/><text x="390" y="232" font-size="20" fill="#1F2328" font-weight="700">General</text><text x="390" y="268" font-size="13" fill="#1F2328" font-weight="700">Repository name</text><rect x="390" y="282" width="300" height="32" rx="6" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/><text x="406" y="303" font-size="13" fill="#1F2328">저장소</text><text x="390" y="356" font-size="16" fill="#1F2328" font-weight="700">Default branch</text><rect x="390" y="372" width="300" height="32" rx="6" fill="#F6F8FA" stroke="#D1D9E0" stroke-width="1"/><text x="406" y="393" font-size="13" fill="#1F2328" font-family="ui-monospace, Consolas, 'Courier New', monospace">main</text><rect x="84" y="531" width="242" height="36" rx="8" fill="none" stroke="#CF222E" stroke-width="2.5" stroke-dasharray="7 4"/>
+  <g class="callout"><circle cx="58" cy="549" r="15" fill="#CF222E"/>
+  <text x="58" y="554" font-size="13" fill="#FFFFFF" font-weight="700" text-anchor="middle">1</text></g><path d="M350 549 L334 549" stroke="#CF222E" stroke-width="2.5" fill="none" marker-end="url(#arw)"/><rect x="360" y="620" width="780" height="66" rx="10" fill="#FFF8E6" stroke="#E3B341" stroke-width="1"/><text x="376" y="648" font-size="13.5" fill="#7A5B00" font-weight="700">① 왼쪽 메뉴를 아래로 내려 Pages 를 누른다</text><text x="376" y="670" font-size="13.5" fill="#7A5B00">메뉴가 길다 — Codespaces 바로 아래에 있다. 화면이 좁으면 메뉴가 접혀 있을 수 있다</text>
+</svg>

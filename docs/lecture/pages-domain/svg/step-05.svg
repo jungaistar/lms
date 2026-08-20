@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" font-family="Pretendard, 'Noto Sans KR', 'Noto Sans KR Thin', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif">
+  <title>STEP 5 DNS 관리 화면 열기</title>
+  <desc>Cloudflare 에서 DNS Records 화면으로 이동</desc>
+  <defs>
+  <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#CF222E"/></marker>
+  <marker id="arwB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#0046C8"/></marker>
+</defs>
+  <rect width="1200" height="640" fill="#FFFFFF"/>
+  
+  <g class="step-head">
+    <rect x="40" y="26" width="96" height="34" rx="17" fill="#0046C8"/>
+    <text x="88" y="49" font-size="15" fill="#FFFFFF" font-weight="700" text-anchor="middle">STEP 5</text>
+    <text x="152" y="51" font-size="24" fill="#1B2A4A" font-weight="700">DNS 관리 화면을 연다</text>
+    <text x="40" y="82" font-size="13" fill="#6B7280">Cloudflare 대시보드 → 도메인 선택 → 왼쪽 DNS → Records</text>
+  </g>
+  <g class="browser">
+    <rect x="40" y="110" width="1120" height="400" rx="10" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/>
+    <rect x="40" y="110" width="1120" height="44" rx="10" fill="#F6F8FA"/><rect x="40" y="140" width="1120" height="14" rx="0" fill="#F6F8FA"/>
+    <circle cx="64" cy="132" r="6" fill="#FF5F57"/>
+    <circle cx="84" cy="132" r="6" fill="#FEBC2E"/>
+    <circle cx="104" cy="132" r="6" fill="#28C840"/>
+    <rect x="128" y="120" width="1000" height="24" rx="12" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/>
+    <text x="144" y="137" font-size="12" fill="#59636E" font-family="ui-monospace, Consolas, 'Courier New', monospace">dash.cloudflare.com</text>
+  </g><rect x="70" y="180" width="240" height="310" rx="8" fill="#FAFBFC" stroke="#D1D9E0" stroke-width="1"/><text x="100" y="207" font-size="13.5" fill="#1F2328">Overview</text><text x="100" y="241" font-size="13.5" fill="#1F2328">Analytics</text><rect x="76" y="254" width="228" height="30" rx="6" fill="#FFF1E3"/><rect x="76" y="254" width="3" height="30" rx="2" fill="#F38020"/><text x="100" y="275" font-size="13.5" fill="#9A4B00" font-weight="700">DNS</text><rect x="76" y="288" width="228" height="30" rx="6" fill="#FFF7EF"/><text x="118" y="309" font-size="13.5" fill="#9A4B00" font-weight="700">Records</text><text x="100" y="343" font-size="13.5" fill="#1F2328">Email</text><text x="100" y="377" font-size="13.5" fill="#1F2328">SSL/TLS</text><text x="100" y="411" font-size="13.5" fill="#1F2328">Security</text><text x="100" y="445" font-size="13.5" fill="#1F2328">Speed</text><rect x="340" y="180" width="780" height="310" rx="8" fill="#FFFFFF" stroke="#D1D9E0" stroke-width="1"/><text x="368" y="220" font-size="19" fill="#1F2328" font-weight="700">DNS records for 내도메인.kr</text><rect x="368" y="244" width="160" height="36" rx="6" fill="#F38020"/><text x="448" y="268" font-size="14" fill="#FFFFFF" font-weight="700" text-anchor="middle">+ Add record</text><text x="368" y="320" font-size="13" fill="#59636E">현재 등록된 레코드가 여기 표로 보인다</text><rect x="368" y="340" width="720" height="120" rx="8" fill="#F6F8FA" stroke="#D1D9E0" stroke-width="1" stroke-dasharray="5 4"/><text x="728" y="406" font-size="14" fill="#6B7280" text-anchor="middle">(레코드 목록)</text><rect x="72" y="250" width="236" height="72" rx="8" fill="none" stroke="#CF222E" stroke-width="2.5" stroke-dasharray="7 4"/>
+  <g class="callout"><circle cx="48" cy="286" r="15" fill="#CF222E"/>
+  <text x="48" y="291" font-size="13" fill="#FFFFFF" font-weight="700" text-anchor="middle">1</text></g><rect x="362" y="238" width="172" height="48" rx="8" fill="none" stroke="#CF222E" stroke-width="2.5" stroke-dasharray="7 4"/>
+  <g class="callout"><circle cx="556" cy="262" r="15" fill="#CF222E"/>
+  <text x="556" y="267" font-size="13" fill="#FFFFFF" font-weight="700" text-anchor="middle">2</text></g><path d="M540 262 L524 262" stroke="#CF222E" stroke-width="2.5" fill="none" marker-end="url(#arw)"/><rect x="40" y="530" width="1120" height="66" rx="10" fill="#FFF8E6" stroke="#E3B341" stroke-width="1"/><text x="56" y="558" font-size="13.5" fill="#7A5B00" font-weight="700">① 왼쪽 메뉴에서 DNS → Records 로 들어간다     ② + Add record 를 누른다</text><text x="56" y="580" font-size="13.5" fill="#7A5B00">가비아·후이즈라면 "DNS 관리 → 레코드 수정" 자리다. 채우는 칸(종류·이름·값)은 어디나 같다</text>
+</svg>
