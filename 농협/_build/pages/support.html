@@ -1,0 +1,602 @@
+<!--@meta
+{
+  "key": "support",
+  "title": "고객지원 — 농협사료 클론 실습본",
+  "desc": "자주 묻는 질문 · 온라인 문의 · 대리점 찾기. 아코디언과 폼 유효성 검사를 직접 구현한 실습 페이지."
+}
+-->
+
+<!--@style-->
+/* ---------- FAQ ---------- */
+.faq-top{display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:20px}
+.faq-top .filter__search{flex:1; min-width:240px; position:relative}
+.acc__panel .a{
+  display:flex; gap:14px; padding:16px 18px; border-radius:10px;
+  background:var(--bg-soft);
+}
+.acc__panel .a .ico{
+  flex:none; display:grid; place-items:center; width:30px; height:30px; border-radius:50%;
+  background:var(--ink); color:#fff; font-size:14px; font-weight:800;
+}
+
+/* ---------- 문의 폼 ---------- */
+.form-card{
+  border:1px solid var(--line); border-radius:var(--radius); padding:32px;
+  background:#fff;
+}
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 20px}
+.form-grid .full{grid-column:1 / -1}
+.agree{
+  margin-top:8px; padding:18px; border:1px solid var(--line);
+  border-radius:10px; background:var(--bg-soft);
+}
+.agree__text{
+  max-height:120px; overflow-y:auto; margin-bottom:12px;
+  font-size:14px; line-height:1.8; color:var(--muted);
+}
+.form-msg{
+  display:none; margin-top:18px; padding:16px 18px; border-radius:10px;
+  font-size:15px; line-height:1.7;
+}
+.form-msg.is-ok{display:block; background:var(--green-soft); color:var(--green-dark)}
+.form-msg.is-err{display:block; background:#FDECEA; color:#B3261E}
+
+/* ---------- 대리점 찾기 ---------- */
+.agency__pick{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px}
+.agency__list li{
+  display:flex; flex-wrap:wrap; gap:6px 16px; align-items:center;
+  padding:16px 4px; border-bottom:1px solid var(--line);
+}
+.agency__list strong{font-size:16px; color:var(--ink); min-width:150px}
+.agency__list span{font-size:14px; color:var(--muted)}
+
+@media (max-width:900px){
+  .form-card{padding:22px 18px}
+  .form-grid{grid-template-columns:1fr}
+  .agency__pick{grid-template-columns:1fr}
+}
+<!--@/style-->
+
+<!--@body-->
+<section class="page-hero">
+  <div class="container">
+    <ol class="breadcrumb">
+      <li><a href="index.html">홈</a></li>
+      <li>고객지원</li>
+    </ol>
+    <h1>고객지원</h1>
+    <span class="en">Support</span>
+  </div>
+</section>
+
+<div class="container sub-layout">
+
+  <aside class="sub-nav">
+    <h2>고객지원</h2>
+    <ul>
+      <li><a href="#faq" class="is-active">자주 묻는 질문</a></li>
+      <li><a href="#inquiry">온라인 문의</a></li>
+      <li><a href="#agency">대리점 찾기</a></li>
+    </ul>
+  </aside>
+
+  <div>
+    <!-- ---------- FAQ ---------- -->
+    <section id="faq" style="margin-bottom:64px">
+      <h2 class="section-title">자주 묻는 질문<span class="en">FAQ</span></h2>
+
+      <div class="faq-top">
+        <div class="filter__search">
+          <label class="sr-only" for="faq-q">질문 검색</label>
+          <input class="input" id="faq-q" type="search" placeholder="궁금한 내용을 검색해 보세요" data-faq-q>
+        </div>
+        <button class="btn btn--ghost btn--sm" type="button" data-faq-all>모두 펼치기</button>
+      </div>
+
+      <p class="muted" style="margin-bottom:14px; font-size:14px" role="status" aria-live="polite" data-faq-count></p>
+
+      <!-- data-single="false" — 여러 개를 동시에 펼칠 수 있다 -->
+      <div class="acc" data-faq data-single="false">
+
+        <div class="acc__item">
+          <h3><button class="acc__btn" type="button" aria-expanded="false" aria-controls="f1">
+            <span class="q" aria-hidden="true">Q</span>
+            <span class="t">사료를 주문하려면 어디로 연락해야 하나요?</span>
+            <span class="arw" aria-hidden="true">⌄</span>
+          </button></h3>
+          <div class="acc__panel" id="f1">
+            <div class="a"><span class="ico" aria-hidden="true">A</span><div>
+              가까운 지사나 대리점으로 연락하시면 됩니다. 아래 <a href="#agency">대리점 찾기</a>에서
+              지역을 고르면 담당 연락처를 확인할 수 있습니다. 처음 거래하시는 경우에는
+              사육 축종과 두수를 함께 알려 주시면 상담이 빠릅니다.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="acc__item">
+          <h3><button class="acc__btn" type="button" aria-expanded="false" aria-controls="f2">
+            <span class="q" aria-hidden="true">Q</span>
+            <span class="t">사료를 바꾸면 바로 급여해도 되나요?</span>
+            <span class="arw" aria-hidden="true">⌄</span>
+          </button></h3>
+          <div class="acc__panel" id="f2">
+            <div class="a"><span class="ico" aria-hidden="true">A</span><div>
+              한 번에 바꾸면 섭취량이 떨어지거나 소화 장애가 생길 수 있습니다.
+              보통 <strong>7일에서 10일에 걸쳐</strong> 기존 사료와 섞는 비율을 조금씩 늘려 가며
+              바꾸는 것을 권합니다. 축종과 구간에 따라 다르니 담당자와 상담해 주십시오.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="acc__item">
+          <h3><button class="acc__btn" type="button" aria-expanded="false" aria-controls="f3">
+            <span class="q" aria-hidden="true">Q</span>
+            <span class="t">사료는 어떻게 보관해야 하나요?</span>
+            <span class="arw" aria-hidden="true">⌄</span>
+          </button></h3>
+          <div class="acc__panel" id="f3">
+            <div class="a"><span class="ico" aria-hidden="true">A</span><div>
+              직사광선과 습기를 피해 통풍이 되는 곳에 보관하십시오. 바닥에 바로 놓지 말고
+              받침 위에 올려 두면 습기를 덜 먹습니다. 여름철에는 개봉 후 되도록 빨리 급여하고,
+              남은 사료를 급이기에 오래 두지 마십시오.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="acc__item">
+          <h3><button class="acc__btn" type="button" aria-expanded="false" aria-controls="f4">
+            <span class="q" aria-hidden="true">Q</span>
+            <span class="t">사양관리 상담을 받을 수 있나요?</span>
+            <span class="arw" aria-hidden="true">⌄</span>
+          </button></h3>
+          <div class="acc__panel" id="f4">
+            <div class="a"><span class="ico" aria-hidden="true">A</span><div>
+              가능합니다. <a href="#inquiry">온라인 문의</a>에 축종과 사육 규모, 현재 겪고 있는
+              문제를 남겨 주시면 담당자가 연락드립니다. 필요하면 현장을 방문해
+              급여 프로그램을 함께 설계합니다.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="acc__item">
+          <h3><button class="acc__btn" type="button" aria-expanded="false" aria-controls="f5">
+            <span class="q" aria-hidden="true">Q</span>
+            <span class="t">제품 성분표는 어디서 볼 수 있나요?</span>
+            <span class="arw" aria-hidden="true">⌄</span>
+          </button></h3>
+          <div class="acc__panel" id="f5">
+            <div class="a"><span class="ico" aria-hidden="true">A</span><div>
+              <a href="products.html">제품소개</a>에서 제품을 누르면 조단백질 · TDN 등
+              주요 수치를 확인할 수 있습니다. 더 자세한 자료가 필요하시면 문의를 남겨 주십시오.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="acc__item">
+          <h3><button class="acc__btn" type="button" aria-expanded="false" aria-controls="f6">
+            <span class="q" aria-hidden="true">Q</span>
+            <span class="t">무항생제 인증 농가도 쓸 수 있는 제품이 있나요?</span>
+            <span class="arw" aria-hidden="true">⌄</span>
+          </button></h3>
+          <div class="acc__panel" id="f6">
+            <div class="a"><span class="ico" aria-hidden="true">A</span><div>
+              인증 사양에 맞춘 전용 제품이 따로 있습니다. 제품소개의
+              <strong>특수 · 기능성</strong> 분류에서 확인하십시오.
+            </div></div>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="empty" data-faq-empty hidden style="margin-top:20px">
+        검색 결과가 없습니다. 다른 낱말로 찾아보시거나 온라인 문의를 남겨 주세요.
+      </p>
+    </section>
+
+    <!-- ---------- 온라인 문의 ---------- -->
+    <section id="inquiry" style="margin-bottom:64px">
+      <h2 class="section-title">온라인 문의<span class="en">Inquiry</span></h2>
+
+      <div class="form-card">
+        <!-- novalidate — 브라우저 기본 말풍선 대신 직접 검사한다 -->
+        <form data-form novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="name">이름 <span class="req" aria-hidden="true">*</span></label>
+              <input class="input" id="name" name="name" type="text" autocomplete="name"
+                     required data-label="이름">
+              <p class="field__err" id="err-name"></p>
+            </div>
+
+            <div class="field">
+              <label for="phone">연락처 <span class="req" aria-hidden="true">*</span></label>
+              <input class="input" id="phone" name="phone" type="tel" inputmode="numeric"
+                     placeholder="010-0000-0000" autocomplete="tel"
+                     required data-label="연락처" data-rule="phone">
+              <p class="field__err" id="err-phone"></p>
+            </div>
+
+            <div class="field">
+              <label for="email">이메일</label>
+              <input class="input" id="email" name="email" type="email" inputmode="email"
+                     autocomplete="email" data-label="이메일" data-rule="email">
+              <p class="field__err" id="err-email"></p>
+            </div>
+
+            <div class="field">
+              <label for="kind">문의 종류 <span class="req" aria-hidden="true">*</span></label>
+              <select class="select" id="kind" name="kind" required data-label="문의 종류">
+                <option value="">선택하세요</option>
+                <option>제품 · 가격</option>
+                <option>사양관리 상담</option>
+                <option>대리점 개설</option>
+                <option>기타</option>
+              </select>
+              <p class="field__err" id="err-kind"></p>
+            </div>
+
+            <div class="field">
+              <label for="animal">축종</label>
+              <select class="select" id="animal" name="animal">
+                <option value="">선택 안 함</option>
+                <option>한우 · 육우</option>
+                <option>낙농</option>
+                <option>양돈</option>
+                <option>양계</option>
+                <option>기타</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="scale">사육 규모 (두)</label>
+              <input class="input" id="scale" name="scale" type="number" inputmode="numeric"
+                     min="0" step="1" placeholder="예: 120">
+            </div>
+
+            <div class="field full">
+              <label for="msg">문의 내용 <span class="req" aria-hidden="true">*</span></label>
+              <textarea class="textarea" id="msg" name="msg" required
+                        data-label="문의 내용" data-min="10"
+                        placeholder="현재 겪고 계신 문제나 궁금한 점을 자세히 적어 주세요."></textarea>
+              <p class="muted" style="margin-top:6px; font-size:13px">
+                <span data-len>0</span> / 1000자
+              </p>
+              <p class="field__err" id="err-msg"></p>
+            </div>
+          </div>
+
+          <div class="agree">
+            <div class="agree__text" tabindex="0" role="region" aria-label="개인정보 수집 이용 안내">
+              <strong>개인정보 수집 · 이용 안내 (실습용 예시)</strong><br>
+              · 수집 항목: 이름, 연락처, 이메일, 축종, 사육 규모, 문의 내용<br>
+              · 수집 목적: 문의 접수와 답변 회신<br>
+              · 보유 기간: 답변 완료 후 3년<br>
+              · 동의를 거부하실 수 있으며, 이 경우 온라인 문의 접수가 제한됩니다.<br>
+              <br>
+              이 화면은 강의 실습본입니다. 입력한 내용은 어디로도 전송되지 않고
+              브라우저 안에서만 처리됩니다.
+            </div>
+            <label class="check">
+              <input type="checkbox" id="agree" name="agree" required data-label="개인정보 수집 동의">
+              <span>개인정보 수집 · 이용에 동의합니다. <span class="req" aria-hidden="true">*</span></span>
+            </label>
+            <p class="field__err" id="err-agree"></p>
+          </div>
+
+          <p class="form-msg" role="status" aria-live="polite" data-msg></p>
+
+          <div class="sticky-actions">
+            <button class="btn btn--ghost" type="reset">다시 작성</button>
+            <button class="btn btn--primary" type="submit">문의 보내기</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ---------- 대리점 찾기 ---------- -->
+    <section id="agency">
+      <h2 class="section-title">대리점 찾기<span class="en">Find a Dealer</span></h2>
+
+      <div class="agency__pick">
+        <div>
+          <label class="sr-only" for="sido">시 · 도</label>
+          <select class="select" id="sido" data-sido></select>
+        </div>
+        <div>
+          <label class="sr-only" for="sigungu">시 · 군 · 구</label>
+          <select class="select" id="sigungu" data-sigungu disabled>
+            <option value="">먼저 시 · 도를 고르세요</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="muted" style="margin-bottom:8px; font-size:14px" role="status" aria-live="polite" data-agency-count></p>
+      <ul class="agency__list" data-agency></ul>
+
+      <p class="muted" style="margin-top:20px; font-size:13px">
+        지역 · 상호 · 연락처는 실습을 위해 만든 예시입니다. 실제 사업장이 아닙니다.
+      </p>
+    </section>
+  </div>
+</div>
+<!--@/body-->
+
+<!--@script-->
+/* ================= 고객지원 전용 스크립트 ================= */
+(function () {
+  'use strict';
+  var $ = NH.$, $$ = NH.$$;
+
+  /* =========================================================
+     1) FAQ 검색 · 모두 펼치기
+     아코디언을 여닫는 동작 자체는 공용 스크립트가 이미 붙여 두었다.
+     여기서는 "거르기"와 "일괄 펼치기"만 더한다.
+     ========================================================= */
+  (function faq() {
+    var box = $('[data-faq]');
+    if (!box) return;
+    var items = $$('.acc__item', box);
+    var input = $('[data-faq-q]');
+    var count = $('[data-faq-count]');
+    var empty = $('[data-faq-empty]');
+    var allBtn = $('[data-faq-all]');
+
+    function apply() {
+      var kw = input.value.trim().toLowerCase();
+      var shown = 0;
+
+      items.forEach(function (it) {
+        var text = it.textContent.toLowerCase();
+        var hit = !kw || text.indexOf(kw) > -1;
+        it.hidden = !hit;
+        if (hit) shown++;
+
+        // 검색 중에는 맞은 항목을 자동으로 펼쳐 준다
+        if (kw && hit) setOpen(it, true);
+      });
+
+      count.textContent = kw ? ('검색 결과 ' + shown + '건') : ('모두 ' + items.length + '건');
+      empty.hidden = shown > 0;
+    }
+
+    function setOpen(item, open) {
+      var btn = $('.acc__btn', item);
+      var panel = $('.acc__panel', item);
+      btn.setAttribute('aria-expanded', String(open));
+      panel.classList.toggle('is-open', open);
+    }
+
+    input.addEventListener('input', apply);
+
+    allBtn.addEventListener('click', function () {
+      var opening = allBtn.dataset.on !== 'true';
+      items.forEach(function (it) { if (!it.hidden) setOpen(it, opening); });
+      allBtn.dataset.on = String(opening);
+      allBtn.textContent = opening ? '모두 접기' : '모두 펼치기';
+    });
+
+    apply();
+  })();
+
+  /* =========================================================
+     2) 문의 폼 유효성 검사
+     브라우저 기본 검사 대신 직접 확인한다 — 메시지를 한국어로 다듬고,
+     오류가 난 첫 칸으로 초점을 옮기기 위해서다.
+     ========================================================= */
+  (function inquiry() {
+    var form = $('[data-form]');
+    if (!form) return;
+    var msg = $('[data-msg]');
+    var clearing = false;   // 제출 성공 뒤의 form.reset() 인지 구분하는 표시
+
+    var RULES = {
+      // 하이픈이 있든 없든 통과시킨다 (010-1234-5678 / 01012345678)
+      phone: { re: /^0\d{1,2}-?\d{3,4}-?\d{4}$/, text: '연락처 형식이 올바르지 않습니다. 예) 010-1234-5678' },
+      email: { re: /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/, text: '이메일 형식이 올바르지 않습니다.' }
+    };
+
+    function errEl(field) { return document.getElementById('err-' + field.id); }
+
+    function setError(field, text) {
+      var el = errEl(field);
+      if (!el) return;
+      if (text) {
+        el.textContent = text;
+        el.classList.add('is-on');
+        field.setAttribute('aria-invalid', 'true');
+        field.setAttribute('aria-describedby', el.id);
+      } else {
+        el.textContent = '';
+        el.classList.remove('is-on');
+        field.removeAttribute('aria-invalid');
+        field.removeAttribute('aria-describedby');
+      }
+    }
+
+    function checkField(field) {
+      var label = field.dataset.label || field.id;
+      var val = field.type === 'checkbox' ? field.checked : field.value.trim();
+
+      if (field.required && !val) {
+        setError(field, field.type === 'checkbox'
+          ? '동의가 필요합니다.'
+          : label + '을(를) 입력해 주세요.');
+        return false;
+      }
+      if (field.dataset.min && String(val).length < Number(field.dataset.min)) {
+        setError(field, label + '은(는) ' + field.dataset.min + '자 이상 적어 주세요.');
+        return false;
+      }
+      var rule = RULES[field.dataset.rule];
+      if (rule && val && !rule.re.test(val)) {
+        setError(field, rule.text);
+        return false;
+      }
+      setError(field, '');
+      return true;
+    }
+
+    var fields = $$('[data-label]', form);
+
+    // 한 번 틀린 칸은 고치는 즉시 다시 검사한다 (제출까지 기다리지 않는다)
+    fields.forEach(function (f) {
+      f.addEventListener('blur', function () { checkField(f); });
+      f.addEventListener('input', function () {
+        if (f.getAttribute('aria-invalid') === 'true') checkField(f);
+      });
+      f.addEventListener('change', function () {
+        if (f.type === 'checkbox') checkField(f);
+      });
+    });
+
+    // 글자 수 세기
+    var msgField = $('#msg'), lenEl = $('[data-len]');
+    msgField.addEventListener('input', function () {
+      if (msgField.value.length > 1000) msgField.value = msgField.value.slice(0, 1000);
+      lenEl.textContent = msgField.value.length;
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var bad = fields.filter(function (f) { return !checkField(f); });
+
+      if (bad.length) {
+        msg.className = 'form-msg is-err';
+        msg.textContent = '입력하지 않았거나 형식이 맞지 않는 칸이 ' + bad.length + '개 있습니다. 확인해 주세요.';
+        bad[0].focus();                       // 첫 오류 칸으로 데려간다
+        return;
+      }
+
+      // 실습본이라 실제로 보내지 않는다. 보낼 값만 확인용으로 만들어 둔다.
+      var data = Object.fromEntries(new FormData(form).entries());
+      console.log('[실습] 서버로 보낼 값:', data);
+
+      msg.className = 'form-msg is-ok';
+      msg.innerHTML = '<strong>문의가 접수되었습니다. (실습 화면)</strong><br>' +
+        '실제로는 이 자리에서 서버로 값을 보냅니다. ' +
+        '지금은 개발자 도구 콘솔에 보낼 값을 찍어 두었습니다.';
+
+      // form.reset() 은 reset 이벤트를 부른다. 그 처리기가 방금 띄운 성공 메시지를
+      // 지워 버리므로, 이번 초기화는 "제출 뒤 정리"라고 표시해 두고 부른다.
+      clearing = true;
+      form.reset();
+      clearing = false;
+
+      lenEl.textContent = '0';
+      fields.forEach(function (f) { setError(f, ''); });
+      msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    form.addEventListener('reset', function () {
+      fields.forEach(function (f) { setError(f, ''); });
+      if (!clearing) msg.className = 'form-msg';   // 사용자가 누른 '다시 작성'일 때만 지운다
+      lenEl.textContent = '0';
+    });
+  })();
+
+  /* =========================================================
+     3) 대리점 찾기 — 앞 select 가 뒤 select 를 바꾼다
+     ========================================================= */
+  (function agency() {
+    var sidoEl = $('[data-sido]');
+    if (!sidoEl) return;
+    var gunEl = $('[data-sigungu]');
+    var listEl = $('[data-agency]');
+    var countEl = $('[data-agency-count]');
+
+    var DATA = {
+      '경기': {
+        '이천': [['○○축산 이천대리점', '031-000-0000', '한우 · 낙농']],
+        '평택': [['평택 ○○사료', '031-000-0001', '양돈'], ['○○영농조합', '031-000-0002', '양계']]
+      },
+      '강원': {
+        '원주': [['원주 ○○상사', '033-000-0000', '한우 · 육우']],
+        '횡성': [['횡성 ○○축산', '033-000-0001', '한우']]
+      },
+      '충북': {
+        '청주': [['청주 ○○사료', '043-000-0000', '양돈 · 양계']],
+        '음성': [['음성 ○○유통', '043-000-0001', '양계']]
+      },
+      '전북': {
+        '군산': [['군산 ○○사료', '063-000-0000', '전 축종']],
+        '정읍': [['정읍 ○○축산', '063-000-0001', '한우']]
+      },
+      '경북': {
+        '경주': [['경주 ○○상사', '054-000-0000', '한우 · 낙농']],
+        '상주': [['상주 ○○영농', '054-000-0001', '한우']]
+      },
+      '경남': {
+        '진주': [['진주 ○○사료', '055-000-0000', '양돈']]
+      }
+    };
+
+    // 첫 번째 select 를 데이터의 키로 채운다
+    sidoEl.innerHTML = '<option value="">시 · 도 선택</option>';
+    Object.keys(DATA).forEach(function (sido) {
+      var op = document.createElement('option');
+      op.value = op.textContent = sido;
+      sidoEl.appendChild(op);
+    });
+
+    sidoEl.addEventListener('change', function () {
+      var sido = sidoEl.value;
+      gunEl.innerHTML = '';
+      gunEl.disabled = !sido;
+
+      if (!sido) {
+        gunEl.innerHTML = '<option value="">먼저 시 · 도를 고르세요</option>';
+        show([]);
+        return;
+      }
+
+      gunEl.appendChild(new Option('전체', ''));
+      Object.keys(DATA[sido]).forEach(function (gun) {
+        gunEl.appendChild(new Option(gun, gun));
+      });
+      show(collect(sido, ''));
+    });
+
+    gunEl.addEventListener('change', function () {
+      show(collect(sidoEl.value, gunEl.value));
+    });
+
+    function collect(sido, gun) {
+      if (!sido) return [];
+      var out = [];
+      Object.keys(DATA[sido]).forEach(function (g) {
+        if (gun && g !== gun) return;
+        DATA[sido][g].forEach(function (row) {
+          out.push({ area: sido + ' ' + g, name: row[0], tel: row[1], kind: row[2] });
+        });
+      });
+      return out;
+    }
+
+    function show(rows) {
+      listEl.innerHTML = '';
+      countEl.textContent = sidoEl.value
+        ? ('검색 결과 ' + rows.length + '곳')
+        : '지역을 고르면 대리점이 표시됩니다.';
+
+      rows.forEach(function (r) {
+        var li = document.createElement('li');
+        li.innerHTML =
+          '<strong>' + esc(r.name) + '</strong>' +
+          '<span class="badge">' + esc(r.area) + '</span>' +
+          '<span>' + esc(r.kind) + '</span>' +
+          '<span style="margin-left:auto">' + esc(r.tel) + '</span>';
+        listEl.appendChild(li);
+      });
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    show([]);
+  })();
+})();
+<!--@/script-->
