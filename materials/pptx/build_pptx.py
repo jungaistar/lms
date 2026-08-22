@@ -342,7 +342,7 @@ def draw_emoji(sl, x, y, w, h, ch):
 # ------------------------------------------------------- SVG path → 자유형
 def flatten_path(d, tx, ty, k, ox, oy):
     """d 속성을 점 목록으로 편다. 우리가 쓰는 명령(M L l H h V v A z)만 다룬다."""
-    toks = re.findall(r"[MmLlHhVvAaZz]|-?\d*\.?\d+(?:e-?\d+)?", d)
+    toks = re.findall(r"[MmLlHhVvAaQqCcZz]|-?\d*\.?\d+(?:e-?\d+)?", d)
     pts, i = [], 0
     cx = cy = sx = sy = 0.0
     cmd = None
@@ -360,7 +360,8 @@ def flatten_path(d, tx, ty, k, ox, oy):
                     cx, cy = sx, sy
                 continue
         nums = []
-        need = {"M": 2, "m": 2, "L": 2, "l": 2, "H": 1, "h": 1, "V": 1, "v": 1, "A": 7, "a": 7}[cmd]
+        need = {"M": 2, "m": 2, "L": 2, "l": 2, "H": 1, "h": 1, "V": 1, "v": 1,
+                "A": 7, "a": 7, "Q": 4, "q": 4, "C": 6, "c": 6}[cmd]
         while len(nums) < need and i < len(toks):
             nums.append(float(toks[i])); i += 1
         if cmd in "Mm":
@@ -377,6 +378,23 @@ def flatten_path(d, tx, ty, k, ox, oy):
             cx = nums[0] + (cx if cmd == "h" else 0); emit(cx, cy)
         elif cmd in "Vv":
             cy = nums[0] + (cy if cmd == "v" else 0); emit(cx, cy)
+        elif cmd in "QqCc":
+            rel = cmd.islower()
+            pts_in = [(nums[i] + (cx if rel else 0), nums[i + 1] + (cy if rel else 0))
+                      for i in range(0, len(nums), 2)]
+            p0 = (cx, cy)
+            for k in range(1, 25):
+                t = k / 24
+                if cmd in "Qq":
+                    x = (1 - t) ** 2 * p0[0] + 2 * (1 - t) * t * pts_in[0][0] + t ** 2 * pts_in[1][0]
+                    y = (1 - t) ** 2 * p0[1] + 2 * (1 - t) * t * pts_in[0][1] + t ** 2 * pts_in[1][1]
+                else:
+                    x = ((1 - t) ** 3 * p0[0] + 3 * (1 - t) ** 2 * t * pts_in[0][0]
+                         + 3 * (1 - t) * t ** 2 * pts_in[1][0] + t ** 3 * pts_in[2][0])
+                    y = ((1 - t) ** 3 * p0[1] + 3 * (1 - t) ** 2 * t * pts_in[0][1]
+                         + 3 * (1 - t) * t ** 2 * pts_in[1][1] + t ** 3 * pts_in[2][1])
+                emit(x, y)
+            cx, cy = pts_in[-1]
         elif cmd in "Aa":
             rx, ry, rot, laf, sf, ex, ey = nums
             if cmd == "a":
@@ -428,11 +446,20 @@ def arc_points(x1, y1, rx, ry, rot, laf, sf, x2, y2, steps=None):
 
 
 def draw_path(sl, it):
-    pts = flatten_path(it["d"], it["tx"], it["ty"], it["k"], it["ox"], it["oy"])
+    """M 이 여러 번 나오면 서로 떨어진 선이다 — 한 도형으로 묶으면 안 이어질 곳이
+    이어져 상자를 가로지른다. 조각마다 따로 그린다."""
+    d = it["d"].strip()
+    parts = re.split(r"(?=[Mm])", d)
+    for piece in [p for p in parts if p.strip()]:
+        _draw_subpath(sl, it, piece, close=piece.strip().lower().endswith("z"))
+
+
+def _draw_subpath(sl, it, d, close):
+    pts = flatten_path(d, it["tx"], it["ty"], it["k"], it["ox"], it["oy"])
     if len(pts) < 2:
         return
     builder = sl.shapes.build_freeform(px(pts[0][0]), px(pts[0][1]), scale=1.0)
-    builder.add_line_segments([(px(x), px(y)) for x, y in pts[1:]], close=True)
+    builder.add_line_segments([(px(x), px(y)) for x, y in pts[1:]], close=close)
     sh = builder.convert_to_shape()
     sh.shadow.inherit = False
     if it.get("grad"):

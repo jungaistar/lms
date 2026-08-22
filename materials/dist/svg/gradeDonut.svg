@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 성적 평가 구성비 — 1주차 원본 9쪽 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 472 472" role="img" aria-label="성적 구성비 출석 20퍼센트, 중간시험 30퍼센트, 기말시험 30퍼센트, 과제물, 수업태도 20퍼센트">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -66 472 538" role="img" aria-label="성적 구성비 출석 20퍼센트, 중간시험 30퍼센트, 기말시험 30퍼센트, 과제물, 수업태도 20퍼센트">
   <path d="M240.69 68.07A168 168 0 0 1 394.27 179.64L322.67 205.14A92 92 0 0 0 238.57 144.04Z" fill="#005BAC"/>
   <path d="M397.16 188.57A168 168 0 0 1 240.69 403.93L238.57 327.96A92 92 0 0 0 324.26 210.02Z" fill="#0071CE"/>
   <path d="M231.31 403.93A168 168 0 0 1 74.84 188.57L147.74 210.02A92 92 0 0 0 233.43 327.96Z" fill="#4BA3E3"/>
@@ -11,4 +11,9 @@
   <text x="159.6" y="106.8" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="800" fill="#FFFFFF">과제물,</text><text x="159.6" y="125.8" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="800" fill="#FFFFFF">수업태도</text><text x="159.6" y="144.8" text-anchor="middle" font-family="Outfit, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF">20%</text>
   <text x="236" y="240" text-anchor="middle" font-family="Outfit, sans-serif" font-size="52" font-weight="700" fill="#17365D">100</text>
   <text x="236" y="266" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#63666B">총점</text>
+  <g transform="translate(150,-62)">
+    <rect width="272" height="42" fill="#005BAC"/>
+    <text x="24" y="30" text-anchor="middle" font-family="Outfit, sans-serif" font-size="24" font-weight="700" fill="#FFFFFF">+</text>
+    <text x="158" y="28" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF">취·창업 및 진로상담</text>
+  </g>
 </svg>

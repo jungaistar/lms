@@ -111,14 +111,13 @@
 .slide__chip {
   display: inline-flex; align-items: center; gap: 10px;
   height: 34px; padding: 0 18px;
-  border: 2px solid var(--dc-yellow);
-  background: rgba(0, 42, 85, .30);
-  color: #FFFFFF; font-size: 20px; font-weight: 800; letter-spacing: -.02em;
+  background: rgba(0, 42, 85, .32);
+  color: var(--dc-yellow); font-size: 20px; font-weight: 800; letter-spacing: -.02em;
   white-space: nowrap;
 }
 .slide__chipno {
   font-family: var(--dc-num); font-size: 19px; font-weight: 700;
-  color: var(--dc-yellow); line-height: 1;
+  color: #FFFFFF; line-height: 1;
 }
 
 /* dima 워드마크 */
@@ -204,7 +203,7 @@
   background: var(--dc-panel);
   border: 1px solid var(--dc-line-2);
   border-left: 7px solid var(--dc-blue);
-  padding: 13px 20px 13px 18px;
+  padding: 13px 26px 13px 18px;
   font-size: 20px; color: var(--dc-ink);
   display: flex; align-items: flex-start; gap: 12px;
 }
@@ -214,6 +213,8 @@
 .callout--solid {
   background: var(--dc-blue); border: none; color: #FFFFFF; font-weight: 700;
 }
+.callout--solid .strong { color: #FFFFFF; }
+.callout--solid .em { color: #FFE14D; }
 .callout .emo { font-size: 23px; line-height: 1.15; flex: 0 0 auto; }
 
 /* --------------------------------------------------------------------- 카드 */
@@ -414,6 +415,8 @@
 .callout--dashed .callout__body { display: block; }
 .slide__chiptext { display: inline-block; }
 .h-sub__text { display: inline-block; }
+.toc__ko { display: inline-block; margin-right: 14px; }
+.toc__bar { margin-right: 14px; }
 
 
 /* --- 목차 --------------------------------------------------------------- */
@@ -451,7 +454,7 @@
     <rect x="6" y="6" width="298" height="134" fill="#FFFFFF" stroke="#D4DCE6" stroke-width="1"/>
     <rect x="22" y="22" width="157" height="26" rx="13" fill="#DEEBF7" stroke="#9DC3E6"/>
     <text x="33" y="40" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="700" fill="#005BAC">진로(취업)준비도</text>
-    <text x="22" y="76" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#17365D">진로준비진단검사(찾아Dream)</text>
+    <text x="22" y="76" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="800" fill="#17365D">진로준비진단검사(찾아Dream)</text>
     <rect x="150" y="98" width="140" height="30" fill="#0071CE"/>
     <text x="220" y="118" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">검사 실시 (2분)</text>
   </g>

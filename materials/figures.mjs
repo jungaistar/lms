@@ -93,11 +93,16 @@ export function gradeDonut(parts = []) {
   }).join('\n  ');
 
   const total = parts.reduce((n, p) => n + p.pct, 0);
-  return `<svg class="fig" viewBox="0 0 472 472" role="img" aria-label="성적 구성비 ${parts.map((p) => `${p.label.replace(/\n/g, ' ')} ${p.pct}퍼센트`).join(', ')}">
+  return `<svg class="fig" viewBox="0 -66 472 538" role="img" aria-label="성적 구성비 ${parts.map((p) => `${p.label.replace(/\n/g, ' ')} ${p.pct}퍼센트`).join(', ')}">
   ${paths}
   ${labels}
   <text x="${cx}" y="${cy + 4}" text-anchor="middle" font-family="${NUM}" font-size="52" font-weight="700" fill="${C.navy}">${total}</text>
   <text x="${cx}" y="${cy + 30}" text-anchor="middle" font-family="${KR}" font-size="15" font-weight="700" fill="${C.ink2}">총점</text>
+  <g transform="translate(150,-62)">
+    <rect width="272" height="42" fill="${C.blue}"/>
+    <text x="24" y="30" text-anchor="middle" font-family="${NUM}" font-size="24" font-weight="700" fill="${C.white}">+</text>
+    <text x="158" y="28" text-anchor="middle" font-family="${KR}" font-size="16" font-weight="700" fill="${C.white}">취·창업 및 진로상담</text>
+  </g>
 </svg>`;
 }
 
@@ -142,7 +147,7 @@ export function happiness() {
     <rect width="280" height="46" fill="${C.soft}" stroke="${C.line}"/>
     <text x="140" y="31" text-anchor="middle" font-family="${KR}" font-size="19" font-weight="800" fill="${C.blue}">직업 = 자아실현의 공간</text>
   </g>
-  <path d="M280 252 V276" stroke="${C.line}" stroke-width="3"/>
+  <path d="M280 252 V262 M96 262 H464 M96 262 V274 M280 262 V274 M464 262 V274" stroke="${C.line}" stroke-width="3" fill="none"/>
 
   <g font-family="${KR}" font-size="18" font-weight="700" fill="${C.navy}">
     <g transform="translate(14,278)"><rect width="164" height="44" fill="${C.white}" stroke="${C.line2}"/><text x="82" y="29" text-anchor="middle">나의 강점</text></g>
@@ -177,9 +182,9 @@ export function submitTimeline(d = {}) {
     <text x="800" y="205" text-anchor="middle" font-family="${KR}" font-size="21" font-weight="800" fill="${C.ink}">본 강의</text>
   </g>
 
-  <path id="${arc}" d="M790 232 Q580 312 372 244" fill="none" stroke="#C87B72" stroke-width="4"/>
-  <path d="M372 244 l22 -2 -12 -14z" fill="#C87B72"/>
-  <text x="580" y="288" text-anchor="middle" font-family="${KR}" font-size="18" font-weight="800" fill="#B0655C">강의일 하루 전까지</text>
+  <path id="${arc}" d="M790 228 A497 497 0 0 1 372 240" fill="none" stroke="#C87B72" stroke-width="4"/>
+  <path d="M372 240 l22 -2 -12 -14z" fill="#C87B72"/>
+  <text x="580" y="298" text-anchor="middle" font-family="${KR}" font-size="18" font-weight="800" fill="#B0655C">강의일 하루 전까지</text>
 </svg>`;
 }
 
@@ -223,7 +228,7 @@ export function testCards() {
     <rect x="6" y="6" width="298" height="134" fill="${sel ? C.soft2 : C.white}" stroke="${sel ? C.red : C.line2}" stroke-width="${sel ? 2.5 : 1}"/>
     <rect x="22" y="22" width="${22 + c[0].length * 15}" height="26" rx="13" fill="${C.soft}" stroke="${C.line}"/>
     <text x="33" y="40" font-family="${KR}" font-size="14" font-weight="700" fill="${C.blue}">${c[0]}</text>
-    <text x="22" y="76" font-family="${KR}" font-size="19" font-weight="800" fill="${C.navy}">${c[1]}</text>
+    <text x="22" y="76" font-family="${KR}" font-size="${c[1].length > 15 ? 17 : 19}" font-weight="800" fill="${C.navy}">${c[1]}</text>
     <rect x="150" y="98" width="140" height="30" fill="${sel ? C.blue : C.blue500}"/>
     <text x="220" y="118" text-anchor="middle" font-family="${KR}" font-size="15" font-weight="700" fill="${C.white}">검사 실시 (${c[2]})</text>
   </g>`;

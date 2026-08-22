@@ -20,7 +20,7 @@
     <text x="800" y="205" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#3B3838">본 강의</text>
   </g>
 
-  <path id="tl68" d="M790 232 Q580 312 372 244" fill="none" stroke="#C87B72" stroke-width="4"/>
-  <path d="M372 244 l22 -2 -12 -14z" fill="#C87B72"/>
-  <text x="580" y="288" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="800" fill="#B0655C">강의일 하루 전까지</text>
+  <path id="tl68" d="M790 228 A497 497 0 0 1 372 240" fill="none" stroke="#C87B72" stroke-width="4"/>
+  <path d="M372 240 l22 -2 -12 -14z" fill="#C87B72"/>
+  <text x="580" y="298" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="800" fill="#B0655C">강의일 하루 전까지</text>
 </svg>

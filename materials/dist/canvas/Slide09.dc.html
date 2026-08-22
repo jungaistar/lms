@@ -111,14 +111,13 @@
 .slide__chip {
   display: inline-flex; align-items: center; gap: 10px;
   height: 34px; padding: 0 18px;
-  border: 2px solid var(--dc-yellow);
-  background: rgba(0, 42, 85, .30);
-  color: #FFFFFF; font-size: 20px; font-weight: 800; letter-spacing: -.02em;
+  background: rgba(0, 42, 85, .32);
+  color: var(--dc-yellow); font-size: 20px; font-weight: 800; letter-spacing: -.02em;
   white-space: nowrap;
 }
 .slide__chipno {
   font-family: var(--dc-num); font-size: 19px; font-weight: 700;
-  color: var(--dc-yellow); line-height: 1;
+  color: #FFFFFF; line-height: 1;
 }
 
 /* dima 워드마크 */
@@ -204,7 +203,7 @@
   background: var(--dc-panel);
   border: 1px solid var(--dc-line-2);
   border-left: 7px solid var(--dc-blue);
-  padding: 13px 20px 13px 18px;
+  padding: 13px 26px 13px 18px;
   font-size: 20px; color: var(--dc-ink);
   display: flex; align-items: flex-start; gap: 12px;
 }
@@ -214,6 +213,8 @@
 .callout--solid {
   background: var(--dc-blue); border: none; color: #FFFFFF; font-weight: 700;
 }
+.callout--solid .strong { color: #FFFFFF; }
+.callout--solid .em { color: #FFE14D; }
 .callout .emo { font-size: 23px; line-height: 1.15; flex: 0 0 auto; }
 
 /* --------------------------------------------------------------------- 카드 */
@@ -414,6 +415,8 @@
 .callout--dashed .callout__body { display: block; }
 .slide__chiptext { display: inline-block; }
 .h-sub__text { display: inline-block; }
+.toc__ko { display: inline-block; margin-right: 14px; }
+.toc__bar { margin-right: 14px; }
 
 
 /* --- 목차 --------------------------------------------------------------- */
@@ -446,7 +449,7 @@
   <header class="slide__head"><span class="slide__chip"><b class="slide__chipno">2</b><span class="slide__chiptext">성적평가</span></span><span class="wordmark">d<i>i</i>ma</span></header>
   <div class="slide__body" data-edit>
     <h2 class="slide__lede">평가 기준에 따라 적용합니다.</h2>
-    <div class="slide__cols slide__cols--wide-left"><div class="stack"><h3 class="h-sub"><span class="h-sub__text">1. 성적평가</span></h3><div class="table-wrap"><table class="tbl tbl--grade"><thead><tr><th>출석</th><th>중간시험</th><th>기말시험</th><th>과제물제출 및 참여도(수업태도)</th></tr></thead><tbody><tr><td class="c">20%</td><td class="c">30%</td><td class="c">30%</td><td class="c">20%</td></tr></tbody></table></div><div class="card card--plain"><span class="card__title">중간고사 : 개인별 과제 및 발표</span></div><div class="card card--plain"><span class="card__title">기말고사 : write-up</span><ul class="list list--dot card__list"><li>아이디어의 독창성 : <em class="em">15점</em></li><li>비지니스의 성공가능성 : <em class="em">15점</em></li></ul></div></div><div class="stack"><div class="fig-wrap"><svg class="fig" viewBox="0 0 472 472" role="img" aria-label="성적 구성비 출석 20퍼센트, 중간시험 30퍼센트, 기말시험 30퍼센트, 과제물, 수업태도 20퍼센트">
+    <div class="slide__cols slide__cols--wide-left"><div class="stack"><h3 class="h-sub"><span class="h-sub__text">1. 성적평가</span></h3><div class="table-wrap"><table class="tbl tbl--grade"><thead><tr><th>출석</th><th>중간시험</th><th>기말시험</th><th>과제물제출 및 참여도(수업태도)</th></tr></thead><tbody><tr><td class="c">20%</td><td class="c">30%</td><td class="c">30%</td><td class="c">20%</td></tr></tbody></table></div><div class="card card--plain"><span class="card__title">중간고사 : 개인별 과제 및 발표</span></div><div class="card card--plain"><span class="card__title">기말고사 : write-up</span><ul class="list list--dot card__list"><li>아이디어의 독창성 : <em class="em">15점</em></li><li>비지니스의 성공가능성 : <em class="em">15점</em></li></ul></div></div><div class="stack"><div class="fig-wrap"><svg class="fig" viewBox="0 -66 472 538" role="img" aria-label="성적 구성비 출석 20퍼센트, 중간시험 30퍼센트, 기말시험 30퍼센트, 과제물, 수업태도 20퍼센트">
   <path d="M240.69 68.07A168 168 0 0 1 394.27 179.64L322.67 205.14A92 92 0 0 0 238.57 144.04Z" fill="#005BAC"/>
   <path d="M397.16 188.57A168 168 0 0 1 240.69 403.93L238.57 327.96A92 92 0 0 0 324.26 210.02Z" fill="#0071CE"/>
   <path d="M231.31 403.93A168 168 0 0 1 74.84 188.57L147.74 210.02A92 92 0 0 0 233.43 327.96Z" fill="#4BA3E3"/>
@@ -457,6 +460,11 @@
   <text x="159.6" y="106.8" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="800" fill="#FFFFFF">과제물,</text><text x="159.6" y="125.8" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="800" fill="#FFFFFF">수업태도</text><text x="159.6" y="144.8" text-anchor="middle" font-family="Outfit, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF">20%</text>
   <text x="236" y="240" text-anchor="middle" font-family="Outfit, sans-serif" font-size="52" font-weight="700" fill="#17365D">100</text>
   <text x="236" y="266" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#63666B">총점</text>
+  <g transform="translate(150,-62)">
+    <rect width="272" height="42" fill="#005BAC"/>
+    <text x="24" y="30" text-anchor="middle" font-family="Outfit, sans-serif" font-size="24" font-weight="700" fill="#FFFFFF">+</text>
+    <text x="158" y="28" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF">취·창업 및 진로상담</text>
+  </g>
 </svg></div></div></div>
     <p class="callout callout--note"><i class="emo">📍</i><span class="callout__body"><b class="strong">취·창업 및 진로상담</b> 참여는 과제물·수업태도 영역에 가산한다.</span></p>
   </div>

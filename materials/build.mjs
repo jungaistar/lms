@@ -181,7 +181,7 @@ function slideHTML(s, n) {
     return `<section class="slide slide--toc" ${attrs}>
   <header class="slide__head"><span></span>${WORDMARK(false)}</header>
   <div class="slide__body" data-edit>
-    <h2 class="toc__title">목차 <span class="toc__bar">|</span> <span class="toc__en">CONTENTS</span></h2>
+    <h2 class="toc__title"><span class="toc__ko">목차</span><span class="toc__bar">|</span><span class="toc__en">CONTENTS</span></h2>
     <ol class="toc">${rows}</ol>
   </div>
   ${no}

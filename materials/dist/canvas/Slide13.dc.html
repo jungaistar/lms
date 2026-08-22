@@ -111,14 +111,13 @@
 .slide__chip {
   display: inline-flex; align-items: center; gap: 10px;
   height: 34px; padding: 0 18px;
-  border: 2px solid var(--dc-yellow);
-  background: rgba(0, 42, 85, .30);
-  color: #FFFFFF; font-size: 20px; font-weight: 800; letter-spacing: -.02em;
+  background: rgba(0, 42, 85, .32);
+  color: var(--dc-yellow); font-size: 20px; font-weight: 800; letter-spacing: -.02em;
   white-space: nowrap;
 }
 .slide__chipno {
   font-family: var(--dc-num); font-size: 19px; font-weight: 700;
-  color: var(--dc-yellow); line-height: 1;
+  color: #FFFFFF; line-height: 1;
 }
 
 /* dima 워드마크 */
@@ -204,7 +203,7 @@
   background: var(--dc-panel);
   border: 1px solid var(--dc-line-2);
   border-left: 7px solid var(--dc-blue);
-  padding: 13px 20px 13px 18px;
+  padding: 13px 26px 13px 18px;
   font-size: 20px; color: var(--dc-ink);
   display: flex; align-items: flex-start; gap: 12px;
 }
@@ -214,6 +213,8 @@
 .callout--solid {
   background: var(--dc-blue); border: none; color: #FFFFFF; font-weight: 700;
 }
+.callout--solid .strong { color: #FFFFFF; }
+.callout--solid .em { color: #FFE14D; }
 .callout .emo { font-size: 23px; line-height: 1.15; flex: 0 0 auto; }
 
 /* --------------------------------------------------------------------- 카드 */
@@ -414,6 +415,8 @@
 .callout--dashed .callout__body { display: block; }
 .slide__chiptext { display: inline-block; }
 .h-sub__text { display: inline-block; }
+.toc__ko { display: inline-block; margin-right: 14px; }
+.toc__bar { margin-right: 14px; }
 
 
 /* --- 목차 --------------------------------------------------------------- */
@@ -467,9 +470,9 @@
     <text x="800" y="205" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#3B3838">본 강의</text>
   </g>
 
-  <path id="tl50" d="M790 232 Q580 312 372 244" fill="none" stroke="#C87B72" stroke-width="4"/>
-  <path d="M372 244 l22 -2 -12 -14z" fill="#C87B72"/>
-  <text x="580" y="288" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="800" fill="#B0655C">강의일 하루 전까지</text>
+  <path id="tl50" d="M790 228 A497 497 0 0 1 372 240" fill="none" stroke="#C87B72" stroke-width="4"/>
+  <path d="M372 240 l22 -2 -12 -14z" fill="#C87B72"/>
+  <text x="580" y="298" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="800" fill="#B0655C">강의일 하루 전까지</text>
 </svg></div>
   </div>
   <span class="slide__no">13</span>
