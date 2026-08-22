@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 빨간 체크박스 · 창업과 기업가 정신 1주차 강의자료 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" role="img" aria-label="빨간 체크박스">
+  <rect x="3.5" y="6.5" width="23" height="23" fill="#FFFFFF" stroke="#C00000" stroke-width="2.2"/>
+  <path d="M7 17 L14 25 L30 3" fill="none" stroke="#C00000" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 생성형 AI 활용 3단계 흐름 + 출처 표기 · 창업과 기업가 정신 1주차 강의자료 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="248" viewBox="0 0 512 248" role="img" aria-label="생성형 AI 활용 3단계 흐름 + 출처 표기">
+  <defs>
+    <marker id="fa" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#0071CE"/></marker>
+  </defs>
+  <rect x="2" y="30" width="148" height="104" rx="8" fill="#DEEBF7" stroke="#9DC3E6" stroke-width="1.5"/>
+  <text x="76" y="20" text-anchor="middle" font-family="Outfit, Arial, sans-serif" font-size="13" font-weight="700" fill="#0071CE" letter-spacing="1">STEP 1</text>
+  <text x="76" y="66" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="19" font-weight="900" fill="#17365D">AI 초안</text>
+  <text x="76" y="94" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14" fill="#3B3838">생성형 AI 사용</text>
+  <text x="76" y="114" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#0071CE">허용</text>
+  <line x1="156" y1="82" x2="174" y2="82" stroke="#0071CE" stroke-width="3" marker-end="url(#fa)"/>
+  <rect x="182" y="30" width="148" height="104" rx="8" fill="#4BA3E3" stroke="#2E8BD4" stroke-width="1.5"/>
+  <text x="256" y="20" text-anchor="middle" font-family="Outfit, Arial, sans-serif" font-size="13" font-weight="700" fill="#0071CE" letter-spacing="1">STEP 2</text>
+  <text x="256" y="66" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="19" font-weight="900" fill="#FFFFFF">재해석 · 변형</text>
+  <text x="256" y="94" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14" fill="#EAF4FC">그대로 쓰지 않는다</text>
+  <text x="256" y="114" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">필수</text>
+  <line x1="336" y1="82" x2="354" y2="82" stroke="#0071CE" stroke-width="3" marker-end="url(#fa)"/>
+  <rect x="362" y="30" width="148" height="104" rx="8" fill="#005BAC" stroke="#003F7D" stroke-width="1.5"/>
+  <text x="436" y="20" text-anchor="middle" font-family="Outfit, Arial, sans-serif" font-size="13" font-weight="700" fill="#0071CE" letter-spacing="1">STEP 3</text>
+  <text x="436" y="60" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="19" font-weight="900" fill="#FFFFFF">핵심 · 결론</text>
+  <text x="436" y="88" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14" fill="#D6E8F7">아이디어 · 최종 분석</text>
+  <text x="436" y="112" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="15" font-weight="900" fill="#FFF100">사람이 직접 작성</text>
+  <rect x="2" y="158" width="508" height="72" rx="8" fill="#FFFFFF" stroke="#C00000" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="256" y="184" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="15" font-weight="900" fill="#C00000">전 과정 기록 · 출처 표기</text>
+  <text x="256" y="208" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14" fill="#3B3838">서비스 종류 · 활용 목적 · 활용 범위</text>
+  <text x="256" y="226" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#3B3838">사용한 프롬프트(메타 프롬프트 포함)</text>
+</svg>

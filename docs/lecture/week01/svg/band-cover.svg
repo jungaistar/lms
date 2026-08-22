@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 표지 파란 띠 (스튜디오 톤) · 창업과 기업가 정신 1주차 강의자료 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="518" viewBox="0 0 1280 518" role="img" aria-label="표지 파란 띠 (스튜디오 톤)">
+  <defs>
+    <linearGradient id="band" x1="0" y1="0" x2="1" y2="0.35">
+      <stop offset="0%" stop-color="#00A5DE"/><stop offset="28%" stop-color="#0089D6"/>
+      <stop offset="58%" stop-color="#0071CE"/><stop offset="100%" stop-color="#005BAC"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="518" fill="url(#band)"/>
+  <g opacity="0.13" fill="#FFFFFF">
+    <rect x="742" y="52" width="150" height="92" rx="4"/><rect x="912" y="52" width="150" height="92" rx="4"/>
+    <rect x="1082" y="52" width="150" height="92" rx="4"/><rect x="742" y="192" width="150" height="92" rx="4"/>
+    <rect x="912" y="192" width="150" height="92" rx="4"/><rect x="1082" y="192" width="150" height="92" rx="4"/>
+  </g>
+  <g opacity="0.10" fill="none" stroke="#FFFFFF" stroke-width="2">
+    <circle cx="196" cy="150" r="118"/><circle cx="196" cy="150" r="84"/>
+  </g>
+  <g opacity="0.09" fill="#FFFFFF">
+    <path d="M0 400 L520 300 L520 340 L0 440 Z"/><path d="M0 460 L520 360 L520 386 L0 486 Z"/>
+  </g>
+</svg>

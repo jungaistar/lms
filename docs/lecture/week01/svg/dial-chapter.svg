@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 챕터 원형 다이얼 (가운데 숫자는 바꿔 쓴다) · 창업과 기업가 정신 1주차 강의자료 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="200" viewBox="0 0 180 200" role="img" aria-label="챕터 원형 다이얼 (가운데 숫자는 바꿔 쓴다)">
+  <circle cx="34" cy="100" r="66" fill="#FFFFFF"/>
+  <path id="arc" d="M 34,42 A 58,58 0 0 1 34,158" fill="none"/>
+  <text font-family="Outfit, Arial, sans-serif" font-size="13" font-weight="600" fill="#005BAC" letter-spacing="3">
+    <textPath href="#arc" startOffset="6%">C H A P T E R</textPath>
+  </text>
+  <text x="34" y="100" text-anchor="middle" dominant-baseline="central"
+        font-family="Outfit, Arial, sans-serif" font-size="46" font-weight="600" fill="#17365D">1</text>
+</svg>

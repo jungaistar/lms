@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 본문 슬라이드 머리띠 · 창업과 기업가 정신 1주차 강의자료 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="62" viewBox="0 0 1280 62" role="img" aria-label="본문 슬라이드 머리띠">
+  <defs>
+    <linearGradient id="band" x1="0" y1="0" x2="1" y2="0.35">
+      <stop offset="0%" stop-color="#00A5DE"/><stop offset="28%" stop-color="#0089D6"/>
+      <stop offset="58%" stop-color="#0071CE"/><stop offset="100%" stop-color="#005BAC"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="62" fill="url(#band)"/>
+</svg>

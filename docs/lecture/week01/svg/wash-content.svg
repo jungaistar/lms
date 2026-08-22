@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 본문 바탕 (캠퍼스 실루엣 워터마크) · 창업과 기업가 정신 1주차 강의자료 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="658" viewBox="0 0 1280 658" role="img" aria-label="본문 바탕 (캠퍼스 실루엣 워터마크)">
+  <defs>
+    <linearGradient id="wash" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#E4E7EB"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="658" fill="url(#wash)"/>
+  <g opacity="0.055" fill="#17365D">
+    <path d="M690 130 L1280 40 L1280 658 L690 658 Z"/>
+    <path d="M540 300 L690 268 L690 658 L540 658 Z" opacity="0.6"/>
+  </g>
+  <g opacity="0.05" fill="#FFFFFF">
+    <path d="M700 150 L1270 62 L1270 120 L700 208 Z"/>
+    <path d="M700 250 L1270 162 L1270 220 L700 308 Z"/>
+    <path d="M700 350 L1270 262 L1270 320 L700 408 Z"/>
+  </g>
+</svg>

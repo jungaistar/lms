@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- dima 워드마크 (남색) · 창업과 기업가 정신 1주차 강의자료 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="150" viewBox="0 0 420 150" role="img" aria-label="dima 워드마크 (남색)">
+  <g fill="#17365D">
+    <!-- d -->
+    <path d="M104 12 h22 v126 h-22 v-13 a44 44 0 1 1 0 -62 z
+             M82 96 a22 22 0 1 0 0.001 0 z" fill-rule="evenodd"/>
+    <!-- i -->
+    <rect x="146" y="54" width="22" height="84"/>
+    <circle cx="157" cy="28" r="13"/>
+    <!-- m -->
+    <path d="M188 54 h20 v10 a30 30 0 0 1 48 -2 a30 30 0 0 1 50 22 v54 h-22 V90
+             a15 15 0 0 0 -30 0 v48 h-22 V90 a15 15 0 0 0 -30 0 v48 h-14 z"/>
+    <!-- a (꼬리가 오른쪽으로 뻗는 dima 특유의 형태) -->
+    <path d="M368 54 h22 v84 h-22 v-12 a44 44 0 1 1 0 -60 z
+             M346 96 a22 22 0 1 0 0.001 0 z" fill-rule="evenodd"/>
+    <path d="M388 120 q26 24 30 26 l-14 16 q-10 -8 -26 -26 z"/>
+  </g>
+</svg>

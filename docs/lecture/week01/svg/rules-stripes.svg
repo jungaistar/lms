@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 띠 아래 줄무늬 네 줄 · 창업과 기업가 정신 1주차 강의자료 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="46" viewBox="0 0 560 46" role="img" aria-label="띠 아래 줄무늬 네 줄">
+  <defs>
+    <linearGradient id="r" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0071CE"/><stop offset="100%" stop-color="#0071CE" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="2"  width="560" height="7" fill="url(#r)"/>
+  <rect x="0" y="15" width="470" height="6" fill="url(#r)" opacity=".8"/>
+  <rect x="0" y="27" width="380" height="5" fill="url(#r)" opacity=".6"/>
+  <rect x="0" y="37" width="300" height="4" fill="url(#r)" opacity=".45"/>
+</svg>

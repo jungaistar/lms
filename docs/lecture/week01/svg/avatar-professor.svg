@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 교수 프로필 원 · 창업과 기업가 정신 1주차 강의자료 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="176" height="176" viewBox="0 0 176 176" role="img" aria-label="교수 프로필 원">
+  <circle cx="88" cy="88" r="86" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+  <circle cx="88" cy="88" r="74" fill="#DEEBF7"/>
+  <circle cx="88" cy="70" r="27" fill="#0071CE" opacity=".85"/>
+  <path d="M40 150 a48 44 0 0 1 96 0 z" fill="#0071CE" opacity=".85"/>
+</svg>

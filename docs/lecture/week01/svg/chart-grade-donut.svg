@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 성적 반영 비율 도넛 (출석20·중간30·기말30·과제20) · 창업과 기업가 정신 1주차 강의자료 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="386" height="386" viewBox="-16 -16 332 332" role="img" aria-label="성적 반영 비율 도넛 (출석20·중간30·기말30·과제20)">
+  <circle cx="150" cy="150" r="108" fill="none" stroke="#005BAC" stroke-width="66" stroke-dasharray="128.72 549.87" stroke-dashoffset="-0.00"/>
+  <circle cx="150" cy="150" r="108" fill="none" stroke="#0071CE" stroke-width="66" stroke-dasharray="196.58 482.01" stroke-dashoffset="-135.72"/>
+  <circle cx="150" cy="150" r="108" fill="none" stroke="#4BA3E3" stroke-width="66" stroke-dasharray="196.58 482.01" stroke-dashoffset="-339.29"/>
+  <circle cx="150" cy="150" r="108" fill="none" stroke="#8FC7EC" stroke-width="66" stroke-dasharray="128.72 549.87" stroke-dashoffset="-542.87"/>
+  <text x="213.5" y="54.1" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF"><tspan x="213.5" dy="0">출석</tspan><tspan x="213.5" dy="17">20%</tspan></text>
+  <text x="237.4" y="196.5" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF"><tspan x="237.4" dy="0">중간시험</tspan><tspan x="237.4" dy="17">개인별 발표</tspan><tspan x="237.4" dy="17">30%</tspan></text>
+  <text x="62.6" y="196.5" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF"><tspan x="62.6" dy="0">기말시험</tspan><tspan x="62.6" dy="17">(실기)</tspan><tspan x="62.6" dy="17">30%</tspan></text>
+  <text x="86.5" y="45.6" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF"><tspan x="86.5" dy="0">과제물</tspan><tspan x="86.5" dy="17">수업태도</tspan><tspan x="86.5" dy="17">20%</tspan></text>
+  <text x="150" y="142" text-anchor="middle" font-family="Outfit, Arial, sans-serif" font-size="36" font-weight="700" fill="#17365D">100</text>
+  <text x="150" y="169" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="15" font-weight="700" fill="#63666B">총점</text>
+</svg>

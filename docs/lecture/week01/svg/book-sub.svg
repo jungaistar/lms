@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 부 교재 표지 도식 · 창업과 기업가 정신 1주차 강의자료 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="172" height="300" viewBox="0 0 172 300" role="img" aria-label="부 교재 표지 도식">
+  <rect x="10" y="8" width="152" height="284" rx="3" fill="#00A5DE"/>
+  <rect x="10" y="8" width="16" height="284" rx="3" fill="#0071CE"/>
+  <rect x="38" y="44" width="96" height="3" fill="#FFFFFF" opacity=".7"/>
+  <text x="86" y="116" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">밸류</text>
+  <text x="86" y="146" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">프로포지션</text>
+  <text x="86" y="176" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">디자인</text>
+  <text x="86" y="256" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="13" fill="#FFFFFF" opacity=".85">Value Proposition Design</text>
+  <rect x="38" y="272" width="96" height="2" fill="#FFFFFF" opacity=".5"/>
+</svg>

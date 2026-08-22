@@ -39,6 +39,10 @@
   --dc-num:"Outfit","Noto Sans KR",sans-serif;
   --dc-mark:"Quicksand","Outfit",sans-serif;
   --dc-emoji:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif;
+  /* 배경 — 원본 1주차 PDF 에서 뽑아낸 사진 세 장 (교문·부조정실·본관) */
+  --bg-cover:url("bg-cover.jpg");
+  --bg-chapter:url("bg-chapter.jpg");
+  --bg-content:url("bg-content.jpg");
   /* 판형 */
   --dc-w:1280px;
   --dc-h:720px;
@@ -54,7 +58,8 @@ body{
 .emoji{font-family:var(--dc-emoji);font-weight:400;line-height:1}
 
 /* ---------- 본문 바탕 · 캠퍼스 워터마크 ---------- */
-.slide__wash{position:absolute;inset:0;pointer-events:none}
+.slide__wash{position:absolute;inset:0;pointer-events:none;
+  background:var(--bg-content) center/cover no-repeat}
 
 /* ---------- 머리띠 ---------- */
 .slide__top{
@@ -152,7 +157,8 @@ body{
 a{color:var(--dc-deep)}a:hover{color:var(--dc-blue)}
 
 /* ---------- 표지 ---------- */
-.cover__band{position:absolute;top:0;left:0;right:0;height:72%;background:var(--dc-band);overflow:hidden}
+.cover__band{position:absolute;top:0;left:0;right:0;height:72%;overflow:hidden;
+  background:var(--dc-band);background-image:var(--bg-cover);background-size:cover;background-position:center}
 .cover__mark{position:absolute;right:22px;top:228px;font-family:var(--dc-mark);font-weight:700;
   font-size:178px;letter-spacing:-.06em;color:#fff;line-height:.8;z-index:2;opacity:.97}
 .cover__txt{position:absolute;left:56px;top:196px;z-index:3}
@@ -165,7 +171,8 @@ a{color:var(--dc-deep)}a:hover{color:var(--dc-blue)}
 .rules{position:absolute;left:0;z-index:4}
 
 /* ---------- 챕터 표지 ---------- */
-.chap__band{position:absolute;top:0;left:0;right:0;height:52%;background:var(--dc-band);overflow:hidden}
+.chap__band{position:absolute;top:0;left:0;right:0;height:52%;overflow:hidden;
+  background:var(--dc-band);background-image:var(--bg-chapter);background-size:cover;background-position:center}
 .chap__title{position:absolute;right:52px;top:calc(52% + 16px);font-size:46px;font-weight:900;
   color:var(--dc-navy);letter-spacing:-.035em;z-index:5;text-align:right}
 .chap__desc{position:absolute;right:52px;top:calc(52% + 92px);font-size:21px;color:var(--dc-ink-soft);
@@ -193,39 +200,7 @@ body{width:1280px;height:720px;overflow:hidden}
       <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#E4E7EB"/>
     </linearGradient>
 
-    <!-- 본문 바탕: 흰→회색 + 아주 옅은 캠퍼스 실루엣 -->
-    <symbol id="wash" viewBox="0 0 1280 658" preserveAspectRatio="none">
-      <rect width="1280" height="658" fill="url(#gWash)"/>
-      <g opacity="0.055" fill="#17365D">
-        <path d="M690 130 L1280 40 L1280 658 L690 658 Z"/>
-        <path d="M540 300 L690 268 L690 658 L540 658 Z" opacity="0.6"/>
-      </g>
-      <g opacity="0.05" fill="#FFFFFF">
-        <path d="M700 150 L1270 62 L1270 120 L700 208 Z"/>
-        <path d="M700 250 L1270 162 L1270 220 L700 308 Z"/>
-        <path d="M700 350 L1270 262 L1270 320 L700 408 Z"/>
-      </g>
-    </symbol>
 
-    <!-- 표지·챕터 띠 안의 방송 스튜디오 톤 오버레이 -->
-    <symbol id="bandArt" viewBox="0 0 1280 520" preserveAspectRatio="none">
-      <rect width="1280" height="520" fill="url(#gBand)"/>
-      <g opacity="0.13" fill="#FFFFFF">
-        <rect x="742" y="52" width="150" height="92" rx="4"/>
-        <rect x="912" y="52" width="150" height="92" rx="4"/>
-        <rect x="1082" y="52" width="150" height="92" rx="4"/>
-        <rect x="742" y="192" width="150" height="92" rx="4"/>
-        <rect x="912" y="192" width="150" height="92" rx="4"/>
-        <rect x="1082" y="192" width="150" height="92" rx="4"/>
-      </g>
-      <g opacity="0.10" fill="none" stroke="#FFFFFF" stroke-width="2">
-        <circle cx="196" cy="150" r="118"/><circle cx="196" cy="150" r="84"/>
-      </g>
-      <g opacity="0.09" fill="#FFFFFF">
-        <path d="M0 400 L520 300 L520 340 L0 440 Z"/>
-        <path d="M0 460 L520 360 L520 386 L0 486 Z"/>
-      </g>
-    </symbol>
 
     <!-- 띠 아래 줄무늬 -->
     <symbol id="rules" viewBox="0 0 560 46">
@@ -245,7 +220,6 @@ body{width:1280px;height:720px;overflow:hidden}
 </svg>
 <section class="slide" data-slide="1" data-kind="cover" id="Main-s01">
   <div class="cover__band">
-    <svg width="1280" height="520" style="position:absolute;inset:0"><use href="#bandArt" width="1280" height="520"/></svg>
   </div>
   <svg class="rules" style="top:64%" width="560" height="46"><use href="#rules"/></svg>
   <div class="cover__mark" aria-label="dima">dima</div>
