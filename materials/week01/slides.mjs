@@ -20,6 +20,22 @@ export const meta = {
   docTitle: '취업과 경력개발 · 제1강 오리엔테이션',
 };
 
+/* 교과 목표 — 원본 6쪽. 그림(goals4)과 Markdown 이 이 한 벌을 같이 쓴다 */
+const GOALS = [
+  ['첫째', '자기이해와 직업세계의 이해를 토대로', '자신의 진로목표와 이유를 분명히 알 수 있다.'],
+  ['둘째', '희망기업 및 직업 분석을 통해 현장에서', '요구되는 전문지식을 배우려고 노력할 수 있다.'],
+  ['셋째', '취업실무 준비를 위해서 고용환경 변화에 대해', '종합적인 시각으로 이해하려고 노력할 수 있다.'],
+  ['넷째', '채용시장에서 일어날 수 있는 다양한 문제에', '대하여 해결방안을 찾는 방법을 알 수 있다.'],
+];
+
+/* 수업 목표 달성 — 원본 7쪽 */
+const OUTCOMES = [
+  ['첫번째', '🧭', '자신의 직업흥미, 적성,', '가치관을 알 수 있다.'],
+  ['두번째', '🔍', '직업정보를 탐색하고', '분석할 수 있다.'],
+  ['세번째', '📄', '자신의 직무에 적합한 이력서/', '자기소개서를 작성할 수 있다.'],
+  ['네번째', '🎤', '적절한 면접 기법을 학습하여', '활용할 수 있다.'],
+];
+
 /* 주차별 강의 계획 — 2주차 자료와 같은 표를 쓴다 */
 const PLAN_ROWS = [
   ['1. 오리엔테이션 / 진로준비도검사', '강좌요구분석, 창업교육영향조사, 진로준비도검사'],
@@ -56,10 +72,11 @@ export const slides = [
     name: '강사 소개',
     section: '여러분과 함께 하는 저는 ?',
     plain: true,
+    dense: true,
     blocks: [
       { t: 'cols', ratio: 'wide-right', left: [
         { t: 'card', emoji: '🎓', badge: 'INSTRUCTOR', title: '정 동 엽',
-          text: '아시아퓨처스그룹 사무국장\n미래학기반 커리어 컨설턴트' },
+          text: '창의융합교양학부\n취업과 경력개발' },
         { t: 'callout', tone: 'blue', emoji: '✉️', text: 'dimajob4u@gmail.com' },
       ], right: [
         { t: 'ul', style: 'arrow', items: [
@@ -71,6 +88,7 @@ export const slides = [
           '서울산업진흥원 신 직업전문컨설턴트 및 자문위원, 창업 닥터(2013~2020년)',
           '고용노동부 직업심리 전문가(성인, 청소년, 대학생)',
           '고용노동부 온라인직업심리 전문가(청소년)',
+          '미래학기반 커리어 컨설턴트',
           'IT업계 20년 근무(교학사, 삼보컴퓨터 등에서 교육정보화 관련 컨설팅 업무 진행)',
           '한국어교원 2급(문화체육관광부)',
           '고용노동부 직업훈련교사 3급(마케팅, 정보기술전략·계획)',
@@ -98,7 +116,7 @@ export const slides = [
     kind: 'chapter',
     name: 'CHAPTER 1',
     no: 1,
-    title: '강의 개요',
+    title: '강의 개요(강의계획서)',
     sub: '교과 목표 및 교재 등에 대한 소개',
   },
 
@@ -107,7 +125,7 @@ export const slides = [
     kind: 'content',
     name: '강의 소개',
     chapNo: 1,
-    section: '강의 개요',
+    section: '강의 소개',
     lede: '본 수업은 여러분이 자신에게 맞는 진로를 찾을 수 있도록 도와드립니다.',
     blocks: [
       { t: 'cols', ratio: 'wide-left', left: [
@@ -131,7 +149,7 @@ export const slides = [
     lede: '교과 목표',
     blocks: [
       { t: 'callout', tone: 'line', emoji: '🎯', text: '『취업과 경력개발』 한 학기 수업을 마치면…' },
-      { t: 'fig', name: 'goals4' },
+      { t: 'fig', name: 'goals4', data: GOALS },
     ],
   },
 
@@ -144,7 +162,7 @@ export const slides = [
     lede: '수업 목표를 달성하면…',
     blocks: [
       { t: 'callout', tone: 'line', emoji: '🏁', text: '『취업과 경력개발』 한 학기 수업을 마치면…' },
-      { t: 'fig', name: 'outcomes4' },
+      { t: 'fig', name: 'outcomes4', data: OUTCOMES },
     ],
   },
 
@@ -201,7 +219,7 @@ export const slides = [
       { t: 'cols', ratio: 'even', left: [
         { t: 'h', text: '1. 전자출결(헤이영)' },
         { t: 'callout', tone: 'red', emoji: '⚠️', text: '유연한 출결 관리 불가' },
-        { t: 'callout', emoji: '📌', text: '¼ 결석자 학점 미취득 (F, 1주차 포함)\n진단서는 1주 이내 제출만 유효' },
+        { t: 'callout', emoji: '📌', text: '¼ 결석자 학점 미취득 (F, 1주차 포함) / 진단서 1주 이내 제출만 유효' },
         { t: 'note', text: '※ 취업관련 면접(면접확인서 필수)은 인정합니다.' },
       ], right: [
         { t: 'h', text: '2. 공결 기준' },
@@ -251,7 +269,7 @@ export const slides = [
     lede: '과제물 제출 안내',
     blocks: [
       { t: 'callout', tone: 'line', emoji: '📮', text:
-        '과제물은 **‘LMS 과제방’** 혹은 담당 교수 메일로, 해당 주차 강의일 !!하루 전 23:59:59!!까지 dimajob4u@gmail.com 으로 제출하시면 됩니다.' },
+        '과제물은 **‘LMS 과제방’** 혹은 저의 메일로 해당 주차 강의일 !!하루 전 23:59:59!!까지 이 메일 주소로 dimajob4u@gmail.com 으로 제출하시면 됩니다.' },
       { t: 'fig', name: 'submitTimeline' },
     ],
   },
@@ -382,7 +400,7 @@ export const slides = [
         { t: 'link', label: '고용24 직업심리검사 목록',
           href: 'https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do' },
         { t: 'callout', tone: 'blue', emoji: '🔎', text:
-          '검사 대상은 **대학생**, 측정 내용은 **진로(취업)준비도**로 골라 찾으면 빠릅니다.' },
+          '검사 대상을 **대학생**으로 걸러 놓고 이름으로 찾으면 빠릅니다.' },
         { t: 'callout', emoji: '📥', text: '검사가 끝나면 결과 화면을 캡처해 !!LMS 과제방!!에 올립니다.' },
       ] },
     ],

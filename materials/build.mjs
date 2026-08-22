@@ -13,7 +13,7 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { FIGURES } from './figures.mjs';
+import { FIGURES, FIGURE_META, MOTIFS } from './figures.mjs';
 import { stripes, chapterBadge } from './figures.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
@@ -50,7 +50,14 @@ function inlineHTML(s) {
 }
 
 function inlineMD(s) {
-  return String(s).replace(/!!(.+?)!!/g, '**$1**').replace(/\n/g, '<br>');
+  const strong = (_, inner, after) =>
+    (/[\p{L}\p{N}]/u.test(after) && !/[\p{L}\p{N}]$/u.test(inner))
+      ? `<strong>${inner}</strong>${after}`   // ‘…’** 뒤에 조사가 붙는 자리
+      : `**${inner}**${after}`;
+  return String(s)
+    .replace(/!!(.+?)!!/g, '**$1**')
+    .replace(/\*\*(.+?)\*\*(.?)/gu, strong)
+    .replace(/\n/g, '<br>');
 }
 
 /* ------------------------------------------------------------ 블록 → HTML */
@@ -81,7 +88,7 @@ function blockHTML(b) {
     case 'cards':
       return `<div class="cards cards--${b.cols || 3}">${b.items.map((i) => cardHTML(i, b.soft)).join('')}</div>`;
     case 'fig':
-      return `<div class="fig-wrap"${b.max ? ` style="max-height:${b.max}px"` : ''}>${FIGURES[b.name]()}</div>`;
+      return `<div class="fig-wrap"${b.max ? ` style="max-height:${b.max}px"` : ''}>${FIGURES[b.name](b.data)}</div>`;
     case 'table':
       return tableHTML(b);
     case 'cols': {
@@ -194,7 +201,7 @@ function slideHTML(s, n) {
     ? `<span class="slide__section slide__section--plain">${esc(s.section)}</span>`
     : `${s.chapNo ? `<span class="slide__chapno">${s.chapNo}</span>` : ''}<span class="slide__section">${esc(s.section)}</span>`;
   const lede = s.lede ? `<h2 class="slide__lede">${inlineHTML(s.lede)}</h2>` : '';
-  return `<section class="slide slide--content${s.dense ? ' is-dense' : ''}${s.tiny ? ' is-tiny' : ''}${s.added ? ' is-added' : ''}" ${attrs}>
+  return `<section class="slide slide--content${s.dense ? ' is-dense' : ''}${s.tiny ? ' is-tiny' : ''}" ${attrs}>
   <header class="slide__head"><span class="slide__eyebrow">${eyebrow}</span>${WORDMARK(false)}</header>
   <div class="slide__body" data-edit>
     ${lede}
@@ -220,7 +227,17 @@ function blockMD(b, out) {
     case 'link': out.push(`- [${inlineMD(b.label)}](${b.href})`, ''); break;
     case 'card': cardMD(b, out); break;
     case 'cards': b.items.forEach((c) => cardMD(c, out)); break;
-    case 'fig': out.push(`> ${FIGURE_MD[b.name] || `**[인포그래픽]** ${b.name}`}`, ''); break;
+    case 'fig':
+      out.push(`> ${FIGURE_MD[b.name]}`, '');
+      if (b.data) {
+        b.data.forEach((row) => {
+          const [label, ...rest] = row;
+          const body = rest.filter((t) => !/^\p{Extended_Pictographic}/u.test(t)).join(' ');
+          out.push(`- **${label}** ${inlineMD(body)}`);
+        });
+        out.push('');
+      }
+      break;
     case 'table': tableMD(b, out); break;
     case 'cols': b.left.forEach((x) => blockMD(x, out)); b.right.forEach((x) => blockMD(x, out)); break;
     default: throw new Error(`알 수 없는 블록: ${b.t}`);
@@ -282,9 +299,7 @@ const EXTRA_CSS = `
 .toc__no { font-family: var(--dc-num); font-size: 52px; font-weight: 600; color: #41B6E6; line-height: 1; min-width: 44px; }
 .toc__label { font-size: 27px; font-weight: 800; color: #4A5260; letter-spacing: -.02em; }
 
-/* --- 빽빽한 슬라이드 ------------------------------------------------------ */
-.slide.is-dense .slide__body { gap: 10px; padding-top: 18px; padding-bottom: 30px; }
-.slide.is-dense .slide__lede { font-size: 28px; }
+/* --- 빽빽한 슬라이드 (나머지는 theme.css) ---------------------------------- */
 .slide.is-dense .cards { gap: 11px; }
 .slide.is-dense .card { padding: 12px 14px; gap: 4px; }
 .slide.is-dense .card__title { font-size: 20px; }
@@ -293,9 +308,9 @@ const EXTRA_CSS = `
 .tbl--grade td { font-size: 20px; font-weight: 700; padding: 8px; }
 
 /* --- 주차별 강의 계획 표: 15줄 한 화면 ------------------------------------- */
-.tbl--plan { font-size: 15px; line-height: 1.3; table-layout: fixed; }
-.tbl--plan th { padding: 6px 10px; font-size: 16px; }
-.tbl--plan td { padding: 3px 10px; }
+.slide .tbl.tbl--plan { font-size: 15px; line-height: 1.3; table-layout: fixed; }
+.slide .tbl.tbl--plan th { padding: 6px 10px; font-size: 16px; }
+.slide .tbl.tbl--plan td { padding: 3px 10px; }
 .tbl--plan col.subject { width: 64%; }
 .tbl--plan col.task { width: 36%; }
 `;
@@ -574,16 +589,90 @@ ${slideHTML(s, i + 1)}
   return files.length;
 }
 
+/* ------------------------------------------------- 홀로 쓰는 .svg 파일 모음 */
+function buildSVG(dir) {
+  /* 데이터를 받아 그리는 그림은 실제 쓰이는 값으로 뽑는다 */
+  const SAMPLE = {};
+  for (const s of slides) {
+    for (const b of (s.blocks || [])) {
+      const flat = b.t === 'cols' ? [...b.left, ...b.right] : [b];
+      for (const x of flat) if (x.t === 'fig' && x.data) SAMPLE[x.name] = x.data;
+    }
+  }
+  const wrap = (body, title, src) => {
+    const withNS = body.includes('xmlns=')
+      ? body
+      : body.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+    return `<?xml version="1.0" encoding="UTF-8"?>\n<!-- ${title} — ${src} -->\n` +
+      withNS.replace(' class="fig"', '').replace(' class="stripes"', '');
+  };
+  const made = [];
+  for (const [name, fn] of Object.entries(FIGURES)) {
+    const m = FIGURE_META[name] || { title: name, src: '' };
+    writeFileSync(join(dir, `${name}.svg`), wrap(fn(SAMPLE[name]), m.title, m.src));
+    made.push({ file: `${name}.svg`, ...m, kind: '인포그래픽' });
+  }
+  for (const [name, m] of Object.entries(MOTIFS)) {
+    writeFileSync(join(dir, `${name}.svg`), wrap(m.make(), m.title, m.src));
+    made.push({ file: `${name}.svg`, title: m.title, src: m.src, kind: '장식 요소' });
+  }
+
+  const rows = made.map((m) => `  <figure class="item">
+    <div class="frame"><img src="${m.file}" alt="${esc(m.title)}"></div>
+    <figcaption><b>${esc(m.title)}</b><span>${esc(m.kind)} · ${esc(m.src)}</span><code>${m.file}</code></figcaption>
+  </figure>`).join('\n');
+
+  writeFileSync(join(dir, 'index.html'), `<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(meta.docTitle)} — 그림 요소</title>
+<link rel="stylesheet" href="${FONTS}">
+<style>
+  :root { color-scheme: light; }
+  body { margin: 0; padding: 40px 24px 64px; background: #F2F4F7; color: #16181D;
+         font-family: "Noto Sans KR", "Pretendard", sans-serif; }
+  h1 { max-width: 1200px; margin: 0 auto 6px; font-size: 30px; letter-spacing: -.02em; }
+  p.sub { max-width: 1200px; margin: 0 auto 30px; color: #6B7280; font-size: 16px; }
+  .grid { max-width: 1200px; margin: 0 auto; display: grid; gap: 22px;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .item { margin: 0; background: #fff; border: 1px solid #D9E2EC; border-radius: 12px; overflow: hidden; }
+  .frame { display: grid; place-items: center; padding: 18px; min-height: 170px; background: #FAFCFF; }
+  .frame img { max-width: 100%; max-height: 220px; }
+  figcaption { padding: 14px 16px 16px; border-top: 1px solid #EEF2F7;
+               display: flex; flex-direction: column; gap: 4px; }
+  figcaption b { font-size: 17px; }
+  figcaption span { font-size: 13px; color: #6B7280; }
+  figcaption code { font-size: 13px; color: #0057A0; }
+</style></head>
+<body>
+  <h1>그림 요소 — ${esc(meta.docTitle)}</h1>
+  <p class="sub">원본 PDF 안의 그림을 SVG 로 다시 그린 것입니다. 파일 하나하나를 그대로 가져다 쓸 수 있습니다.</p>
+  <div class="grid">
+${rows}
+  </div>
+</body></html>
+`);
+  return made.length;
+}
+
 /* --------------------------------------------------------------------- 실행 */
 const dist = join(ROOT, 'dist');
 const canvasDir = join(dist, 'canvas');
 rmSync(canvasDir, { recursive: true, force: true });
 mkdirSync(canvasDir, { recursive: true });
 
+const svgDir = join(dist, 'svg');
+rmSync(svgDir, { recursive: true, force: true });
+mkdirSync(svgDir, { recursive: true });
+
 writeFileSync(join(dist, `${meta.slug}.md`), buildMD());
 writeFileSync(join(dist, `${meta.slug}.html`), buildHTML());
+writeFileSync(join(dist, 'slides.json'), JSON.stringify({ meta, slides }, null, 2));
 const n = buildCanvas(canvasDir);
+const g = buildSVG(svgDir);
 
 console.log(`✓ ${meta.slug}.md`);
 console.log(`✓ ${meta.slug}.html   (슬라이드 ${slides.length}장)`);
+console.log(`✓ slides.json        (PPTX 빌더가 읽는 내용)`);
 console.log(`✓ canvas/            (아트보드 ${n}개 + canvas.json)`);
+console.log(`✓ svg/               (그림 ${g}개 + index.html)`);

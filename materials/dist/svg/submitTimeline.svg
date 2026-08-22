@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 과제물 제출 타임라인 — 1주차 원본 13쪽 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 210" role="img" aria-label="과제물 제출 일시는 강의 하루 전 23시 59분 59초까지">
+  <line x1="74" y1="120" x2="1060" y2="120" stroke="#9DC3E6" stroke-width="6" stroke-linecap="round"/>
+  <path d="M1060 120 l-22 -11 v22z" fill="#0070C0"/>
+
+  <g transform="translate(180,0)">
+    <rect x="0" y="16" width="330" height="76" rx="10" fill="#FFD78F" stroke="#E8A33D" stroke-width="2"/>
+    <text x="165" y="46" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#4A3208">과제물 제출 마감</text>
+    <text x="165" y="76" text-anchor="middle" font-family="Outfit, sans-serif" font-size="24" font-weight="700" fill="#4A3208">3. 10.  23:59:59</text>
+    <circle cx="165" cy="120" r="14" fill="#E8A33D" stroke="#FFFFFF" stroke-width="4"/>
+    <text x="165" y="166" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="700" fill="#6B7280">강의 하루 전</text>
+  </g>
+
+  <g transform="translate(650,0)">
+    <rect x="0" y="16" width="330" height="76" rx="10" fill="#DCE9F8" stroke="#9DC3E6" stroke-width="2"/>
+    <text x="165" y="46" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#0057A0">본 강의</text>
+    <text x="165" y="76" text-anchor="middle" font-family="Outfit, sans-serif" font-size="24" font-weight="700" fill="#0057A0">3. 11.  11:00</text>
+    <circle cx="165" cy="120" r="14" fill="#0070C0" stroke="#FFFFFF" stroke-width="4"/>
+    <text x="165" y="166" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="700" fill="#6B7280">수업 시작</text>
+  </g>
+  <text x="18" y="100" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="700" fill="#6B7280">예시</text>
+</svg>

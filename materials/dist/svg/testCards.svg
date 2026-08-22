@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 직업심리검사 목록 — 1주차 원본 23쪽 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 630 300" role="img" aria-label="고용24 직업심리검사 목록에서 대학생 진로준비도검사를 고른다">
+  <g transform="translate(0,0)">
+    <rect x="6" y="6" width="298" height="134" rx="10" fill="#FFFFFF" stroke="#D9E2EC" stroke-width="1.5"/>
+    <rect x="22" y="22" width="157" height="26" rx="13" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <text x="33" y="40" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="700" fill="#0057A0">진로(취업)준비도</text>
+    <text x="22" y="76" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#0B2A4A">진로준비진단검사(찾아Dream)</text>
+    <rect x="150" y="98" width="140" height="30" rx="6" fill="#4A5DBE"/>
+    <text x="220" y="118" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">검사 실시 (2분)</text>
+  </g>
+  <g transform="translate(320,0)">
+    <rect x="6" y="6" width="298" height="134" rx="10" fill="#FFFFFF" stroke="#C00000" stroke-width="3"/>
+    <rect x="22" y="22" width="97" height="26" rx="13" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <text x="33" y="40" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="700" fill="#0057A0">진로준비도</text>
+    <text x="22" y="76" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#0B2A4A">대학생진로준비도검사</text>
+    <rect x="150" y="98" width="140" height="30" rx="6" fill="#0070C0"/>
+    <text x="220" y="118" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">검사 실시 (20분)</text>
+  </g>
+  <g transform="translate(0,152)">
+    <rect x="6" y="6" width="298" height="134" rx="10" fill="#FFFFFF" stroke="#D9E2EC" stroke-width="1.5"/>
+    <rect x="22" y="22" width="52" height="26" rx="13" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <text x="33" y="40" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="700" fill="#0057A0">역량</text>
+    <text x="22" y="76" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#0B2A4A">창업적성검사</text>
+    <rect x="150" y="98" width="140" height="30" rx="6" fill="#4A5DBE"/>
+    <text x="220" y="118" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">검사 실시 (20분)</text>
+  </g>
+  <g transform="translate(320,152)">
+    <rect x="6" y="6" width="298" height="134" rx="10" fill="#FFFFFF" stroke="#D9E2EC" stroke-width="1.5"/>
+    <rect x="22" y="22" width="52" height="26" rx="13" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <text x="33" y="40" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="700" fill="#0057A0">흥미</text>
+    <text x="22" y="76" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#0B2A4A">직업흥미탐색검사(간편형)</text>
+    <rect x="150" y="98" width="140" height="30" rx="6" fill="#4A5DBE"/>
+    <text x="220" y="118" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">검사 실시 (5분)</text>
+  </g>
+</svg>

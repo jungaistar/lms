@@ -170,7 +170,7 @@
 
 .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
 .list li {
-  position: relative; padding-left: 26px;
+  position: relative; padding-left: 29px;
   font-size: 21px; color: var(--dc-ink-2); line-height: 1.45;
 }
 .list li::before {
@@ -180,14 +180,14 @@
 .list--check li::before {
   content: "✓"; font-family: var(--dc-sans); font-weight: 800;
   left: 0; top: 0; width: auto; height: auto;
-  background: none; color: var(--dc-blue); font-size: 20px;
+  background: none; color: var(--dc-blue); font-size: 18px;
 }
 .list--arrow li::before {
   content: "▸"; left: 2px; top: -.05em; width: auto; height: auto;
-  background: none; color: var(--dc-cyan); font-size: 20px; font-weight: 700;
+  background: none; color: var(--dc-cyan); font-size: 18px; font-weight: 700;
 }
 .list--num { counter-reset: dcnum; }
-.list--num li { padding-left: 40px; }
+.list--num li { padding-left: 45px; }
 .list--num li::before {
   counter-increment: dcnum; content: counter(dcnum);
   left: 0; top: .08em; width: 28px; height: 28px;
@@ -210,16 +210,11 @@
 .callout--red { border-color: #E39C9C; background: #FDECEC; color: #7A1414; }
 .callout .emo { margin-right: 8px; }
 
-.quote {
-  border: 1px solid #C9B9D6; background: #FAF7FC;
-  border-radius: 6px; padding: 20px 24px; text-align: center;
-}
 
 /* --------------------------------------------------------------------- 카드 */
 .cards { display: grid; gap: 14px; }
 .cards--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .cards--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.cards--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .card {
   background: var(--dc-panel); border: 1px solid var(--dc-line);
   border-radius: 12px; padding: 16px 18px;
@@ -328,20 +323,12 @@
   color: var(--dc-navy); letter-spacing: -.035em;
 }
 .next__sub {
-  position: absolute; right: var(--dc-pad-x); top: calc(52% + 100px);
+  position: absolute; right: var(--dc-pad-x); top: calc(52% + 114px);
   text-align: right; font-size: 25px; font-weight: 600; color: var(--dc-ink-2);
 }
 
 /* --------------------------------------------------------------------- 기타 */
 .emo { font-family: var(--dc-emoji); font-style: normal; }
-.pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 15px; border-radius: 999px;
-  background: var(--dc-blue-soft); color: var(--dc-blue-deep);
-  border: 1px solid var(--dc-blue-line);
-  font-size: 18px; font-weight: 700;
-}
-.pill--solid { background: var(--dc-blue); color: #fff; border-color: var(--dc-blue); }
 .link { color: var(--dc-blue-deep); font-weight: 700; word-break: break-all; }
 .link:hover { color: var(--dc-cyan); }
 .linkbox {
@@ -358,13 +345,8 @@
   font-family: var(--dc-num); font-size: 17px; font-weight: 600;
   color: var(--dc-blue-deep); word-break: break-all;
 }
-.kv { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; align-items: baseline; }
-.kv dt { font-size: 19px; font-weight: 800; color: var(--dc-blue-deep); white-space: nowrap; }
-.kv dd { margin: 0; font-size: 19px; color: var(--dc-ink-2); }
 .note { font-size: 17px; color: var(--dc-ink-3); }
-.screen {
-  background: var(--dc-panel); border: 1px solid var(--dc-line);
-  border-radius: 10px; padding: 14px; }
+
 
 /* --------------------------------------------------- 빽빽 모드 (is-dense) */
 .slide.is-dense .slide__body { gap: 10px; padding-top: 16px; padding-bottom: 44px; }
@@ -408,9 +390,7 @@
 .toc__no { font-family: var(--dc-num); font-size: 52px; font-weight: 600; color: #41B6E6; line-height: 1; min-width: 44px; }
 .toc__label { font-size: 27px; font-weight: 800; color: #4A5260; letter-spacing: -.02em; }
 
-/* --- 빽빽한 슬라이드 ------------------------------------------------------ */
-.slide.is-dense .slide__body { gap: 10px; padding-top: 18px; padding-bottom: 30px; }
-.slide.is-dense .slide__lede { font-size: 28px; }
+/* --- 빽빽한 슬라이드 (나머지는 theme.css) ---------------------------------- */
 .slide.is-dense .cards { gap: 11px; }
 .slide.is-dense .card { padding: 12px 14px; gap: 4px; }
 .slide.is-dense .card__title { font-size: 20px; }
@@ -419,19 +399,19 @@
 .tbl--grade td { font-size: 20px; font-weight: 700; padding: 8px; }
 
 /* --- 주차별 강의 계획 표: 15줄 한 화면 ------------------------------------- */
-.tbl--plan { font-size: 15px; line-height: 1.3; table-layout: fixed; }
-.tbl--plan th { padding: 6px 10px; font-size: 16px; }
-.tbl--plan td { padding: 3px 10px; }
+.slide .tbl.tbl--plan { font-size: 15px; line-height: 1.3; table-layout: fixed; }
+.slide .tbl.tbl--plan th { padding: 6px 10px; font-size: 16px; }
+.slide .tbl.tbl--plan td { padding: 3px 10px; }
 .tbl--plan col.subject { width: 64%; }
 .tbl--plan col.task { width: 36%; }
 
   </style>
 </helmet>
-<section class="slide slide--content" id="s02" data-index="2" data-kind="content" data-name="강사 소개">
+<section class="slide slide--content is-dense" id="s02" data-index="2" data-kind="content" data-name="강사 소개">
   <header class="slide__head"><span class="slide__eyebrow"><span class="slide__section slide__section--plain">여러분과 함께 하는 저는 ?</span></span><span class="wordmark">d<i>i</i>ma</span></header>
   <div class="slide__body" data-edit>
     
-    <div class="slide__cols slide__cols--wide-right"><div class="stack"><div class="card"><span class="card__emo emo">🎓</span><span class="card__badge">INSTRUCTOR</span><span class="card__title">정 동 엽</span><span class="card__text">아시아퓨처스그룹 사무국장<br>미래학기반 커리어 컨설턴트</span></div><p class="callout callout--blue"><i class="emo">✉️</i>dimajob4u@gmail.com</p></div><div class="stack"><ul class="list list--arrow"><li>아시아퓨처스그룹 사무국장</li><li>아시아미래인재연구소 (前)교육실장 및 전문연구원</li><li>경기대학교 일반대학원 직업학과 박사수료</li><li>가천대학교 경영대학원 고용 및 직업상담학과 석사</li><li>한국기술교육대학교 능력개발원 4차 산업혁명과 일/직업의 변화 교수</li><li>서울산업진흥원 신 직업전문컨설턴트 및 자문위원, 창업 닥터(2013~2020년)</li><li>고용노동부 직업심리 전문가(성인, 청소년, 대학생)</li><li>고용노동부 온라인직업심리 전문가(청소년)</li><li>IT업계 20년 근무(교학사, 삼보컴퓨터 등에서 교육정보화 관련 컨설팅 업무 진행)</li><li>한국어교원 2급(문화체육관광부)</li><li>고용노동부 직업훈련교사 3급(마케팅, 정보기술전략·계획)</li><li>모금전문가, 평생교육사, 사회복지사, 국제공인 NLP Practitioner</li></ul></div></div>
+    <div class="slide__cols slide__cols--wide-right"><div class="stack"><div class="card"><span class="card__emo emo">🎓</span><span class="card__badge">INSTRUCTOR</span><span class="card__title">정 동 엽</span><span class="card__text">창의융합교양학부<br>취업과 경력개발</span></div><p class="callout callout--blue"><i class="emo">✉️</i>dimajob4u@gmail.com</p></div><div class="stack"><ul class="list list--arrow"><li>아시아퓨처스그룹 사무국장</li><li>아시아미래인재연구소 (前)교육실장 및 전문연구원</li><li>경기대학교 일반대학원 직업학과 박사수료</li><li>가천대학교 경영대학원 고용 및 직업상담학과 석사</li><li>한국기술교육대학교 능력개발원 4차 산업혁명과 일/직업의 변화 교수</li><li>서울산업진흥원 신 직업전문컨설턴트 및 자문위원, 창업 닥터(2013~2020년)</li><li>고용노동부 직업심리 전문가(성인, 청소년, 대학생)</li><li>고용노동부 온라인직업심리 전문가(청소년)</li><li>미래학기반 커리어 컨설턴트</li><li>IT업계 20년 근무(교학사, 삼보컴퓨터 등에서 교육정보화 관련 컨설팅 업무 진행)</li><li>한국어교원 2급(문화체육관광부)</li><li>고용노동부 직업훈련교사 3급(마케팅, 정보기술전략·계획)</li><li>모금전문가, 평생교육사, 사회복지사, 국제공인 NLP Practitioner</li></ul></div></div>
   </div>
   <span class="slide__no">2</span>
 </section>

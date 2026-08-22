@@ -157,7 +157,7 @@
 
 .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
 .list li {
-  position: relative; padding-left: 26px;
+  position: relative; padding-left: 29px;
   font-size: 21px; color: var(--dc-ink-2); line-height: 1.45;
 }
 .list li::before {
@@ -167,14 +167,14 @@
 .list--check li::before {
   content: "✓"; font-family: var(--dc-sans); font-weight: 800;
   left: 0; top: 0; width: auto; height: auto;
-  background: none; color: var(--dc-blue); font-size: 20px;
+  background: none; color: var(--dc-blue); font-size: 18px;
 }
 .list--arrow li::before {
   content: "▸"; left: 2px; top: -.05em; width: auto; height: auto;
-  background: none; color: var(--dc-cyan); font-size: 20px; font-weight: 700;
+  background: none; color: var(--dc-cyan); font-size: 18px; font-weight: 700;
 }
 .list--num { counter-reset: dcnum; }
-.list--num li { padding-left: 40px; }
+.list--num li { padding-left: 45px; }
 .list--num li::before {
   counter-increment: dcnum; content: counter(dcnum);
   left: 0; top: .08em; width: 28px; height: 28px;
@@ -197,16 +197,11 @@
 .callout--red { border-color: #E39C9C; background: #FDECEC; color: #7A1414; }
 .callout .emo { margin-right: 8px; }
 
-.quote {
-  border: 1px solid #C9B9D6; background: #FAF7FC;
-  border-radius: 6px; padding: 20px 24px; text-align: center;
-}
 
 /* --------------------------------------------------------------------- 카드 */
 .cards { display: grid; gap: 14px; }
 .cards--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .cards--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.cards--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .card {
   background: var(--dc-panel); border: 1px solid var(--dc-line);
   border-radius: 12px; padding: 16px 18px;
@@ -315,20 +310,12 @@
   color: var(--dc-navy); letter-spacing: -.035em;
 }
 .next__sub {
-  position: absolute; right: var(--dc-pad-x); top: calc(52% + 100px);
+  position: absolute; right: var(--dc-pad-x); top: calc(52% + 114px);
   text-align: right; font-size: 25px; font-weight: 600; color: var(--dc-ink-2);
 }
 
 /* --------------------------------------------------------------------- 기타 */
 .emo { font-family: var(--dc-emoji); font-style: normal; }
-.pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 15px; border-radius: 999px;
-  background: var(--dc-blue-soft); color: var(--dc-blue-deep);
-  border: 1px solid var(--dc-blue-line);
-  font-size: 18px; font-weight: 700;
-}
-.pill--solid { background: var(--dc-blue); color: #fff; border-color: var(--dc-blue); }
 .link { color: var(--dc-blue-deep); font-weight: 700; word-break: break-all; }
 .link:hover { color: var(--dc-cyan); }
 .linkbox {
@@ -345,13 +332,8 @@
   font-family: var(--dc-num); font-size: 17px; font-weight: 600;
   color: var(--dc-blue-deep); word-break: break-all;
 }
-.kv { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; align-items: baseline; }
-.kv dt { font-size: 19px; font-weight: 800; color: var(--dc-blue-deep); white-space: nowrap; }
-.kv dd { margin: 0; font-size: 19px; color: var(--dc-ink-2); }
 .note { font-size: 17px; color: var(--dc-ink-3); }
-.screen {
-  background: var(--dc-panel); border: 1px solid var(--dc-line);
-  border-radius: 10px; padding: 14px; }
+
 
 /* --------------------------------------------------- 빽빽 모드 (is-dense) */
 .slide.is-dense .slide__body { gap: 10px; padding-top: 16px; padding-bottom: 44px; }

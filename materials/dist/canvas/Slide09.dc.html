@@ -170,7 +170,7 @@
 
 .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
 .list li {
-  position: relative; padding-left: 26px;
+  position: relative; padding-left: 29px;
   font-size: 21px; color: var(--dc-ink-2); line-height: 1.45;
 }
 .list li::before {
@@ -180,14 +180,14 @@
 .list--check li::before {
   content: "✓"; font-family: var(--dc-sans); font-weight: 800;
   left: 0; top: 0; width: auto; height: auto;
-  background: none; color: var(--dc-blue); font-size: 20px;
+  background: none; color: var(--dc-blue); font-size: 18px;
 }
 .list--arrow li::before {
   content: "▸"; left: 2px; top: -.05em; width: auto; height: auto;
-  background: none; color: var(--dc-cyan); font-size: 20px; font-weight: 700;
+  background: none; color: var(--dc-cyan); font-size: 18px; font-weight: 700;
 }
 .list--num { counter-reset: dcnum; }
-.list--num li { padding-left: 40px; }
+.list--num li { padding-left: 45px; }
 .list--num li::before {
   counter-increment: dcnum; content: counter(dcnum);
   left: 0; top: .08em; width: 28px; height: 28px;
@@ -210,16 +210,11 @@
 .callout--red { border-color: #E39C9C; background: #FDECEC; color: #7A1414; }
 .callout .emo { margin-right: 8px; }
 
-.quote {
-  border: 1px solid #C9B9D6; background: #FAF7FC;
-  border-radius: 6px; padding: 20px 24px; text-align: center;
-}
 
 /* --------------------------------------------------------------------- 카드 */
 .cards { display: grid; gap: 14px; }
 .cards--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .cards--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.cards--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .card {
   background: var(--dc-panel); border: 1px solid var(--dc-line);
   border-radius: 12px; padding: 16px 18px;
@@ -328,20 +323,12 @@
   color: var(--dc-navy); letter-spacing: -.035em;
 }
 .next__sub {
-  position: absolute; right: var(--dc-pad-x); top: calc(52% + 100px);
+  position: absolute; right: var(--dc-pad-x); top: calc(52% + 114px);
   text-align: right; font-size: 25px; font-weight: 600; color: var(--dc-ink-2);
 }
 
 /* --------------------------------------------------------------------- 기타 */
 .emo { font-family: var(--dc-emoji); font-style: normal; }
-.pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 15px; border-radius: 999px;
-  background: var(--dc-blue-soft); color: var(--dc-blue-deep);
-  border: 1px solid var(--dc-blue-line);
-  font-size: 18px; font-weight: 700;
-}
-.pill--solid { background: var(--dc-blue); color: #fff; border-color: var(--dc-blue); }
 .link { color: var(--dc-blue-deep); font-weight: 700; word-break: break-all; }
 .link:hover { color: var(--dc-cyan); }
 .linkbox {
@@ -358,13 +345,8 @@
   font-family: var(--dc-num); font-size: 17px; font-weight: 600;
   color: var(--dc-blue-deep); word-break: break-all;
 }
-.kv { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; align-items: baseline; }
-.kv dt { font-size: 19px; font-weight: 800; color: var(--dc-blue-deep); white-space: nowrap; }
-.kv dd { margin: 0; font-size: 19px; color: var(--dc-ink-2); }
 .note { font-size: 17px; color: var(--dc-ink-3); }
-.screen {
-  background: var(--dc-panel); border: 1px solid var(--dc-line);
-  border-radius: 10px; padding: 14px; }
+
 
 /* --------------------------------------------------- 빽빽 모드 (is-dense) */
 .slide.is-dense .slide__body { gap: 10px; padding-top: 16px; padding-bottom: 44px; }
@@ -408,9 +390,7 @@
 .toc__no { font-family: var(--dc-num); font-size: 52px; font-weight: 600; color: #41B6E6; line-height: 1; min-width: 44px; }
 .toc__label { font-size: 27px; font-weight: 800; color: #4A5260; letter-spacing: -.02em; }
 
-/* --- 빽빽한 슬라이드 ------------------------------------------------------ */
-.slide.is-dense .slide__body { gap: 10px; padding-top: 18px; padding-bottom: 30px; }
-.slide.is-dense .slide__lede { font-size: 28px; }
+/* --- 빽빽한 슬라이드 (나머지는 theme.css) ---------------------------------- */
 .slide.is-dense .cards { gap: 11px; }
 .slide.is-dense .card { padding: 12px 14px; gap: 4px; }
 .slide.is-dense .card__title { font-size: 20px; }
@@ -419,9 +399,9 @@
 .tbl--grade td { font-size: 20px; font-weight: 700; padding: 8px; }
 
 /* --- 주차별 강의 계획 표: 15줄 한 화면 ------------------------------------- */
-.tbl--plan { font-size: 15px; line-height: 1.3; table-layout: fixed; }
-.tbl--plan th { padding: 6px 10px; font-size: 16px; }
-.tbl--plan td { padding: 3px 10px; }
+.slide .tbl.tbl--plan { font-size: 15px; line-height: 1.3; table-layout: fixed; }
+.slide .tbl.tbl--plan th { padding: 6px 10px; font-size: 16px; }
+.slide .tbl.tbl--plan td { padding: 3px 10px; }
 .tbl--plan col.subject { width: 64%; }
 .tbl--plan col.task { width: 36%; }
 
@@ -432,7 +412,7 @@
   <div class="slide__body" data-edit>
     <h2 class="slide__lede">평가 기준에 따라 적용합니다.</h2>
     <div class="slide__cols slide__cols--wide-left"><div class="stack"><h3 class="h-sub">1. 성적평가</h3><div class="table-wrap"><table class="tbl tbl--grade"><thead><tr><th>출석</th><th>중간시험</th><th>기말시험</th><th>과제물제출 및 참여도(수업태도)</th></tr></thead><tbody><tr><td class="c">30%</td><td class="c">20%</td><td class="c">20%</td><td class="c">30%(활동워크북)</td></tr></tbody></table></div><h3 class="h-sub">2. 시험 안내</h3><ul class="list"><li><b class="strong">중간고사 : 8주차 시행</b> — 이력서 및 자기소개서 제출 및 조별 공유</li><li><b class="strong">기말고사 : 15주차 시행</b> — 진로 생애계획서 제출 및 조별 공유</li></ul><h3 class="h-sub">3. 평가기준</h3><ul class="list"><li><b class="strong">수업 참여 적극성</b> — 소그룹 토론 참여 적극성, 개인의 생각과 의견 게시 적극성 등을 확인</li><li><b class="strong">활동워크북</b> — 수업시간 내에 작성하는 활동지 제출 여부 및 구체적으로 작성하였는지를 확인</li></ul></div><div class="stack"><div class="fig-wrap"><svg class="fig" viewBox="0 0 470 470" role="img" aria-label="성적 평가 비율: 출석 30퍼센트, 중간시험 조별발표 20퍼센트, 기말시험 20퍼센트, 과제물과 수업태도 30퍼센트">
-  <rect x="6" y="6" width="458" height="458" rx="10" fill="#DCE9F8" opacity=".45" stroke="#9DC3E6"/>
+  <rect x="6" y="6" width="458" height="458" rx="10" fill="#EEF4FC" stroke="#9DC3E6"/>
   <path d="M241.62 92.14A158 158 0 0 1 387.18 292.49L292.79 266.14A60 60 0 0 0 237.51 190.05Z" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
   <path d="M383.09 305.07A158 158 0 0 1 241.62 407.86L237.51 309.95A60 60 0 0 0 291.24 270.91Z" fill="#EDF4FC" stroke="#9DC3E6" stroke-width="2"/>
   <path d="M228.38 407.86A158 158 0 0 1 86.91 305.07L178.76 270.91A60 60 0 0 0 232.49 309.95Z" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
@@ -443,8 +423,8 @@
   <text x="137.1" y="152.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">과제물,</text><text x="137.1" y="179.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">수업태도</text><text x="137.1" y="206.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">30%</text>
   <g transform="translate(258,18)">
     <rect width="200" height="62" rx="6" fill="#0070C0"/>
-    <text x="20" y="40" font-family="Outfit, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">+</text>
-    <text x="44" y="38" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="700" fill="#FFFFFF">취·창업 및 진로상담</text>
+    <text x="18" y="40" font-family="Outfit, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">+</text>
+    <text x="50" y="38" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF">취·창업 및 진로상담</text>
   </g>
   <path d="M330 88 l9 22 24 2 -18 16 5 24 -20-13 -20 13 5-24 -18-16 24-2z" fill="#FFE14D" stroke="#E8A33D" stroke-width="2"/>
 </svg></div></div></div>

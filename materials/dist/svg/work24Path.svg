@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 고용24 접속 경로 — 1주차 원본 21·22쪽 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="고용24에서 대학생 진로준비도검사까지 가는 다섯 단계">
+  <g transform="translate(0,0)">
+    <rect x="0" y="0" width="640" height="60" rx="10" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <circle cx="34" cy="30" r="18" fill="#0070C0"/>
+    <text x="34" y="38" text-anchor="middle" font-family="Outfit, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">1</text>
+    <text x="66" y="27" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#0B2A4A">고용24 접속</text>
+    <text x="66" y="49" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="600" fill="#6B7280">work24.go.kr</text>
+    <path d="M320 62 l-8 0 8 10 8-10z" fill="#9DC3E6"/>
+  </g>
+  <g transform="translate(0,74)">
+    <rect x="0" y="0" width="640" height="60" rx="10" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <circle cx="34" cy="30" r="18" fill="#0070C0"/>
+    <text x="34" y="38" text-anchor="middle" font-family="Outfit, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">2</text>
+    <text x="66" y="27" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#0B2A4A">취업지원</text>
+    <text x="66" y="49" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="600" fill="#6B7280">상단 메뉴</text>
+    <path d="M320 62 l-8 0 8 10 8-10z" fill="#9DC3E6"/>
+  </g>
+  <g transform="translate(0,148)">
+    <rect x="0" y="0" width="640" height="60" rx="10" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <circle cx="34" cy="30" r="18" fill="#0070C0"/>
+    <text x="34" y="38" text-anchor="middle" font-family="Outfit, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">3</text>
+    <text x="66" y="27" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#0B2A4A">직업심리검사</text>
+    <text x="66" y="49" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="600" fill="#6B7280">취업가이드 안</text>
+    <path d="M320 62 l-8 0 8 10 8-10z" fill="#9DC3E6"/>
+  </g>
+  <g transform="translate(0,222)">
+    <rect x="0" y="0" width="640" height="60" rx="10" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <circle cx="34" cy="30" r="18" fill="#0070C0"/>
+    <text x="34" y="38" text-anchor="middle" font-family="Outfit, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">4</text>
+    <text x="66" y="27" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#0B2A4A">대학생 진로준비도검사</text>
+    <text x="66" y="49" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="600" fill="#6B7280">검사 대상: 대학생</text>
+    <path d="M320 62 l-8 0 8 10 8-10z" fill="#9DC3E6"/>
+  </g>
+  <g transform="translate(0,296)">
+    <rect x="0" y="0" width="640" height="60" rx="10" fill="#FFD78F" stroke="#E8A33D" stroke-width="2"/>
+    <circle cx="34" cy="30" r="18" fill="#B4741A"/>
+    <text x="34" y="38" text-anchor="middle" font-family="Outfit, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">5</text>
+    <text x="66" y="27" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#4A3208">검사 실시 (20분)</text>
+    <text x="66" y="49" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="600" fill="#6B4A10">결과 캡처 → LMS 제출</text>
+    
+  </g>
+</svg>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 생성형 AI 사용 흐름 — 이번에 추가 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1090 174" role="img" aria-label="생성형 AI 사용 흐름: 초안은 AI, 재해석과 핵심 결론은 사람, 출처와 프롬프트는 반드시 명시">
+  <g transform="translate(0,0)">
+    <rect x="0" y="10" width="248" height="150" rx="14" fill="#EDF4FC" stroke="#9DC3E6" stroke-width="2"/>
+    <text x="124" y="64" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🤖</text>
+    <text x="124" y="104" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="23" font-weight="800" fill="#0057A0">초안</text>
+    <text x="124" y="133" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="600" fill="#3D4450">AI 사용 허용</text>
+    <path d="M252 78 l14 7 -14 7z" fill="#0070C0"/><path d="M248 85 h8" stroke="#0070C0" stroke-width="3"/>
+  </g>
+  <g transform="translate(272,0)">
+    <rect x="0" y="10" width="248" height="150" rx="14" fill="#DCE9F8" stroke="#9DC3E6" stroke-width="2"/>
+    <text x="124" y="64" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🧠</text>
+    <text x="124" y="104" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="23" font-weight="800" fill="#0057A0">재해석 · 발전</text>
+    <text x="124" y="133" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="600" fill="#3D4450">사람이 변형한다</text>
+    <path d="M252 78 l14 7 -14 7z" fill="#0070C0"/><path d="M248 85 h8" stroke="#0070C0" stroke-width="3"/>
+  </g>
+  <g transform="translate(544,0)">
+    <rect x="0" y="10" width="248" height="150" rx="14" fill="#FFD78F" stroke="#E8A33D" stroke-width="2"/>
+    <text x="124" y="64" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">✍️</text>
+    <text x="124" y="104" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="23" font-weight="800" fill="#4A3208">핵심 · 결론</text>
+    <text x="124" y="133" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="600" fill="#3D4450">반드시 사람이 직접</text>
+    <path d="M252 78 l14 7 -14 7z" fill="#0070C0"/><path d="M248 85 h8" stroke="#0070C0" stroke-width="3"/>
+  </g>
+  <g transform="translate(816,0)">
+    <rect x="0" y="10" width="248" height="150" rx="14" fill="#FFFFFF" stroke="#C00000" stroke-width="2"/>
+    <text x="124" y="64" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🔖</text>
+    <text x="124" y="104" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="23" font-weight="800" fill="#C00000">출처 · 프롬프트</text>
+    <text x="124" y="133" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="600" fill="#3D4450">반드시 명시한다</text>
+    
+  </g>
+</svg>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 성적 평가 구성비 — 1주차 원본 9쪽 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 470" role="img" aria-label="성적 평가 비율: 출석 30퍼센트, 중간시험 조별발표 20퍼센트, 기말시험 20퍼센트, 과제물과 수업태도 30퍼센트">
+  <rect x="6" y="6" width="458" height="458" rx="10" fill="#EEF4FC" stroke="#9DC3E6"/>
+  <path d="M241.62 92.14A158 158 0 0 1 387.18 292.49L292.79 266.14A60 60 0 0 0 237.51 190.05Z" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+  <path d="M383.09 305.07A158 158 0 0 1 241.62 407.86L237.51 309.95A60 60 0 0 0 291.24 270.91Z" fill="#EDF4FC" stroke="#9DC3E6" stroke-width="2"/>
+  <path d="M228.38 407.86A158 158 0 0 1 86.91 305.07L178.76 270.91A60 60 0 0 0 232.49 309.95Z" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+  <path d="M82.82 292.49A158 158 0 0 1 228.38 92.14L232.49 190.05A60 60 0 0 0 177.21 266.14Z" fill="#EDF4FC" stroke="#9DC3E6" stroke-width="2"/>
+  <text x="332.9" y="165.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="25" font-weight="800" fill="#C00000">출석</text><text x="332.9" y="192.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="25" font-weight="800" fill="#C00000">30%</text>
+  <text x="306.1" y="321.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">중간 시험</text><text x="306.1" y="348.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">(조별발표)</text><text x="306.1" y="375.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">20%</text>
+  <text x="163.9" y="334.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">기말시험</text><text x="163.9" y="361.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">20%</text>
+  <text x="137.1" y="152.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">과제물,</text><text x="137.1" y="179.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">수업태도</text><text x="137.1" y="206.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">30%</text>
+  <g transform="translate(258,18)">
+    <rect width="200" height="62" rx="6" fill="#0070C0"/>
+    <text x="18" y="40" font-family="Outfit, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">+</text>
+    <text x="50" y="38" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF">취·창업 및 진로상담</text>
+  </g>
+  <path d="M330 88 l9 22 24 2 -18 16 5 24 -20-13 -20 13 5-24 -18-16 24-2z" fill="#FFE14D" stroke="#E8A33D" stroke-width="2"/>
+</svg>

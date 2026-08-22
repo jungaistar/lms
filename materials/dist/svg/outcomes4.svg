@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 수업 목표 달성 네 단계 — 1주차 원본 7쪽 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1140 316" role="img" aria-label="한 학기를 마치면 달성하는 네 가지 목표">
+  <path d="M0 306 H1140" stroke="#9DC3E6" stroke-width="2"/>
+  <g transform="translate(0,0)">
+    <rect x="10" y="110" width="262" height="190" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <rect x="10" y="110" width="262" height="46" rx="12" fill="#0070C0"/>
+    <rect x="10" y="140" width="262" height="16" fill="#0070C0"/>
+    <text x="141" y="141" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">첫번째</text>
+    <text x="141" y="210" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🧭</text>
+    <text x="141" y="250" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">자신의 직업흥미, 적성,</text>
+    <text x="141" y="276" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">가치관을 알 수 있다.</text>
+  </g>
+  <g transform="translate(285,0)">
+    <rect x="10" y="76" width="262" height="224" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <rect x="10" y="76" width="262" height="46" rx="12" fill="#0070C0"/>
+    <rect x="10" y="106" width="262" height="16" fill="#0070C0"/>
+    <text x="141" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">두번째</text>
+    <text x="141" y="176" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🔍</text>
+    <text x="141" y="216" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">직업정보를 탐색하고</text>
+    <text x="141" y="242" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">분석할 수 있다.</text>
+  </g>
+  <g transform="translate(570,0)">
+    <rect x="10" y="42" width="262" height="258" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <rect x="10" y="42" width="262" height="46" rx="12" fill="#0070C0"/>
+    <rect x="10" y="72" width="262" height="16" fill="#0070C0"/>
+    <text x="141" y="73" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">세번째</text>
+    <text x="141" y="142" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">📄</text>
+    <text x="141" y="182" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">자신의 직무에 적합한 이력서/</text>
+    <text x="141" y="208" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">자기소개서를 작성할 수 있다.</text>
+  </g>
+  <g transform="translate(855,0)">
+    <rect x="10" y="8" width="262" height="292" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <rect x="10" y="8" width="262" height="46" rx="12" fill="#0070C0"/>
+    <rect x="10" y="38" width="262" height="16" fill="#0070C0"/>
+    <text x="141" y="39" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">네번째</text>
+    <text x="141" y="108" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🎤</text>
+    <text x="141" y="148" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">적절한 면접 기법을 학습하여</text>
+    <text x="141" y="174" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">활용할 수 있다.</text>
+  </g>
+</svg>

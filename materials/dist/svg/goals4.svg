@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 교과 목표 네 가지 — 1주차 원본 6쪽 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 392" role="img" aria-label="교과 목표 네 가지">
+  <g transform="translate(0,8)">
+    <rect x="0" y="0" width="1120" height="82" rx="10" fill="#FFFFFF" stroke="#9DC3E6"/>
+    <rect x="0" y="0" width="7" height="82" rx="3" fill="#0070C0"/>
+    <circle cx="52" cy="41" r="25" fill="#0070C0"/>
+    <text x="52" y="49" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#FFFFFF">첫째</text>
+    <text x="94" y="35" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="600" fill="#3D4450">자기이해와 직업세계의 이해를 토대로</text>
+    <text x="94" y="65" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="700" fill="#0B2A4A">자신의 진로목표와 이유를 분명히 알 수 있다.</text>
+  </g>
+  <g transform="translate(0,104)">
+    <rect x="0" y="0" width="1120" height="82" rx="10" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <rect x="0" y="0" width="7" height="82" rx="3" fill="#0070C0"/>
+    <circle cx="52" cy="41" r="25" fill="#0070C0"/>
+    <text x="52" y="49" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#FFFFFF">둘째</text>
+    <text x="94" y="35" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="600" fill="#3D4450">희망기업 및 직업 분석을 통해 현장에서</text>
+    <text x="94" y="65" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="700" fill="#0B2A4A">요구되는 전문지식을 배우려고 노력할 수 있다.</text>
+  </g>
+  <g transform="translate(0,200)">
+    <rect x="0" y="0" width="1120" height="82" rx="10" fill="#FFFFFF" stroke="#9DC3E6"/>
+    <rect x="0" y="0" width="7" height="82" rx="3" fill="#0070C0"/>
+    <circle cx="52" cy="41" r="25" fill="#0070C0"/>
+    <text x="52" y="49" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#FFFFFF">셋째</text>
+    <text x="94" y="35" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="600" fill="#3D4450">취업실무 준비를 위해서 고용환경 변화에 대해</text>
+    <text x="94" y="65" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="700" fill="#0B2A4A">종합적인 시각으로 이해하려고 노력할 수 있다.</text>
+  </g>
+  <g transform="translate(0,296)">
+    <rect x="0" y="0" width="1120" height="82" rx="10" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <rect x="0" y="0" width="7" height="82" rx="3" fill="#0070C0"/>
+    <circle cx="52" cy="41" r="25" fill="#0070C0"/>
+    <text x="52" y="49" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#FFFFFF">넷째</text>
+    <text x="94" y="35" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="600" fill="#3D4450">채용시장에서 일어날 수 있는 다양한 문제에</text>
+    <text x="94" y="65" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="700" fill="#0B2A4A">대하여 해결방안을 찾는 방법을 알 수 있다.</text>
+  </g>
+</svg>

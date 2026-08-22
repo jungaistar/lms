@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 챕터 반원 배지 — 2주차 디자인 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 216" aria-hidden="true">
+  <defs><path id="chArc69" d="M29 14.4 A98 98 0 0 1 97.3 96.2" fill="none"/></defs>
+  <path d="M0 22 A86 86 0 0 1 0 194 Z" fill="#EDEFF2"/>
+  <text font-family="Outfit, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" letter-spacing="0.8">
+    <textPath href="#chArc69" startOffset="50%" text-anchor="middle">C H A P T E R</textPath>
+  </text>
+  <text x="40" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-size="46" font-weight="700" fill="#3D4450">1</text>
+</svg>

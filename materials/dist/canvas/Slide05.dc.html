@@ -170,7 +170,7 @@
 
 .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
 .list li {
-  position: relative; padding-left: 26px;
+  position: relative; padding-left: 29px;
   font-size: 21px; color: var(--dc-ink-2); line-height: 1.45;
 }
 .list li::before {
@@ -180,14 +180,14 @@
 .list--check li::before {
   content: "✓"; font-family: var(--dc-sans); font-weight: 800;
   left: 0; top: 0; width: auto; height: auto;
-  background: none; color: var(--dc-blue); font-size: 20px;
+  background: none; color: var(--dc-blue); font-size: 18px;
 }
 .list--arrow li::before {
   content: "▸"; left: 2px; top: -.05em; width: auto; height: auto;
-  background: none; color: var(--dc-cyan); font-size: 20px; font-weight: 700;
+  background: none; color: var(--dc-cyan); font-size: 18px; font-weight: 700;
 }
 .list--num { counter-reset: dcnum; }
-.list--num li { padding-left: 40px; }
+.list--num li { padding-left: 45px; }
 .list--num li::before {
   counter-increment: dcnum; content: counter(dcnum);
   left: 0; top: .08em; width: 28px; height: 28px;
@@ -210,16 +210,11 @@
 .callout--red { border-color: #E39C9C; background: #FDECEC; color: #7A1414; }
 .callout .emo { margin-right: 8px; }
 
-.quote {
-  border: 1px solid #C9B9D6; background: #FAF7FC;
-  border-radius: 6px; padding: 20px 24px; text-align: center;
-}
 
 /* --------------------------------------------------------------------- 카드 */
 .cards { display: grid; gap: 14px; }
 .cards--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .cards--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.cards--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .card {
   background: var(--dc-panel); border: 1px solid var(--dc-line);
   border-radius: 12px; padding: 16px 18px;
@@ -328,20 +323,12 @@
   color: var(--dc-navy); letter-spacing: -.035em;
 }
 .next__sub {
-  position: absolute; right: var(--dc-pad-x); top: calc(52% + 100px);
+  position: absolute; right: var(--dc-pad-x); top: calc(52% + 114px);
   text-align: right; font-size: 25px; font-weight: 600; color: var(--dc-ink-2);
 }
 
 /* --------------------------------------------------------------------- 기타 */
 .emo { font-family: var(--dc-emoji); font-style: normal; }
-.pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 15px; border-radius: 999px;
-  background: var(--dc-blue-soft); color: var(--dc-blue-deep);
-  border: 1px solid var(--dc-blue-line);
-  font-size: 18px; font-weight: 700;
-}
-.pill--solid { background: var(--dc-blue); color: #fff; border-color: var(--dc-blue); }
 .link { color: var(--dc-blue-deep); font-weight: 700; word-break: break-all; }
 .link:hover { color: var(--dc-cyan); }
 .linkbox {
@@ -358,13 +345,8 @@
   font-family: var(--dc-num); font-size: 17px; font-weight: 600;
   color: var(--dc-blue-deep); word-break: break-all;
 }
-.kv { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; align-items: baseline; }
-.kv dt { font-size: 19px; font-weight: 800; color: var(--dc-blue-deep); white-space: nowrap; }
-.kv dd { margin: 0; font-size: 19px; color: var(--dc-ink-2); }
 .note { font-size: 17px; color: var(--dc-ink-3); }
-.screen {
-  background: var(--dc-panel); border: 1px solid var(--dc-line);
-  border-radius: 10px; padding: 14px; }
+
 
 /* --------------------------------------------------- 빽빽 모드 (is-dense) */
 .slide.is-dense .slide__body { gap: 10px; padding-top: 16px; padding-bottom: 44px; }
@@ -408,9 +390,7 @@
 .toc__no { font-family: var(--dc-num); font-size: 52px; font-weight: 600; color: #41B6E6; line-height: 1; min-width: 44px; }
 .toc__label { font-size: 27px; font-weight: 800; color: #4A5260; letter-spacing: -.02em; }
 
-/* --- 빽빽한 슬라이드 ------------------------------------------------------ */
-.slide.is-dense .slide__body { gap: 10px; padding-top: 18px; padding-bottom: 30px; }
-.slide.is-dense .slide__lede { font-size: 28px; }
+/* --- 빽빽한 슬라이드 (나머지는 theme.css) ---------------------------------- */
 .slide.is-dense .cards { gap: 11px; }
 .slide.is-dense .card { padding: 12px 14px; gap: 4px; }
 .slide.is-dense .card__title { font-size: 20px; }
@@ -419,30 +399,30 @@
 .tbl--grade td { font-size: 20px; font-weight: 700; padding: 8px; }
 
 /* --- 주차별 강의 계획 표: 15줄 한 화면 ------------------------------------- */
-.tbl--plan { font-size: 15px; line-height: 1.3; table-layout: fixed; }
-.tbl--plan th { padding: 6px 10px; font-size: 16px; }
-.tbl--plan td { padding: 3px 10px; }
+.slide .tbl.tbl--plan { font-size: 15px; line-height: 1.3; table-layout: fixed; }
+.slide .tbl.tbl--plan th { padding: 6px 10px; font-size: 16px; }
+.slide .tbl.tbl--plan td { padding: 3px 10px; }
 .tbl--plan col.subject { width: 64%; }
 .tbl--plan col.task { width: 36%; }
 
   </style>
 </helmet>
 <section class="slide slide--content" id="s05" data-index="5" data-kind="content" data-name="강의 소개">
-  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">1</span><span class="slide__section">강의 개요</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">1</span><span class="slide__section">강의 소개</span></span><span class="wordmark">d<i>i</i>ma</span></header>
   <div class="slide__body" data-edit>
     <h2 class="slide__lede">본 수업은 여러분이 자신에게 맞는 진로를 찾을 수 있도록 도와드립니다.</h2>
     <div class="slide__cols slide__cols--wide-left"><div class="stack"><h3 class="h-sub">행복한 삶이란?</h3><p class="p p--lg">여러분에게 <b class="strong">‘행복한 삶’</b>이란 무엇인가요?</p><p class="callout"><i class="emo">🌱</i>취업과 경력개발은 행복한 삶을 위한 첫 걸음입니다.</p><p class="p">직업은 단순히 돈을 버는 수단이 아닌, <em class="em">자아실현의 공간</em>입니다.</p><p class="p">나의 강점, 흥미, 가치관을 발견하고 취업 역량을 높여봅시다.</p></div><div class="stack"><div class="fig-wrap"><svg class="fig" viewBox="0 0 560 330" role="img" aria-label="행복한 삶으로 가는 첫 걸음은 취업과 경력개발">
   <defs>
-    <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="hg40" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0070C0"/>
     </linearGradient>
   </defs>
-  <circle cx="280" cy="92" r="72" fill="url(#hg)"/>
+  <circle cx="280" cy="92" r="72" fill="url(#hg40)"/>
   <text x="280" y="80" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="34">😊</text>
   <text x="280" y="120" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="24" font-weight="800" fill="#FFFFFF">행복한 삶</text>
 
-  <path d="M280 172 V206" stroke="#9DC3E6" stroke-width="3"/>
-  <path d="M274 202 l6 10 6-10z" fill="#0070C0"/>
+  <path d="M280 172 V200" stroke="#9DC3E6" stroke-width="3"/>
+  <path d="M274 196 l6 10 6-10z" fill="#0070C0"/>
 
   <g transform="translate(140,208)">
     <rect width="280" height="46" rx="23" fill="#DCE9F8" stroke="#9DC3E6"/>

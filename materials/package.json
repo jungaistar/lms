@@ -1,0 +1,15 @@
+{
+  "name": "lms-materials",
+  "private": true,
+  "type": "module",
+  "description": "취업과 경력개발 학습자료 — 내용 한 벌에서 Markdown · HTML · PPTX · SVG · 디자인 캔버스를 만든다",
+  "scripts": {
+    "build": "node build.mjs",
+    "layout": "node pptx/extract-layout.mjs",
+    "pptx": "node build.mjs && node pptx/extract-layout.mjs && python3 pptx/build_pptx.py",
+    "verify": "python3 pptx/verify_coverage.py"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

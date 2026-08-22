@@ -12,6 +12,11 @@ const C = {
   ink2: '#3D4450', ink3: '#6B7280', white: '#FFFFFF', grey: '#D9E2EC',
 };
 
+/* 한 HTML 문서에 같은 그림이 여러 번 들어간다. id 가 겹치면 <textPath href>
+   와 gradient 참조가 첫 번째 것으로 몰리므로 부를 때마다 번호를 붙인다. */
+let seq = 0;
+const uid = (base) => `${base}${++seq}`;
+
 /* 도넛 조각 하나의 path — 바깥 반지름 ro, 안쪽 ri, 각도는 도(度) */
 function ring(cx, cy, ro, ri, a0, a1) {
   const rad = (d) => ((d - 90) * Math.PI) / 180;
@@ -25,31 +30,33 @@ function ring(cx, cy, ro, ri, a0, a1) {
 
 /* --------------------------------------------------- 3중 스트라이프 (시그니처) */
 export function stripes(w = 1280, h = 30) {
+  const g1 = uid('stg'), g2 = uid('stg'), g3 = uid('stg');
   return `<svg class="stripes" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
   <defs>
-    <linearGradient id="stg1" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="${g1}" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="${C.cyan}"/><stop offset="1" stop-color="${C.cyan}" stop-opacity="0"/>
     </linearGradient>
-    <linearGradient id="stg2" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="${g2}" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="${C.blue}"/><stop offset="1" stop-color="${C.blue}" stop-opacity="0"/>
     </linearGradient>
-    <linearGradient id="stg3" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="${g3}" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="${C.cyanLight}"/><stop offset="1" stop-color="${C.cyanLight}" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <rect x="0" y="2"  width="${w * 0.62}" height="4" fill="url(#stg1)"/>
-  <rect x="0" y="11" width="${w * 0.42}" height="5" fill="url(#stg2)"/>
-  <rect x="0" y="21" width="${w * 0.31}" height="5" fill="url(#stg3)"/>
+  <rect x="0" y="2"  width="${w * 0.62}" height="4" fill="url(#${g1})"/>
+  <rect x="0" y="11" width="${w * 0.42}" height="5" fill="url(#${g2})"/>
+  <rect x="0" y="21" width="${w * 0.31}" height="5" fill="url(#${g3})"/>
 </svg>`;
 }
 
 /* ------------------------------------------------------------ 챕터 반원 배지 */
 export function chapterBadge(no) {
+  const arc = uid('chArc');
   return `<svg class="fig" viewBox="0 0 120 216" aria-hidden="true">
-  <defs><path id="chArc${no}" d="M29 14.4 A98 98 0 0 1 97.3 96.2" fill="none"/></defs>
+  <defs><path id="${arc}" d="M29 14.4 A98 98 0 0 1 97.3 96.2" fill="none"/></defs>
   <path d="M0 22 A86 86 0 0 1 0 194 Z" fill="#EDEFF2"/>
   <text font-family="Outfit, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" letter-spacing="0.8">
-    <textPath href="#chArc${no}" startOffset="50%" text-anchor="middle">C H A P T E R</textPath>
+    <textPath href="#${arc}" startOffset="50%" text-anchor="middle">C H A P T E R</textPath>
   </text>
   <text x="40" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-size="46" font-weight="700" fill="#3D4450">${no}</text>
 </svg>`;
@@ -78,26 +85,20 @@ export function gradeDonut() {
   }).join('\n  ');
 
   return `<svg class="fig" viewBox="0 0 470 470" role="img" aria-label="성적 평가 비율: 출석 30퍼센트, 중간시험 조별발표 20퍼센트, 기말시험 20퍼센트, 과제물과 수업태도 30퍼센트">
-  <rect x="6" y="6" width="458" height="458" rx="10" fill="${C.soft}" opacity=".45" stroke="${C.line}"/>
+  <rect x="6" y="6" width="458" height="458" rx="10" fill="#EEF4FC" stroke="${C.line}"/>
   ${paths}
   ${labels}
   <g transform="translate(258,18)">
     <rect width="200" height="62" rx="6" fill="${C.blue}"/>
-    <text x="20" y="40" font-family="Outfit, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">+</text>
-    <text x="44" y="38" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="700" fill="#FFFFFF">취·창업 및 진로상담</text>
+    <text x="18" y="40" font-family="Outfit, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">+</text>
+    <text x="50" y="38" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF">취·창업 및 진로상담</text>
   </g>
   <path d="M330 88 l9 22 24 2 -18 16 5 24 -20-13 -20 13 5-24 -18-16 24-2z" fill="#FFE14D" stroke="${C.amberLine}" stroke-width="2"/>
 </svg>`;
 }
 
 /* -------------------------------------------------------- 2. 교과 목표 4단 */
-export function goals4() {
-  const items = [
-    ['첫째', '자기이해와 직업세계의 이해를 토대로', '자신의 진로목표와 이유를 분명히 알 수 있다.'],
-    ['둘째', '희망기업 및 직업 분석을 통해 현장에서', '요구되는 전문지식을 배우려고 노력할 수 있다.'],
-    ['셋째', '취업실무 준비를 위해서 고용환경 변화에 대해', '종합적인 시각으로 이해하려고 노력할 수 있다.'],
-    ['넷째', '채용시장에서 일어날 수 있는 다양한 문제에', '대하여 해결방안을 찾는 방법을 알 수 있다.'],
-  ];
+export function goals4(items = []) {
   const rows = items.map((it, i) => {
     const y = 8 + i * 96;
     return `<g transform="translate(0,${y})">
@@ -115,13 +116,7 @@ export function goals4() {
 }
 
 /* --------------------------------------------- 3. 수업 목표 달성 4가지 계단 */
-export function outcomes4() {
-  const items = [
-    ['첫번째', '🧭', '자신의 직업흥미, 적성,', '가치관을 알 수 있다.'],
-    ['두번째', '🔍', '직업정보를 탐색하고', '분석할 수 있다.'],
-    ['세번째', '📄', '자신의 직무에 적합한 이력서/', '자기소개서를 작성할 수 있다.'],
-    ['네번째', '🎤', '적절한 면접 기법을 학습하여', '활용할 수 있다.'],
-  ];
+export function outcomes4(items = []) {
   const cols = items.map((it, i) => {
     const x = i * 285, h = 190 + i * 34, y = 300 - h;
     return `<g transform="translate(${x},0)">
@@ -142,18 +137,19 @@ export function outcomes4() {
 
 /* ----------------------------------------------- 4. 행복한 삶 → 직업 → 역량 */
 export function happiness() {
+  const g = uid('hg');
   return `<svg class="fig" viewBox="0 0 560 330" role="img" aria-label="행복한 삶으로 가는 첫 걸음은 취업과 경력개발">
   <defs>
-    <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="${C.cyan}"/><stop offset="1" stop-color="${C.blue}"/>
     </linearGradient>
   </defs>
-  <circle cx="280" cy="92" r="72" fill="url(#hg)"/>
+  <circle cx="280" cy="92" r="72" fill="url(#${g})"/>
   <text x="280" y="80" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="34">😊</text>
   <text x="280" y="120" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="24" font-weight="800" fill="#FFFFFF">행복한 삶</text>
 
-  <path d="M280 172 V206" stroke="${C.line}" stroke-width="3"/>
-  <path d="M274 202 l6 10 6-10z" fill="${C.blue}"/>
+  <path d="M280 172 V200" stroke="${C.line}" stroke-width="3"/>
+  <path d="M274 196 l6 10 6-10z" fill="${C.blue}"/>
 
   <g transform="translate(140,208)">
     <rect width="280" height="46" rx="23" fill="${C.soft}" stroke="${C.line}"/>
@@ -181,7 +177,7 @@ export function happiness() {
 /* ------------------------------------------------------- 5. 과제 제출 타임라인 */
 export function submitTimeline() {
   return `<svg class="fig" viewBox="0 0 1120 210" role="img" aria-label="과제물 제출 일시는 강의 하루 전 23시 59분 59초까지">
-  <line x1="60" y1="120" x2="1060" y2="120" stroke="${C.line}" stroke-width="6" stroke-linecap="round"/>
+  <line x1="74" y1="120" x2="1060" y2="120" stroke="${C.line}" stroke-width="6" stroke-linecap="round"/>
   <path d="M1060 120 l-22 -11 v22z" fill="${C.blue}"/>
 
   <g transform="translate(180,0)">
@@ -199,7 +195,7 @@ export function submitTimeline() {
     <circle cx="165" cy="120" r="14" fill="${C.blue}" stroke="#FFFFFF" stroke-width="4"/>
     <text x="165" y="166" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="700" fill="${C.ink3}">수업 시작</text>
   </g>
-  <text x="60" y="126" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="700" fill="${C.ink3}">예시</text>
+  <text x="18" y="100" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="700" fill="${C.ink3}">예시</text>
 </svg>`;
 }
 
@@ -217,14 +213,14 @@ export function work24Path() {
     const last = i === steps.length - 1;
     return `<g transform="translate(0,${y})">
     <rect x="0" y="0" width="640" height="60" rx="10" fill="${last ? C.amber : C.white}" stroke="${last ? C.amberLine : C.line}" stroke-width="2"/>
-    <circle cx="34" cy="30" r="18" fill="${last ? C.amberLine : C.blue}"/>
+    <circle cx="34" cy="30" r="18" fill="${last ? '#B4741A' : C.blue}"/>
     <text x="34" y="38" text-anchor="middle" font-family="Outfit, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">${s[0]}</text>
     <text x="66" y="27" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="${last ? '#4A3208' : C.navy}">${s[1]}</text>
     <text x="66" y="49" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="600" fill="${last ? '#6B4A10' : C.ink3}">${s[2]}</text>
     ${last ? '' : `<path d="M320 62 l-8 0 8 10 8-10z" fill="${C.line}"/>`}
   </g>`;
   }).join('\n  ');
-  return `<svg class="fig" viewBox="0 0 640 430" role="img" aria-label="고용24에서 대학생 진로준비도검사까지 가는 다섯 단계">
+  return `<svg class="fig" viewBox="0 0 640 360" role="img" aria-label="고용24에서 대학생 진로준비도검사까지 가는 다섯 단계">
   ${rows}
 </svg>`;
 }
@@ -242,8 +238,8 @@ export function testCards() {
     const sel = c[3];
     return `<g transform="translate(${x},${y})">
     <rect x="6" y="6" width="298" height="134" rx="10" fill="#FFFFFF" stroke="${sel ? C.red : C.grey}" stroke-width="${sel ? 3 : 1.5}"/>
-    <rect x="22" y="22" width="${16 + c[0].length * 11}" height="26" rx="13" fill="${C.soft2}" stroke="${C.line}"/>
-    <text x="${30}" y="40" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="700" fill="${C.blueDeep}">${c[0]}</text>
+    <rect x="22" y="22" width="${22 + c[0].length * 15}" height="26" rx="13" fill="${C.soft2}" stroke="${C.line}"/>
+    <text x="${33}" y="40" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="700" fill="${C.blueDeep}">${c[0]}</text>
     <text x="22" y="76" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="${C.navy}">${c[1]}</text>
     <rect x="150" y="98" width="140" height="30" rx="6" fill="${sel ? C.blue : '#4A5DBE'}"/>
     <text x="220" y="118" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">검사 실시 (${c[2]})</text>
@@ -281,3 +277,39 @@ export const FIGURES = {
   gradeDonut, goals4, outcomes4, happiness,
   submitTimeline, work24Path, testCards, aiFlow,
 };
+
+/* 홀로 쓸 수 있는 .svg 파일로 뽑을 때 붙이는 설명 — dist/svg/ 로 나간다 */
+export const FIGURE_META = {
+  gradeDonut:     { title: '성적 평가 구성비',        src: '1주차 원본 9쪽' },
+  goals4:         { title: '교과 목표 네 가지',        src: '1주차 원본 6쪽' },
+  outcomes4:      { title: '수업 목표 달성 네 단계',    src: '1주차 원본 7쪽' },
+  happiness:      { title: '행복한 삶과 진로',        src: '1주차 원본 5쪽' },
+  submitTimeline: { title: '과제물 제출 타임라인',      src: '1주차 원본 13쪽' },
+  work24Path:     { title: '고용24 접속 경로',        src: '1주차 원본 21·22쪽' },
+  testCards:      { title: '직업심리검사 목록',        src: '1주차 원본 23쪽' },
+  aiFlow:         { title: '생성형 AI 사용 흐름',      src: '이번에 추가' },
+};
+
+/* 자료 전체에 되풀이되는 장식 요소 (2주차 자료의 시각 언어) */
+export const MOTIFS = {
+  stripes:      { title: '3중 스트라이프',  src: '2주차 디자인', make: () => stripes(1280, 30) },
+  chapterBadge: { title: '챕터 반원 배지',  src: '2주차 디자인', make: () => chapterBadge(1) },
+  headerBar:    { title: '헤더 그라디언트 띠', src: '2주차 디자인', make: headerBar },
+  wordmark:     { title: 'dima 워드마크',   src: '2주차 디자인', make: wordmark },
+};
+
+function headerBar() {
+  return `<svg viewBox="0 0 1280 74" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="hdr" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="${C.cyan}"/><stop offset=".46" stop-color="#0086CE"/><stop offset="1" stop-color="${C.blue}"/>
+  </linearGradient></defs>
+  <rect width="1280" height="74" fill="url(#hdr)"/>
+</svg>`;
+}
+
+function wordmark() {
+  return `<svg viewBox="0 0 220 96" xmlns="http://www.w3.org/2000/svg">
+  <text x="0" y="76" font-family="Outfit, Arial, sans-serif" font-size="84" font-weight="800" letter-spacing="-3.8" fill="${C.navy}">dima</text>
+  <circle cx="45" cy="14" r="8" fill="${C.navy}"/>
+</svg>`;
+}
