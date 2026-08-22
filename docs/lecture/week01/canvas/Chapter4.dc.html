@@ -1,0 +1,269 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Quicksand:wght@600;700&family=Outfit:wght@400;600;700&family=Noto+Color+Emoji&display=swap">
+  <style>
+/* ============================================================
+   dima 강의자료 디자인 시스템  ·  2주차 자료에서 추출한 토큰
+   슬라이드 편집기가 읽는 구조:
+     section.slide[data-slide][data-kind]  = 슬라이드 1장
+       .slide__top   머리띠(제목칩 + 로고)
+       .slide__body  본문
+       .slide__foot  쪽번호
+   ============================================================ */
+:root{
+  /* 색 — 원본 PPT 에서 추출 */
+  --dc-cyan:#00A5DE;
+  --dc-blue:#0071CE;
+  --dc-deep:#005BAC;
+  --dc-navy:#17365D;
+  --dc-yellow:#FFF100;
+  --dc-red:#C00000;
+  --dc-orange:#ED7D31;
+  --dc-ink:#3B3838;
+  --dc-ink-soft:#63666B;
+  --dc-line:#9DC3E6;
+  --dc-tint:#DEEBF7;
+  --dc-tint-2:#F2F7FC;
+  --dc-bg:#EFF0F2;
+  /* 띠 그라디언트 — 표지·챕터·머리띠가 모두 같은 각도를 쓴다 */
+  --dc-band:linear-gradient(100deg,#00A5DE 0%,#0089D6 28%,#0071CE 58%,#005BAC 100%);
+  /* 글꼴 */
+  --dc-kr:"Noto Sans KR","Pretendard","맑은 고딕","Malgun Gothic",sans-serif;
+  --dc-num:"Outfit","Noto Sans KR",sans-serif;
+  --dc-mark:"Quicksand","Outfit",sans-serif;
+  --dc-emoji:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif;
+  /* 판형 */
+  --dc-w:1280px;
+  --dc-h:720px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:transparent;
+  font-family:var(--dc-kr);
+  color:var(--dc-ink);
+  -webkit-font-smoothing:antialiased;
+}
+.emoji{font-family:var(--dc-emoji);font-weight:400;line-height:1}
+
+/* ---------- 본문 바탕 · 캠퍼스 워터마크 ---------- */
+.slide__wash{position:absolute;inset:0;pointer-events:none}
+
+/* ---------- 머리띠 ---------- */
+.slide__top{
+  position:absolute;top:0;left:0;right:0;height:62px;
+  background:var(--dc-band);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 26px 0 46px;
+  z-index:3;
+}
+.slide__tag{
+  margin:0;
+  background:rgba(0,40,90,.34);
+  color:var(--dc-yellow);
+  font-size:26px;font-weight:900;letter-spacing:-.02em;
+  padding:2px 16px 4px;
+  text-shadow:0 2px 2px rgba(0,0,0,.28);
+  border-radius:2px;
+}
+.mark{
+  font-family:var(--dc-mark);font-weight:700;
+  font-size:44px;letter-spacing:-.045em;color:#fff;line-height:.9;
+  user-select:none;
+}
+.mark--ink{color:var(--dc-navy)}
+.mark--sm{font-size:30px}
+
+/* ---------- 본문 ---------- */
+.slide__body{position:absolute;top:62px;left:0;right:0;bottom:0;padding:26px 52px 44px;z-index:2}
+.slide__foot{
+  position:absolute;left:0;right:0;bottom:12px;text-align:center;
+  font-family:var(--dc-num);font-size:15px;color:#8A8F96;z-index:3;
+}
+
+/* ---------- 제목 계층 ---------- */
+.h-lead{margin:0 0 18px;font-size:34px;font-weight:900;color:var(--dc-navy);letter-spacing:-.03em}
+.h-check{margin:0 0 16px;font-size:29px;font-weight:900;color:var(--dc-navy);letter-spacing:-.03em}
+.h-check::before{content:"✓";color:var(--dc-deep);margin-right:8px;font-weight:700}
+.h-sub{margin:0 0 12px;font-size:22px;font-weight:700;color:var(--dc-deep)}
+
+/* ---------- 목록 ---------- */
+.list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:13px}
+.list li{position:relative;padding-left:30px;font-size:20px;line-height:1.5;color:var(--dc-ink)}
+.list li::before{content:"➢";position:absolute;left:0;top:1px;color:var(--dc-deep);font-size:17px}
+.list--dot li::before{content:"•";left:6px;top:-2px;font-size:24px;color:var(--dc-blue)}
+.list--check li::before{content:"✓";left:2px;color:var(--dc-deep);font-weight:700}
+.list--tight li{font-size:17px;line-height:1.45}
+
+/* 빨간 체크박스 목록 (2주차 '중요성' 페이지 패턴) */
+.checklist{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:20px}
+.checklist li{position:relative;padding-left:46px;font-size:23px;font-weight:700;line-height:1.42;color:var(--dc-ink)}
+.checklist li>svg{position:absolute;left:0;top:2px}
+
+/* 번호 원 (2주차 ①② 패턴) */
+.numlist{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:18px}
+.numlist li{position:relative;padding-left:44px;font-size:19px;line-height:1.5}
+.numlist li>.num{
+  position:absolute;left:0;top:1px;width:29px;height:29px;border-radius:50%;
+  background:var(--dc-red);color:#fff;font-family:var(--dc-num);font-weight:700;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ---------- 카드 ---------- */
+.card{background:#fff;border:1px solid #D4DCE6;border-radius:4px;padding:18px 22px}
+.card--tint{background:var(--dc-tint-2);border-color:var(--dc-line)}
+.pill-head{
+  display:inline-block;background:var(--dc-tint);border:1px solid var(--dc-line);
+  border-radius:999px;padding:6px 26px;font-size:23px;font-weight:900;color:var(--dc-navy);
+}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+
+/* ---------- 표 ---------- */
+.tbl{width:100%;border-collapse:collapse;font-size:17px}
+.tbl th{
+  background:var(--dc-tint);color:var(--dc-navy);font-weight:900;
+  border:1px solid var(--dc-line);padding:8px 10px;
+}
+.tbl td{border:1px solid var(--dc-line);padding:8px 10px;background:#fff}
+.tbl--plan{font-size:13.5px}
+.tbl--plan th{padding:7px 10px;font-size:15px}
+.tbl--plan td{padding:5px 10px;line-height:1.34}
+.tbl--plan tbody tr:nth-child(even) td{background:var(--dc-tint-2)}
+.tbl--plan .wk{font-family:var(--dc-num);font-weight:700;color:var(--dc-deep);width:34px;text-align:center}
+.tbl--plan .hw{color:var(--dc-red);font-weight:700;width:210px}
+.tbl--plan tr.is-exam td{background:#FDF3F3;font-weight:700}
+.table-wrap{overflow-x:auto}
+
+/* ---------- 강조 ---------- */
+.hl{color:var(--dc-red);font-weight:700}
+.hl-blue{color:var(--dc-deep);font-weight:700}
+.underline-blue{border-bottom:2px solid var(--dc-cyan);padding-bottom:1px}
+.note{font-size:15px;color:var(--dc-ink-soft);line-height:1.5}
+.link{color:var(--dc-deep);font-weight:700;text-decoration:none;border-bottom:1px solid var(--dc-line)}
+.link:hover{color:var(--dc-blue);border-bottom-color:var(--dc-blue)}
+a{color:var(--dc-deep)}a:hover{color:var(--dc-blue)}
+
+/* ---------- 표지 ---------- */
+.cover__band{position:absolute;top:0;left:0;right:0;height:72%;background:var(--dc-band);overflow:hidden}
+.cover__mark{position:absolute;right:22px;top:228px;font-family:var(--dc-mark);font-weight:700;
+  font-size:178px;letter-spacing:-.06em;color:#fff;line-height:.8;z-index:2;opacity:.97}
+.cover__txt{position:absolute;left:56px;top:196px;z-index:3}
+.cover__over{margin:0 0 14px;font-size:26px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:-.02em}
+.cover__title{margin:0;font-size:60px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1.12;
+  text-shadow:0 3px 10px rgba(0,30,70,.28)}
+.cover__foot{position:absolute;right:34px;bottom:0;height:28%;display:flex;flex-direction:column;
+  justify-content:center;gap:34px;align-items:flex-end;z-index:3}
+.cover__foot span{font-size:22px;font-weight:700;color:var(--dc-navy)}
+.rules{position:absolute;left:0;z-index:4}
+
+/* ---------- 챕터 표지 ---------- */
+.chap__band{position:absolute;top:0;left:0;right:0;height:52%;background:var(--dc-band);overflow:hidden}
+.chap__title{position:absolute;right:52px;top:calc(52% + 16px);font-size:46px;font-weight:900;
+  color:var(--dc-navy);letter-spacing:-.035em;z-index:5;text-align:right}
+.chap__desc{position:absolute;right:52px;top:calc(52% + 92px);font-size:21px;color:var(--dc-ink-soft);
+  text-align:right;line-height:1.5;z-index:5}
+.chap__mark{position:absolute;right:38px;bottom:26px;z-index:5}
+.chap__dial{position:absolute;left:-6px;top:calc(52% - 130px);z-index:6}
+
+
+/* 아트보드: 슬라이드 한 장이 곧 프레임 */
+.slide{position:relative;width:1280px;height:720px;background:var(--dc-bg);overflow:hidden}
+body{width:1280px;height:720px;overflow:hidden}
+</style>
+</helmet>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gBand" x1="0" y1="0" x2="1" y2="0.35">
+      <stop offset="0%" stop-color="#00A5DE"/><stop offset="28%" stop-color="#0089D6"/>
+      <stop offset="58%" stop-color="#0071CE"/><stop offset="100%" stop-color="#005BAC"/>
+    </linearGradient>
+    <linearGradient id="gRule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0071CE" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#0071CE" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gWash" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#E4E7EB"/>
+    </linearGradient>
+
+    <!-- 본문 바탕: 흰→회색 + 아주 옅은 캠퍼스 실루엣 -->
+    <symbol id="wash" viewBox="0 0 1280 658" preserveAspectRatio="none">
+      <rect width="1280" height="658" fill="url(#gWash)"/>
+      <g opacity="0.055" fill="#17365D">
+        <path d="M690 130 L1280 40 L1280 658 L690 658 Z"/>
+        <path d="M540 300 L690 268 L690 658 L540 658 Z" opacity="0.6"/>
+      </g>
+      <g opacity="0.05" fill="#FFFFFF">
+        <path d="M700 150 L1270 62 L1270 120 L700 208 Z"/>
+        <path d="M700 250 L1270 162 L1270 220 L700 308 Z"/>
+        <path d="M700 350 L1270 262 L1270 320 L700 408 Z"/>
+      </g>
+    </symbol>
+
+    <!-- 표지·챕터 띠 안의 방송 스튜디오 톤 오버레이 -->
+    <symbol id="bandArt" viewBox="0 0 1280 520" preserveAspectRatio="none">
+      <rect width="1280" height="520" fill="url(#gBand)"/>
+      <g opacity="0.13" fill="#FFFFFF">
+        <rect x="742" y="52" width="150" height="92" rx="4"/>
+        <rect x="912" y="52" width="150" height="92" rx="4"/>
+        <rect x="1082" y="52" width="150" height="92" rx="4"/>
+        <rect x="742" y="192" width="150" height="92" rx="4"/>
+        <rect x="912" y="192" width="150" height="92" rx="4"/>
+        <rect x="1082" y="192" width="150" height="92" rx="4"/>
+      </g>
+      <g opacity="0.10" fill="none" stroke="#FFFFFF" stroke-width="2">
+        <circle cx="196" cy="150" r="118"/><circle cx="196" cy="150" r="84"/>
+      </g>
+      <g opacity="0.09" fill="#FFFFFF">
+        <path d="M0 400 L520 300 L520 340 L0 440 Z"/>
+        <path d="M0 460 L520 360 L520 386 L0 486 Z"/>
+      </g>
+    </symbol>
+
+    <!-- 띠 아래 줄무늬 -->
+    <symbol id="rules" viewBox="0 0 560 46">
+      <rect x="0" y="2"  width="560" height="7" fill="url(#gRule)"/>
+      <rect x="0" y="15" width="470" height="6" fill="url(#gRule)" opacity=".8"/>
+      <rect x="0" y="27" width="380" height="5" fill="url(#gRule)" opacity=".6"/>
+      <rect x="0" y="37" width="300" height="4" fill="url(#gRule)" opacity=".45"/>
+    </symbol>
+
+    <!-- 빨간 체크박스 아이콘 -->
+    <symbol id="ckbox" viewBox="0 0 32 32">
+      <rect x="3.5" y="6.5" width="23" height="23" fill="#fff" stroke="#C00000" stroke-width="2.2"/>
+      <path d="M7 17 L14 25 L30 3" fill="none" stroke="#C00000" stroke-width="3.4"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+<section class="slide" data-slide="14" data-kind="chapter" id="Chapter4-s14">
+  <div class="chap__band">
+    <svg width="1280" height="374" style="position:absolute;inset:0"><use href="#bandArt" width="1280" height="374"/></svg>
+  </div>
+  <svg class="rules" style="top:calc(52% + 2px)" width="560" height="46"><use href="#rules"/></svg>
+  <svg class="chap__dial" width="180" height="200" viewBox="0 0 180 200" aria-hidden="true">
+    <circle cx="34" cy="100" r="66" fill="#FFFFFF"/>
+    <path id="arc14" d="M 34,42 A 58,58 0 0 1 34,158" fill="none"/>
+    <text font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#005BAC" letter-spacing="3">
+      <textPath href="#arc14" startOffset="6%">C H A P T E R</textPath>
+    </text>
+    <text x="34" y="100" text-anchor="middle" dominant-baseline="central"
+          font-family="Outfit, sans-serif" font-size="46" font-weight="600" fill="#17365D">4</text>
+  </svg>
+  <h2 class="chap__title">강의 요구 분석</h2>
+  <p class="chap__desc">강의를 통해 무엇을 얻고자 하는지 설문조사로 알아보기</p>
+  <div class="mark mark--ink mark--sm chap__mark">dima</div>
+</section>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

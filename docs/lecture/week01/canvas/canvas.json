@@ -1,0 +1,196 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "1 표지",
+      "print": "fixed"
+    },
+    {
+      "file": "Profile.dc.html",
+      "x": 1420,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "2 교수 소개",
+      "print": "fixed"
+    },
+    {
+      "file": "Contents.dc.html",
+      "x": 2840,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "3 목차",
+      "print": "fixed"
+    },
+    {
+      "file": "Chapter1.dc.html",
+      "x": 4260,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "4 CHAPTER 1",
+      "print": "fixed"
+    },
+    {
+      "file": "Goals.dc.html",
+      "x": 5680,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "5 교과 목표",
+      "print": "fixed"
+    },
+    {
+      "file": "TextbookMain.dc.html",
+      "x": 0,
+      "y": 930,
+      "w": 1280,
+      "h": 720,
+      "title": "6 주 교재",
+      "print": "fixed"
+    },
+    {
+      "file": "TextbookSub.dc.html",
+      "x": 1420,
+      "y": 930,
+      "w": 1280,
+      "h": 720,
+      "title": "7 부 교재",
+      "print": "fixed"
+    },
+    {
+      "file": "Chapter2.dc.html",
+      "x": 2840,
+      "y": 930,
+      "w": 1280,
+      "h": 720,
+      "title": "8 CHAPTER 2",
+      "print": "fixed"
+    },
+    {
+      "file": "Grading.dc.html",
+      "x": 4260,
+      "y": 930,
+      "w": 1280,
+      "h": 720,
+      "title": "9 성적평가",
+      "print": "fixed"
+    },
+    {
+      "file": "Attendance.dc.html",
+      "x": 5680,
+      "y": 930,
+      "w": 1280,
+      "h": 720,
+      "title": "10 출석·공결",
+      "print": "fixed"
+    },
+    {
+      "file": "Chapter3.dc.html",
+      "x": 0,
+      "y": 1860,
+      "w": 1280,
+      "h": 720,
+      "title": "11 CHAPTER 3",
+      "print": "fixed"
+    },
+    {
+      "file": "WeeklyPlan.dc.html",
+      "x": 1420,
+      "y": 1860,
+      "w": 1280,
+      "h": 720,
+      "title": "12 주차 별 강의 계획",
+      "print": "fixed"
+    },
+    {
+      "file": "Submission.dc.html",
+      "x": 2840,
+      "y": 1860,
+      "w": 1280,
+      "h": 720,
+      "title": "13 과제물 제출 안내",
+      "print": "fixed"
+    },
+    {
+      "file": "Chapter4.dc.html",
+      "x": 4260,
+      "y": 1860,
+      "w": 1280,
+      "h": 720,
+      "title": "14 CHAPTER 4",
+      "print": "fixed"
+    },
+    {
+      "file": "NeedsSurvey.dc.html",
+      "x": 5680,
+      "y": 1860,
+      "w": 1280,
+      "h": 720,
+      "title": "15 강의 요구 분석",
+      "print": "fixed"
+    },
+    {
+      "file": "Chapter5.dc.html",
+      "x": 0,
+      "y": 2790,
+      "w": 1280,
+      "h": 720,
+      "title": "16 CHAPTER 5",
+      "print": "fixed"
+    },
+    {
+      "file": "Perception.dc.html",
+      "x": 1420,
+      "y": 2790,
+      "w": 1280,
+      "h": 720,
+      "title": "17 창업 인식도 조사",
+      "print": "fixed"
+    },
+    {
+      "file": "SurveyHow.dc.html",
+      "x": 2840,
+      "y": 2790,
+      "w": 1280,
+      "h": 720,
+      "title": "18 설문 방법 안내",
+      "print": "fixed"
+    },
+    {
+      "file": "AIGuidelines.dc.html",
+      "x": 4260,
+      "y": 2790,
+      "w": 1280,
+      "h": 720,
+      "title": "19 생성형 AI 사용 지침 (신설)",
+      "print": "fixed"
+    },
+    {
+      "file": "NextWeek.dc.html",
+      "x": 5680,
+      "y": 2790,
+      "w": 1280,
+      "h": 720,
+      "title": "20 다음 차시 안내",
+      "print": "fixed"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "new-page",
+      "x": 4260,
+      "y": 2620,
+      "w": 460,
+      "text": "신설 페이지 — 원본 1주차 자료에는 없던 「생성형 AI 사용 지침」 한 장.\n나머지 19장은 원본 내용 그대로, 2주차 디자인만 입혔다."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}
