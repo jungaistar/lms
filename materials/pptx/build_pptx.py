@@ -266,17 +266,24 @@ def draw_text(sl, n):
     return tb
 
 
-def draw_centered_text(sl, x, y, w, h, text, *, size, bold, color, latin=False):
-    """SVG 안의 글자처럼 '중심'을 맞춰야 하는 글."""
+def draw_centered_text(sl, x, y, w, h, text, *, size, bold, color, latin=False, anchor="middle"):
+    """SVG 안의 글자. anchor 로 어느 끝을 붙잡을지 정한다 (text-anchor 와 같다)."""
     H = max(h, size * 1.7)
-    tb = sl.shapes.add_textbox(px(x - 20), px(y + h / 2 - H / 2), px(w + 40), px(H))
+    pad = max(24, w * 0.35)
+    if anchor == "start":
+        X, align = x, PP_ALIGN.LEFT
+    elif anchor == "end":
+        X, align = x - pad * 2, PP_ALIGN.RIGHT
+    else:
+        X, align = x - pad, PP_ALIGN.CENTER
+    tb = sl.shapes.add_textbox(px(X), px(y + h / 2 - H / 2), px(w + pad * 2), px(H))
     tf = tb.text_frame
     tf.word_wrap = False
     tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
     tf.vertical_anchor = MSO_ANCHOR.MIDDLE
     tf.auto_size = MSO_AUTO_SIZE.NONE
     p = tf.paragraphs[0]
-    p.alignment = PP_ALIGN.CENTER
+    p.alignment = align
     p.line_spacing = pt(size * 1.2)
     run = p.add_run()
     run.text = text
@@ -469,7 +476,8 @@ def draw_svg(sl, n):
             else:
                 draw_centered_text(sl, it["x"], it["y"], it["w"], it["h"], it["text"],
                                    size=it["size"], bold=it["bold"], color=it["color"],
-                                   latin=not re.search(r"[가-힣]", it["text"]))
+                                   latin=not re.search(r"[가-힣]", it["text"]),
+                                   anchor=it.get("anchor", "middle"))
         elif s == "arctext":
             for c in it["chars"]:
                 side = it["size"] * 2.2
@@ -541,9 +549,10 @@ def draw_table(sl, n):
                          bold=run_spec.get("bold") or c.get("head"),
                          color=run_spec.get("color") or c["color"])
         if r.get("current") or r.get("shadow"):
-            y = r["cells"][0]["y"]
-            h = r["cells"][0]["h"]
-            box = sl.shapes.add_shape(MSO_SHAPE.RECTANGLE, px(n["x"]), px(y), px(n["w"]), px(h))
+            c0, cN = r["cells"][0], r["cells"][-1]
+            y, h = c0["y"], c0["h"]
+            box = sl.shapes.add_shape(MSO_SHAPE.RECTANGLE,
+                                      px(c0["x"]), px(y), px(cN["x"] + cN["w"] - c0["x"]), px(h))
             box.shadow.inherit = False
             box.fill.background()
             box.line.color.rgb = rgb("C00000")

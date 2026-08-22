@@ -93,7 +93,7 @@ export function gradeDonut() {
     <text x="18" y="40" font-family="Outfit, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">+</text>
     <text x="50" y="38" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF">취·창업 및 진로상담</text>
   </g>
-  <path d="M330 88 l9 22 24 2 -18 16 5 24 -20-13 -20 13 5-24 -18-16 24-2z" fill="#FFE14D" stroke="${C.amberLine}" stroke-width="2"/>
+  <path d="M334 82 l9 22 24 2 -18 16 5 24 -20-13 -20 13 5-24 -18-16 24-2z" fill="#FFE14D" stroke="${C.amberLine}" stroke-width="2"/>
 </svg>`;
 }
 
