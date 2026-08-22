@@ -609,16 +609,19 @@ function buildSVG(dir) {
   const made = [];
   for (const [name, fn] of Object.entries(FIGURES)) {
     const m = FIGURE_META[name] || { title: name, src: '' };
-    writeFileSync(join(dir, `${name}.svg`), wrap(fn(SAMPLE[name]), m.title, m.src));
-    made.push({ file: `${name}.svg`, ...m, kind: '인포그래픽' });
+    const body = fn(SAMPLE[name]);
+    writeFileSync(join(dir, `${name}.svg`), wrap(body, m.title, m.src));
+    made.push({ file: `${name}.svg`, ...m, kind: '인포그래픽', svg: body });
   }
   for (const [name, m] of Object.entries(MOTIFS)) {
-    writeFileSync(join(dir, `${name}.svg`), wrap(m.make(), m.title, m.src));
-    made.push({ file: `${name}.svg`, title: m.title, src: m.src, kind: '장식 요소' });
+    const body = m.make();
+    writeFileSync(join(dir, `${name}.svg`), wrap(body, m.title, m.src));
+    made.push({ file: `${name}.svg`, title: m.title, src: m.src, kind: '장식 요소',
+                svg: body, frameBg: m.frameBg });
   }
 
   const rows = made.map((m) => `  <figure class="item">
-    <div class="frame"><img src="${m.file}" alt="${esc(m.title)}"></div>
+    <div class="frame"${m.frameBg ? ` style="background:${m.frameBg}"` : ''}>${m.svg}</div>
     <figcaption><b>${esc(m.title)}</b><span>${esc(m.kind)} · ${esc(m.src)}</span><code>${m.file}</code></figcaption>
   </figure>`).join('\n');
 
@@ -637,7 +640,8 @@ function buildSVG(dir) {
           grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
   .item { margin: 0; background: #fff; border: 1px solid #D9E2EC; border-radius: 12px; overflow: hidden; }
   .frame { display: grid; place-items: center; padding: 18px; min-height: 170px; background: #FAFCFF; }
-  .frame img { max-width: 100%; max-height: 220px; }
+  .frame svg { max-width: 100%; max-height: 220px; height: auto; }
+  .frame .stripes, .frame svg[viewBox^="0 0 1280 74"] { width: 100%; }
   figcaption { padding: 14px 16px 16px; border-top: 1px solid #EEF2F7;
                display: flex; flex-direction: column; gap: 4px; }
   figcaption b { font-size: 17px; }

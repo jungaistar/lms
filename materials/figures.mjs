@@ -293,7 +293,8 @@ export const FIGURE_META = {
 /* 자료 전체에 되풀이되는 장식 요소 (2주차 자료의 시각 언어) */
 export const MOTIFS = {
   stripes:      { title: '3중 스트라이프',  src: '2주차 디자인', make: () => stripes(1280, 30) },
-  chapterBadge: { title: '챕터 반원 배지',  src: '2주차 디자인', make: () => chapterBadge(1) },
+  chapterBadge: { title: '챕터 반원 배지',  src: '2주차 디자인', make: () => chapterBadge(1),
+                  frameBg: 'linear-gradient(100deg,#0A9EE0,#0070C0)' },   // 흰 호 글자가 보이도록
   headerBar:    { title: '헤더 그라디언트 띠', src: '2주차 디자인', make: headerBar },
   wordmark:     { title: 'dima 워드마크',   src: '2주차 디자인', make: wordmark },
 };
