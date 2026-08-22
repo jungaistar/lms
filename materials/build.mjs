@@ -10,7 +10,7 @@
    사용법:  node materials/build.mjs [week01]
    =========================================================================== */
 
-import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
+import { readFileSync, writeFileSync, copyFileSync, mkdirSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FIGURES, FIGURE_META, MOTIFS } from './figures.mjs';
@@ -22,16 +22,30 @@ const { meta, slides } = await import(`./${week}/slides.mjs`);
 
 const FONTS = 'https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800&family=Noto+Color+Emoji&display=swap';
 
+/* 배경 사진 — 학교 자체 강의자료에서 그대로 가져온 것 (assets/README.md) */
+const ASSETS = ['bg-cover.jpg', 'bg-band.jpg', 'bg-campus.jpg'];
+const dataURI = (f) =>
+  `data:image/jpeg;base64,${readFileSync(join(ROOT, 'assets', f)).toString('base64')}`;
+
+/* 배경을 어떻게 가리킬지는 목적지마다 다르다.
+   HTML 한 파일로 나가는 쪽은 data URI, 디자인 캔버스는 파일 이름. */
+function bgVars(mode) {
+  const url = (f) => (mode === 'canvas' ? `url("${f}")` : `url("${dataURI(f)}")`);
+  return `  --dc-cover: ${url('bg-cover.jpg')};
+  --dc-band: ${url('bg-band.jpg')};
+  --dc-campus: ${url('bg-campus.jpg')};`;
+}
+
 /* 그림을 Markdown 으로 옮길 때 쓰는 설명 — 그림이 나르는 정보를 글로 남긴다 */
 const FIGURE_MD = {
   happiness: '**[인포그래픽]** 행복한 삶 ← 직업(자아실현의 공간) ← 나의 강점 · 흥미 · 가치관',
   goals4: '**[인포그래픽]** 교과 목표 네 가지 — 아래 목록과 같은 내용',
-  outcomes4: '**[인포그래픽]** 수업 목표 달성 네 단계 — 아래 목록과 같은 내용',
-  gradeDonut: '**[인포그래픽]** 성적 구성비 도넛 — 출석 30% · 중간시험(조별발표) 20% · 기말시험 20% · 과제물/수업태도 30% (＋ 취·창업 및 진로상담)',
+  outcomes4: '**[인포그래픽]** 수업 목표 달성 네 가지 — 아래 목록과 같은 내용',
+  gradeDonut: '**[인포그래픽]** 성적 구성비 도넛 (가운데 총점 100)',
   submitTimeline: '**[인포그래픽]** 과제물 제출 타임라인 — 예) 마감 3.10. 23:59:59 → 본 강의 3.11. 11:00',
   work24Path: '**[인포그래픽]** 고용24 접속 경로 — ① 고용24 접속(work24.go.kr) → ② 취업지원 → ③ 직업심리검사 → ④ 대학생 진로준비도검사 → ⑤ 검사 실시(20분), 결과 캡처 후 LMS 제출',
   testCards: '**[인포그래픽]** 직업심리검사 목록 — 진로준비진단검사(찾아Dream, 2분) / **대학생진로준비도검사(20분)** / 창업적성검사(20분) / 직업흥미탐색검사 간편형(5분)',
-  aiFlow: '**[인포그래픽]** 초안(AI 허용) → 재해석·발전(사람) → 핵심·결론(반드시 사람) → 출처·프롬프트(반드시 명시)',
+  aiFlow: '**[인포그래픽]** STEP 1 AI 초안(허용) → STEP 2 재해석·변형(필수) → STEP 3 핵심·결론(사람이 직접 작성)',
 };
 
 /* ------------------------------------------------------------------ 인라인 */
@@ -64,7 +78,8 @@ function inlineMD(s) {
 function blockHTML(b) {
   switch (b.t) {
     case 'h':
-      return `<h3 class="h-sub">${inlineHTML(b.text)}</h3>`;
+      return `<h3 class="h-sub"><span class="h-sub__text">${inlineHTML(b.text)}</span>` +
+             `${b.note ? `<small class="h-sub__note">${inlineHTML(b.note)}</small>` : ''}</h3>`;
     case 'p':
       return `<p class="p${b.lg ? ' p--lg' : ''}">${inlineHTML(b.text)}</p>`;
     case 'ul': {
@@ -72,9 +87,11 @@ function blockHTML(b) {
       return `<ul class="list${cls}">${b.items.map((i) => `<li>${inlineHTML(i)}</li>`).join('')}</ul>`;
     }
     case 'callout': {
-      const tone = { line: ' callout--line', blue: ' callout--blue', red: ' callout--red' }[b.tone] || '';
+      const tone = { tint: ' callout--tint', warn: ' callout--warn', note: ' callout--note',
+                     solid: ' callout--solid', dashed: ' callout--dashed' }[b.tone] || '';
       const emo = b.emoji ? `<i class="emo">${b.emoji}</i>` : '';
-      return `<p class="callout${tone}">${emo}${inlineHTML(b.text)}</p>`;
+      return `<p class="callout${tone}">${emo}` +
+             `<span class="callout__body">${inlineHTML(b.text)}</span></p>`;
     }
     case 'note':
       return `<p class="note">${inlineHTML(b.text)}</p>`;
@@ -87,6 +104,12 @@ function blockHTML(b) {
       return cardHTML(b, false);
     case 'cards':
       return `<div class="cards cards--${b.cols || 3}">${b.items.map((i) => cardHTML(i, b.soft)).join('')}</div>`;
+    case 'rules':
+      return `<ol class="rules">${b.items.map((r) => `<li class="rule">` +
+        `<span class="rule__body">` +
+        `<b class="rule__title">${inlineHTML(r.title)}</b>` +
+        `<span class="rule__text">${inlineHTML(r.text)}</span></span>` +
+        `${r.emoji ? `<i class="emo rule__emo">${r.emoji}</i>` : ''}</li>`).join('')}</ol>`;
     case 'fig':
       return `<div class="fig-wrap"${b.max ? ` style="max-height:${b.max}px"` : ''}>${FIGURES[b.name](b.data)}</div>`;
     case 'table':
@@ -107,7 +130,9 @@ function cardHTML(c, soft) {
   if (c.badge) bits.push(`<span class="card__badge">${esc(c.badge)}</span>`);
   bits.push(`<span class="card__title">${inlineHTML(c.title)}</span>`);
   if (c.text) bits.push(`<span class="card__text">${inlineHTML(c.text)}</span>`);
-  return `<div class="card${soft ? ' card--soft' : ''}">${bits.join('')}</div>`;
+  if (c.list) bits.push(`<ul class="list list--dot card__list">` +
+    c.list.map((i) => `<li>${inlineHTML(i)}</li>`).join('') + `</ul>`);
+  return `<div class="card${c.plain || soft === 'plain' ? ' card--plain' : ''}">${bits.join('')}</div>`;
 }
 
 function tableHTML(b) {
@@ -137,7 +162,7 @@ function slideHTML(s, n) {
 
   if (s.kind === 'cover') {
     return `<section class="slide slide--cover" ${attrs}>
-  <div class="cover__band"></div>
+  <div class="cover__band" data-bg="cover"></div>
   <div class="cover__stripes">${stripes()}</div>
   <div class="cover__inner" data-edit>
     <p class="cover__course">${esc(s.course)}</p>
@@ -154,7 +179,7 @@ function slideHTML(s, n) {
       <span class="toc__label">${inlineHTML(it)}</span>
     </li>`).join('');
     return `<section class="slide slide--toc" ${attrs}>
-  <header class="slide__head"><span class="slide__eyebrow"></span>${WORDMARK(false)}</header>
+  <header class="slide__head"><span></span>${WORDMARK(false)}</header>
   <div class="slide__body" data-edit>
     <h2 class="toc__title">목차 <span class="toc__bar">|</span> <span class="toc__en">CONTENTS</span></h2>
     <ol class="toc">${rows}</ol>
@@ -165,44 +190,41 @@ function slideHTML(s, n) {
 
   if (s.kind === 'chapter') {
     return `<section class="slide slide--chapter" ${attrs}>
-  <div class="chapter__band"></div>
+  <div class="chapter__band" data-bg="band"></div>
   <div class="chapter__stripes">${stripes()}</div>
   <div class="chapter__badge">${chapterBadge(s.no)}</div>
   <h2 class="chapter__title" data-edit>${esc(s.title)}</h2>
   <p class="chapter__sub" data-edit>${esc(s.sub)}</p>
   <div class="chapter__mark">${WORDMARK(true)}</div>
-  ${no}
 </section>`;
   }
 
   if (s.kind === 'closing') {
     return `<section class="slide slide--closing" ${attrs}>
-  <div class="cover__band" style="height:100%"></div>
+  <div class="chapter__band" data-bg="band" style="height:100%"></div>
   <h2 class="closing__title" data-edit>${esc(s.title)}</h2>
-  ${no}
 </section>`;
   }
 
   if (s.kind === 'next') {
     return `<section class="slide slide--next" ${attrs}>
-  <div class="chapter__band"></div>
+  <div class="chapter__band" data-bg="band"></div>
   <div class="chapter__stripes">${stripes()}</div>
-  <div class="chapter__badge">${chapterBadge(s.no)}</div>
+  <div class="chapter__badge">${chapterBadge(s.no, '차시')}</div>
   <p class="next__lines" data-edit>${s.lines.map(esc).join('<br>')}</p>
-  <h2 class="next__title" data-edit>${esc(s.title)}</h2>
-  <p class="next__sub" data-edit>${esc(s.sub)}</p>
+  <h2 class="chapter__title" data-edit>${esc(s.title)}</h2>
+  <p class="chapter__sub" data-edit>${esc(s.sub)}</p>
   <div class="chapter__mark">${WORDMARK(true)}</div>
-  ${no}
 </section>`;
   }
 
   /* content */
-  const eyebrow = s.plain
-    ? `<span class="slide__section slide__section--plain">${esc(s.section)}</span>`
-    : `${s.chapNo ? `<span class="slide__chapno">${s.chapNo}</span>` : ''}<span class="slide__section">${esc(s.section)}</span>`;
+  const chip = `<span class="slide__chip">` +
+    `${s.chapNo ? `<b class="slide__chipno">${s.chapNo}</b>` : ''}` +
+    `<span class="slide__chiptext">${esc(s.section)}</span></span>`;
   const lede = s.lede ? `<h2 class="slide__lede">${inlineHTML(s.lede)}</h2>` : '';
   return `<section class="slide slide--content${s.dense ? ' is-dense' : ''}${s.tiny ? ' is-tiny' : ''}" ${attrs}>
-  <header class="slide__head"><span class="slide__eyebrow">${eyebrow}</span>${WORDMARK(false)}</header>
+  <header class="slide__head">${chip}${WORDMARK(false)}</header>
   <div class="slide__body" data-edit>
     ${lede}
     ${s.blocks.map(blockHTML).join('\n    ')}
@@ -214,7 +236,9 @@ function slideHTML(s, n) {
 /* ----------------------------------------------------------- 블록 → Markdown */
 function blockMD(b, out) {
   switch (b.t) {
-    case 'h': out.push(`### ${inlineMD(b.text)}`, ''); break;
+    case 'h':
+      out.push(`### ${inlineMD(b.text)}${b.note ? ` <small>${inlineMD(b.note)}</small>` : ''}`, '');
+      break;
     case 'p': out.push(inlineMD(b.text), ''); break;
     case 'note': out.push(`<small>${inlineMD(b.text)}</small>`, ''); break;
     case 'ul':
@@ -226,14 +250,31 @@ function blockMD(b, out) {
       break;
     case 'link': out.push(`- [${inlineMD(b.label)}](${b.href})`, ''); break;
     case 'card': cardMD(b, out); break;
+    case 'rules':
+      b.items.forEach((r, k) => {
+        out.push(`${k + 1}. ${r.emoji ? r.emoji + ' ' : ''}**${inlineMD(r.title)}** — ` +
+                 inlineMD(r.text).replace(/<br>/g, ' '));
+      });
+      out.push('');
+      break;
     case 'cards': b.items.forEach((c) => cardMD(c, out)); break;
+    case 'rules':
+      return `<ol class="rules">${b.items.map((r) => `<li class="rule">` +
+        `<span class="rule__body">` +
+        `<b class="rule__title">${inlineHTML(r.title)}</b>` +
+        `<span class="rule__text">${inlineHTML(r.text)}</span></span>` +
+        `${r.emoji ? `<i class="emo rule__emo">${r.emoji}</i>` : ''}</li>`).join('')}</ol>`;
     case 'fig':
       out.push(`> ${FIGURE_MD[b.name]}`, '');
       if (b.data) {
         b.data.forEach((row) => {
-          const [label, ...rest] = row;
-          const body = rest.filter((t) => !/^\p{Extended_Pictographic}/u.test(t)).join(' ');
-          out.push(`- **${label}** ${inlineMD(body)}`);
+          if (Array.isArray(row)) {
+            const [label, ...rest] = row;
+            const body = rest.filter((t) => !/^\p{Extended_Pictographic}/u.test(t)).join(' ');
+            out.push(`- **${label}** ${inlineMD(body)}`);
+          } else {
+            out.push(`- **${inlineMD(String(row.label).replace(/\n/g, ' '))}** ${row.pct}%`);
+          }
         });
         out.push('');
       }
@@ -248,6 +289,7 @@ function cardMD(c, out) {
   const head = `${c.emoji ? c.emoji + ' ' : ''}**${inlineMD(c.title)}**${c.badge ? ` \`${c.badge}\`` : ''}`;
   out.push(`- ${head}`);
   if (c.text) String(c.text).split('\n').forEach((l) => out.push(`  - ${inlineMD(l)}`));
+  if (c.list) c.list.forEach((l) => out.push(`  - ${inlineMD(l)}`));
   out.push('');
 }
 
@@ -291,16 +333,16 @@ const css = readFileSync(join(ROOT, 'theme.css'), 'utf8');
 
 const EXTRA_CSS = `
 /* --- 목차 --------------------------------------------------------------- */
-.toc__title { font-size: 44px; font-weight: 800; color: #3D4450; letter-spacing: -.03em; display: flex; align-items: baseline; gap: 16px; }
-.toc__bar { color: #9DC3E6; font-weight: 400; }
-.toc__en { font-family: var(--dc-num); font-size: 27px; font-weight: 600; color: #6B7280; letter-spacing: .02em; }
-.toc { list-style: none; margin: 22px 0 0; padding: 0 0 0 96px; display: flex; flex-direction: column; gap: 6px; }
-.toc__row { display: flex; align-items: baseline; gap: 14px; padding-bottom: 6px; border-bottom: 2px solid; border-image: linear-gradient(90deg, #0A9EE0, rgba(10,158,224,0)) 1; }
-.toc__no { font-family: var(--dc-num); font-size: 52px; font-weight: 600; color: #41B6E6; line-height: 1; min-width: 44px; }
-.toc__label { font-size: 27px; font-weight: 800; color: #4A5260; letter-spacing: -.02em; }
+.toc__title { font-size: 36px; font-weight: 700; color: var(--dc-ink2, #63666B); letter-spacing: -.03em; display: flex; align-items: baseline; gap: 14px; }
+.toc__bar { color: var(--dc-line); font-weight: 400; }
+.toc__en { font-family: var(--dc-num); font-size: 22px; font-weight: 500; color: #8A8F96; letter-spacing: .1em; }
+.toc { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.toc__row { display: flex; align-items: baseline; gap: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--dc-line); max-width: 62%; }
+.toc__no { font-family: var(--dc-num); font-size: 34px; font-weight: 500; color: var(--dc-blue-500); line-height: 1; min-width: 28px; }
+.toc__label { font-size: 25px; font-weight: 800; color: var(--dc-blue); letter-spacing: -.02em; }
 
 /* --- 빽빽한 슬라이드 (나머지는 theme.css) ---------------------------------- */
-.slide.is-dense .cards { gap: 11px; }
+.slide.is-dense .toc { gap: 10px; }
 .slide.is-dense .card { padding: 12px 14px; gap: 4px; }
 .slide.is-dense .card__title { font-size: 20px; }
 .slide.is-dense .card__text { font-size: 16px; line-height: 1.38; }
@@ -504,6 +546,9 @@ function buildHTML() {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONTS}">
 <style>
+:root {
+${bgVars('html')}
+}
 ${css}
 ${EXTRA_CSS}
 ${PAGE_CSS}
@@ -555,8 +600,11 @@ function buildCanvas(dir) {
 <helmet>
   <link rel="stylesheet" href="${FONTS}">
   <style>
-  html, body { margin: 0; padding: 0; background: #E8EBF0; }
-  a { color: #0057A0; } a:hover { color: #0A9EE0; }
+  :root {
+${bgVars('canvas')}
+  }
+  html, body { margin: 0; padding: 0; background: #EFF0F2; }
+  a { color: #005BAC; } a:hover { color: #00A5DE; }
 ${css}
 ${EXTRA_CSS}
   </style>
@@ -569,6 +617,8 @@ ${slideHTML(s, i + 1)}
     writeFileSync(join(dir, file), doc);
     files.push({ file, name: s.name });
   });
+
+  for (const a of ASSETS) copyFileSync(join(ROOT, 'assets', a), join(dir, a));
 
   const PER_ROW = 4, W = 1280, H = 720, GX = 140, GY = 220;
   const canvas = {

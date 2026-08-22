@@ -1,36 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 행복한 삶과 진로 — 1주차 원본 5쪽 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 330" role="img" aria-label="행복한 삶으로 가는 첫 걸음은 취업과 경력개발">
-  <defs>
-    <linearGradient id="hg65" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0070C0"/>
-    </linearGradient>
-  </defs>
-  <circle cx="280" cy="92" r="72" fill="url(#hg65)"/>
-  <text x="280" y="80" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="34">😊</text>
-  <text x="280" y="120" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="24" font-weight="800" fill="#FFFFFF">행복한 삶</text>
+  <defs><linearGradient id="hg67" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#00A5DE"/><stop offset="1" stop-color="#005BAC"/>
+  </linearGradient></defs>
+  <circle cx="280" cy="90" r="70" fill="url(#hg67)"/>
+  <text x="280" y="78" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="32">😊</text>
+  <text x="280" y="118" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="23" font-weight="800" fill="#FFFFFF">행복한 삶</text>
 
-  <path d="M280 172 V200" stroke="#9DC3E6" stroke-width="3"/>
-  <path d="M274 196 l6 10 6-10z" fill="#0070C0"/>
+  <path d="M280 168 V198" stroke="#9DC3E6" stroke-width="3"/>
+  <path d="M274 194 l6 10 6-10z" fill="#0071CE"/>
 
-  <g transform="translate(140,208)">
-    <rect width="280" height="46" rx="23" fill="#DCE9F8" stroke="#9DC3E6"/>
-    <text x="140" y="31" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#0057A0">직업 = 자아실현의 공간</text>
+  <g transform="translate(140,206)">
+    <rect width="280" height="46" fill="#DEEBF7" stroke="#9DC3E6"/>
+    <text x="140" y="31" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#005BAC">직업 = 자아실현의 공간</text>
   </g>
+  <path d="M280 252 V276" stroke="#9DC3E6" stroke-width="3"/>
 
-  <g font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">
-    <g transform="translate(14,278)">
-      <rect width="164" height="44" rx="10" fill="#FFFFFF" stroke="#9DC3E6"/>
-      <text x="82" y="29" text-anchor="middle">나의 강점</text>
-    </g>
-    <g transform="translate(198,278)">
-      <rect width="164" height="44" rx="10" fill="#FFFFFF" stroke="#9DC3E6"/>
-      <text x="82" y="29" text-anchor="middle">흥미</text>
-    </g>
-    <g transform="translate(382,278)">
-      <rect width="164" height="44" rx="10" fill="#FFFFFF" stroke="#9DC3E6"/>
-      <text x="82" y="29" text-anchor="middle">가치관</text>
-    </g>
+  <g font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="700" fill="#17365D">
+    <g transform="translate(14,278)"><rect width="164" height="44" fill="#FFFFFF" stroke="#D4DCE6"/><text x="82" y="29" text-anchor="middle">나의 강점</text></g>
+    <g transform="translate(198,278)"><rect width="164" height="44" fill="#FFFFFF" stroke="#D4DCE6"/><text x="82" y="29" text-anchor="middle">흥미</text></g>
+    <g transform="translate(382,278)"><rect width="164" height="44" fill="#FFFFFF" stroke="#D4DCE6"/><text x="82" y="29" text-anchor="middle">가치관</text></g>
   </g>
-  <path d="M280 254 V272" stroke="#9DC3E6" stroke-width="3"/>
 </svg>

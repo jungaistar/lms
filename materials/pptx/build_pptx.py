@@ -31,6 +31,7 @@ from pptx.util import Emu, Pt
 
 ROOT = Path(__file__).resolve().parent.parent
 LAYOUT = ROOT / "dist" / "layout.json"
+ASSETS = ROOT / "assets"
 CONTENT = ROOT / "dist" / "slides.json"
 
 PX = 9525                      # 1 px (96dpi) = 9525 EMU
@@ -90,6 +91,24 @@ def emoji_png(ch, size_px):
 
 
 # ------------------------------------------------------------------ 도형 손질
+def picture(sl, name, x, y, w, h, *, alpha=None, behind=False):
+    """배경 사진. alpha 는 0~1 (파워포인트 그림 투명도)."""
+    f = ASSETS / name
+    if not f.exists():
+        return None
+    pic = sl.shapes.add_picture(str(f), px(x), px(y), px(w), px(h))
+    if alpha is not None:
+        from pptx.oxml import parse_xml
+        ns = 'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"'
+        blip = pic._element.blipFill.find(qn("a:blip"))
+        blip.append(parse_xml(f'<a:alphaModFix {ns} amt="{int(alpha * 100000)}"/>'))
+    if behind:
+        spTree = sl.shapes._spTree
+        spTree.remove(pic._element)
+        spTree.insert(2, pic._element)
+    return pic
+
+
 def plain(shape):
     """파워포인트 기본 테마가 씌우는 그림자·테두리를 걷어낸다."""
     shape.shadow.inherit = False
@@ -582,9 +601,12 @@ def build():
                 if t == "bg":
                     base = dict(n); base["grad"] = None
                     draw_box(sl, base)
-                    if n.get("grad"):
-                        g = draw_box(sl, n)
-                        g.line.fill.background()
+                    if s.get("campus"):
+                        c = s["campus"]
+                        picture(sl, "bg-campus.jpg", c["x"], c["y"], c["w"], c["h"] - c["y"], alpha=0.5)
+                elif n.get("bgImage"):
+                    picture(sl, {"cover": "bg-cover.jpg", "band": "bg-band.jpg"}[n["bgImage"]],
+                            n["x"], n["y"], n["w"], n["h"])
                 else:
                     draw_box(sl, n)
             elif t == "text":

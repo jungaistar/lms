@@ -1,41 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 수업 목표 달성 네 단계 — 1주차 원본 7쪽 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1140 316" role="img" aria-label="한 학기를 마치면 달성하는 네 가지 목표">
-  <path d="M0 306 H1140" stroke="#9DC3E6" stroke-width="2"/>
+<!-- 수업 목표 달성 네 가지 — 1주차 원본 7쪽 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 300" role="img" aria-label="자신의 직업흥미, 적성, 가치관을 알 수 있다. / 직업정보를 탐색하고 분석할 수 있다. / 자신의 직무에 적합한 이력서/ 자기소개서를 작성할 수 있다. / 적절한 면접 기법을 학습하여 활용할 수 있다.">
   <g transform="translate(0,0)">
-    <rect x="10" y="110" width="262" height="190" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
-    <rect x="10" y="110" width="262" height="46" rx="12" fill="#0070C0"/>
-    <rect x="10" y="140" width="262" height="16" fill="#0070C0"/>
-    <text x="141" y="141" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">첫번째</text>
-    <text x="141" y="210" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🧭</text>
-    <text x="141" y="250" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">자신의 직업흥미, 적성,</text>
-    <text x="141" y="276" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">가치관을 알 수 있다.</text>
+    <rect width="549" height="140" fill="#F2F7FC" stroke="#9DC3E6"/>
+    <text x="26" y="52" font-family="Noto Color Emoji, sans-serif" font-size="30">🧭</text>
+    <text x="72" y="42" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="800" fill="#005BAC">첫번째</text>
+    <text x="72" y="72" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="500" fill="#3B3838">자신의 직업흥미, 적성,</text><text x="72" y="99" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="700" fill="#17365D">가치관을 알 수 있다.</text>
   </g>
-  <g transform="translate(285,0)">
-    <rect x="10" y="76" width="262" height="224" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
-    <rect x="10" y="76" width="262" height="46" rx="12" fill="#0070C0"/>
-    <rect x="10" y="106" width="262" height="16" fill="#0070C0"/>
-    <text x="141" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">두번째</text>
-    <text x="141" y="176" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🔍</text>
-    <text x="141" y="216" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">직업정보를 탐색하고</text>
-    <text x="141" y="242" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">분석할 수 있다.</text>
+  <g transform="translate(571,0)">
+    <rect width="549" height="140" fill="#F2F7FC" stroke="#9DC3E6"/>
+    <text x="26" y="52" font-family="Noto Color Emoji, sans-serif" font-size="30">🔍</text>
+    <text x="72" y="42" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="800" fill="#005BAC">두번째</text>
+    <text x="72" y="72" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="500" fill="#3B3838">직업정보를 탐색하고</text><text x="72" y="99" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="700" fill="#17365D">분석할 수 있다.</text>
   </g>
-  <g transform="translate(570,0)">
-    <rect x="10" y="42" width="262" height="258" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
-    <rect x="10" y="42" width="262" height="46" rx="12" fill="#0070C0"/>
-    <rect x="10" y="72" width="262" height="16" fill="#0070C0"/>
-    <text x="141" y="73" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">세번째</text>
-    <text x="141" y="142" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">📄</text>
-    <text x="141" y="182" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">자신의 직무에 적합한 이력서/</text>
-    <text x="141" y="208" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">자기소개서를 작성할 수 있다.</text>
+  <g transform="translate(0,160)">
+    <rect width="549" height="140" fill="#F2F7FC" stroke="#9DC3E6"/>
+    <text x="26" y="52" font-family="Noto Color Emoji, sans-serif" font-size="30">📄</text>
+    <text x="72" y="42" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="800" fill="#005BAC">세번째</text>
+    <text x="72" y="72" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="500" fill="#3B3838">자신의 직무에 적합한 이력서/</text><text x="72" y="99" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="700" fill="#17365D">자기소개서를 작성할 수 있다.</text>
   </g>
-  <g transform="translate(855,0)">
-    <rect x="10" y="8" width="262" height="292" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
-    <rect x="10" y="8" width="262" height="46" rx="12" fill="#0070C0"/>
-    <rect x="10" y="38" width="262" height="16" fill="#0070C0"/>
-    <text x="141" y="39" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">네번째</text>
-    <text x="141" y="108" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🎤</text>
-    <text x="141" y="148" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">적절한 면접 기법을 학습하여</text>
-    <text x="141" y="174" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">활용할 수 있다.</text>
+  <g transform="translate(571,160)">
+    <rect width="549" height="140" fill="#F2F7FC" stroke="#9DC3E6"/>
+    <text x="26" y="52" font-family="Noto Color Emoji, sans-serif" font-size="30">🎤</text>
+    <text x="72" y="42" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="800" fill="#005BAC">네번째</text>
+    <text x="72" y="72" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="500" fill="#3B3838">적절한 면접 기법을 학습하여</text><text x="72" y="99" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="700" fill="#17365D">활용할 수 있다.</text>
   </g>
 </svg>

@@ -80,19 +80,14 @@ const data = await page.evaluate(() => {
   function marker(li, ul, box, cs) {
     const fs = num(cs.fontSize);
     const cls = ul.className;
-    if (cls.includes('list--check')) return { kind: 'glyph', ch: '✓', x: box.x, y: box.y, size: 18, color: '0070C0', bold: true };
-    if (cls.includes('list--arrow')) return { kind: 'glyph', ch: '▸', x: box.x, y: box.y - 1, size: 18, color: '0A9EE0', bold: true };
+    if (cls.includes('list--check')) return { kind: 'glyph', ch: '✓', x: box.x, y: box.y, size: 18, color: '0071CE', bold: true };
+    if (cls.includes('list--dot')) return { kind: 'circle', x: box.x + 5, y: box.y + fs * 0.55, d: 7, fill: '0071CE' };
     if (cls.includes('list--num')) {
       const n = [...ul.children].indexOf(li) + 1;
-      return { kind: 'circle', x: box.x, y: box.y + 1, d: 28, fill: '0070C0',
-               text: String(n), size: 16, color: 'FFFFFF' };
+      return { kind: 'circle', x: box.x, y: box.y + 1, d: 27, fill: '005BAC',
+               text: String(n), size: 15, color: 'FFFFFF' };
     }
-    return { kind: 'square', x: box.x + 4, y: box.y + fs * 0.58, d: 9, fill: '0070C0' };
-  }
-
-  /* 소제목 앞의 세로 막대도 ::before 다 */
-  function subBar(box, h) {
-    return { kind: 'bar', x: box.x, y: box.y + (box.h - h) / 2, w: 5, h, from: '0A9EE0', to: '0070C0' };
+    return { kind: 'glyph', ch: '➢', x: box.x, y: box.y - 1, size: 17, color: '0071CE', bold: true };
   }
 
   const slides = [];
@@ -238,6 +233,7 @@ const data = await page.evaluate(() => {
       if (!fill && !grad && !sides.length) return null;
       return {
         type: 'box', ...box,
+        bgImage: el.dataset ? el.dataset.bg : undefined,
         fill, grad,
         stroke: uniform ? sides[0].color : null,
         strokeW: uniform ? sides[0].w : 0,
@@ -382,11 +378,14 @@ const data = await page.evaluate(() => {
 
       push(boxNode(el, box));
 
-      if (el.tagName === 'LI') {
+      if (el.tagName === 'LI' && el.classList.contains('rule')) {
+        const n = [...el.parentElement.children].indexOf(el) + 1;
+        push({ type: 'marker', kind: 'circle', x: box.x + 12, y: box.y + 11, d: 24,
+               fill: '005BAC', text: String(n), size: 14, color: 'FFFFFF' });
+      } else if (el.tagName === 'LI') {
         const ul = el.closest('ul,ol');
         push({ type: 'marker', ...marker(el, ul, box, cs) });
       }
-      if (el.classList.contains('h-sub')) push({ type: 'marker', ...subBar(box, 25) });
       if (el.classList.contains('wordmark')) {
         const cs2 = getComputedStyle(el);
         const m = textMetrics(el);
@@ -430,6 +429,11 @@ const data = await page.evaluate(() => {
       index: +slide.dataset.index,
       kind: slide.dataset.kind,
       name: slide.dataset.name,
+      /* 본문 슬라이드 바탕에 깔리는 캠퍼스 사진 (::before 라 좌표가 없다) */
+      campus: ['content', 'toc'].includes(slide.dataset.kind)
+        ? { x: 0, y: parseFloat(getComputedStyle(slide).getPropertyValue('--dc-head-h')) || 56,
+            w: S.width, h: S.height }
+        : null,
       nodes,
     });
   });

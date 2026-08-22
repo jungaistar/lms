@@ -54,6 +54,13 @@ PAGE_MAP = [
 # 강의 내용이 아니라서 인포그래픽으로 바꾸며 일부러 옮기지 않았다.
 CHROME_PAGES = {22, 23}
 
+# 일부러 내용을 갈아 끼운 쪽 — 원본과 다른 것이 맞다.
+REPLACED = {
+    9: "학교 자체 강의자료(『창업과 기업가 정신』 1강 9쪽)의 성적평가로 교체 "
+       "— 구성비 20/30/30/20, 중간 개인별 과제·발표, 기말 write-up",
+}
+SKIP = CHROME_PAGES | set(REPLACED)
+
 
 def norm(t):
     t = unicodedata.normalize("NFKC", t or "")
@@ -145,14 +152,14 @@ def main():
         ps, gaps = cover(raw, slides[dst - 1])
         pa, gaps_all = cover(raw, all_pptx)
         rows.append((src, dst, name, len(norm(raw)), ps * 100, pa * 100, gaps_all))
-        if src not in CHROME_PAGES:
+        if src not in SKIP:
             total_hit += pa * len(norm(raw))
             total_all += len(norm(raw))
 
     def block(label, hay):
         hit = tot = 0
         for src, *_ in PAGE_MAP:
-            if src in CHROME_PAGES:
+            if src in SKIP:
                 continue
             raw = pages[src - 1]
             n = len(norm(raw))
@@ -167,10 +174,10 @@ def main():
     print(f"{'원본':>4} {'슬라이드':>6}  {'해당 장':>6} {'전체':>6}  {'제목'}")
     print("-" * 78)
     for src, dst, name, n, ps, pa, miss in rows:
-        flag = "※" if src in CHROME_PAGES else " "
+        flag = "※" if src in CHROME_PAGES else ("◇" if src in REPLACED else " ")
         print(f"{src:>4} → {dst:>4}  {ps:>5.1f}% {pa:>5.1f}% {flag} {name}")
     print("-" * 78)
-    print(f"원본 내용 반영률 (22·23쪽 화면 갈무리 제외)")
+    print(f"원본 내용 반영률 ({', '.join(str(x) for x in sorted(SKIP))}쪽 제외 — 아래 설명)")
     print(f"  PPTX     {total_hit / total_all * 100:.1f}%")
     print(f"  HTML     {block('HTML', html):.1f}%")
     print(f"  Markdown {block('MD', md):.1f}%")
@@ -182,24 +189,30 @@ def main():
            "| 원본 쪽 | 슬라이드 | 내용 | 해당 장 | 자료 전체 |",
            "|---:|---:|---|---:|---:|"]
     for src, dst, name, n, ps, pa, miss in rows:
-        mark = " ※" if src in CHROME_PAGES else ""
+        mark = " ※" if src in CHROME_PAGES else (" ◇" if src in REPLACED else "")
         out.append(f"| {src} | {dst} | {name}{mark} | {ps:.1f}% | {pa:.1f}% |")
     out += ["",
             f"**PPTX 전체 반영률 {total_hit / total_all * 100:.1f}%** "
             f"· HTML {block('HTML', html):.1f}% · Markdown {block('MD', md):.1f}% "
-            "(원본 22·23쪽 제외)",
+            f"(원본 {', '.join(str(x) for x in sorted(SKIP))}쪽 제외)",
             "",
             "※ 원본 22·23쪽은 고용24 누리집 화면 갈무리입니다. 사이트 메뉴·배너 같은",
             "껍데기 글자는 강의 내용이 아니라, 접속 경로와 검사 목록 인포그래픽으로",
             "바꾸어 담았습니다. 검사 이름·소요 시간·경로 같은 알맹이는 그대로 있습니다.",
             ""]
+    for pg, why in REPLACED.items():
+        out += [f"◇ 원본 {pg}쪽은 {why}.", ""]
     out += ["## 일부러 다르게 한 것", "",
-            "1. **디자인** — 2주차 학습자료의 시각 언어(헤더 그라디언트 띠 · 노란 섹션 칩 ·",
-            "   3중 스트라이프 · 반원 챕터 배지 · 앰버 강조박스)를 입혔습니다. 글은 그대로입니다.",
-            "2. **원본 22·23쪽** — 고용24 누리집 화면 갈무리를 접속 경로·검사 목록",
+            "1. **디자인** — 학교 자체 강의자료 『창업과 기업가 정신』 1강의 시각 언어를",
+            "   입혔습니다 (헤더 띠 + 노란 테 섹션 칩 · 왼쪽 색막대 강조 · 옅은 캠퍼스 바탕 ·",
+            "   챕터 표지의 원형 배지와 오른쪽 제목). 글은 그대로입니다.",
+            "2. **성적평가(원본 9쪽)** — 같은 자료의 성적평가로 갈아 끼웠습니다.",
+            "   구성비가 30/20/20/30 에서 **20/30/30/20** 으로 바뀌었고,",
+            "   중간고사는 개인별 과제·발표, 기말고사는 write-up(독창성 15점 · 성공가능성 15점)입니다.",
+            "3. **원본 22·23쪽** — 고용24 누리집 화면 갈무리를 접속 경로·검사 목록",
             "   인포그래픽으로 다시 그렸습니다. 사이트 메뉴·배너 같은 껍데기는 옮기지 않았습니다.",
-            "3. **한 장 추가** — 24번째 슬라이드 「생성형 AI 사용 지침」은 원본에 없던 새 장입니다.",
-            "4. **그림** — 원본의 그림은 모두 SVG 로 다시 그렸습니다 (`dist/svg/`).",
+            "4. **한 장 추가** — 24번째 슬라이드 「생성형 AI 사용 지침」은 원본에 없던 새 장입니다.",
+            "5. **그림** — 원본의 그림은 모두 SVG 로 다시 그렸습니다 (`dist/svg/`).",
             ""]
 
     gaps = [(s, d, nm, m) for s, d, nm, n, ps, pa, m in rows if m and s not in CHROME_PAGES]

@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 3중 스트라이프 — 2주차 디자인 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 30" preserveAspectRatio="none" aria-hidden="true">
-  <defs>
-    <linearGradient id="stg66" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0A9EE0" stop-opacity="0"/>
-    </linearGradient>
-    <linearGradient id="stg67" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#0070C0"/><stop offset="1" stop-color="#0070C0" stop-opacity="0"/>
-    </linearGradient>
-    <linearGradient id="stg68" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#41B6E6"/><stop offset="1" stop-color="#41B6E6" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
-  <rect x="0" y="2"  width="793.6" height="4" fill="url(#stg66)"/>
-  <rect x="0" y="11" width="537.6" height="5" fill="url(#stg67)"/>
-  <rect x="0" y="21" width="396.8" height="5" fill="url(#stg68)"/>
+<!-- 3중 스트라이프 — 학교 자료 공통 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 26" preserveAspectRatio="none" aria-hidden="true">
+  <defs><linearGradient id="stg69" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#005BAC"/><stop offset="1" stop-color="#005BAC" stop-opacity="0"/>
+    </linearGradient><linearGradient id="stg70" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0071CE"/><stop offset="1" stop-color="#0071CE" stop-opacity="0"/>
+    </linearGradient><linearGradient id="stg71" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4BA3E3"/><stop offset="1" stop-color="#4BA3E3" stop-opacity="0"/>
+    </linearGradient></defs>
+  <rect x="0" y="2"  width="742.4" height="4" fill="url(#stg69)"/>
+  <rect x="0" y="10" width="512" height="4" fill="url(#stg70)"/>
+  <rect x="0" y="18" width="358.40000000000003" height="4" fill="url(#stg71)"/>
 </svg>
