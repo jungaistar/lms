@@ -1,0 +1,241 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "title": "1. 표지",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide02.dc.html",
+      "title": "2. 강사 소개",
+      "x": 1420,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide03.dc.html",
+      "title": "3. 목차",
+      "x": 2840,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide04.dc.html",
+      "title": "4. CHAPTER 1",
+      "x": 4260,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide05.dc.html",
+      "title": "5. 강의 소개",
+      "x": 0,
+      "y": 940,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide06.dc.html",
+      "title": "6. 교과 목표",
+      "x": 1420,
+      "y": 940,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide07.dc.html",
+      "title": "7. 수업 목표를 달성하면",
+      "x": 2840,
+      "y": 940,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide08.dc.html",
+      "title": "8. CHAPTER 2",
+      "x": 4260,
+      "y": 940,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide09.dc.html",
+      "title": "9. 성적 평가 기준",
+      "x": 0,
+      "y": 1880,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide10.dc.html",
+      "title": "10. 출석 기준",
+      "x": 1420,
+      "y": 1880,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide11.dc.html",
+      "title": "11. CHAPTER 3",
+      "x": 2840,
+      "y": 1880,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide12.dc.html",
+      "title": "12. 주차 별 강의 계획",
+      "x": 4260,
+      "y": 1880,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide13.dc.html",
+      "title": "13. 과제물 제출 안내",
+      "x": 0,
+      "y": 2820,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide14.dc.html",
+      "title": "14. CHAPTER 4",
+      "x": 1420,
+      "y": 2820,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide15.dc.html",
+      "title": "15. 강의 요구 분석",
+      "x": 2840,
+      "y": 2820,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide16.dc.html",
+      "title": "16. CHAPTER 5",
+      "x": 4260,
+      "y": 2820,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide17.dc.html",
+      "title": "17. 창업 인식도 조사",
+      "x": 0,
+      "y": 3760,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide18.dc.html",
+      "title": "18. 창업 인식도 조사 — 설문 방법",
+      "x": 1420,
+      "y": 3760,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide19.dc.html",
+      "title": "19. CHAPTER 6",
+      "x": 2840,
+      "y": 3760,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide20.dc.html",
+      "title": "20. 진로준비도 검사란?",
+      "x": 4260,
+      "y": 3760,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide21.dc.html",
+      "title": "21. 진로준비도 검사 — 접속 경로",
+      "x": 0,
+      "y": 4700,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide22.dc.html",
+      "title": "22. 진로준비도 검사 — 검사 고르기",
+      "x": 1420,
+      "y": 4700,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide23.dc.html",
+      "title": "23. 질의응답",
+      "x": 2840,
+      "y": 4700,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide24.dc.html",
+      "title": "24. 생성형 AI 사용 지침",
+      "x": 4260,
+      "y": 4700,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    },
+    {
+      "file": "Slide25.dc.html",
+      "title": "25. 다음 차시 안내",
+      "x": 0,
+      "y": 5640,
+      "w": 1280,
+      "h": 720,
+      "print": "fixed"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "brief",
+      "x": 0,
+      "y": -180,
+      "w": 720,
+      "text": "제1강 오리엔테이션 — 1주차 원본 내용을 그대로 두고 2주차 자료의 디자인을 입혔습니다.\n마지막에서 두 번째 아트보드가 이번에 추가한 「생성형 AI 사용 지침」 한 장입니다."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

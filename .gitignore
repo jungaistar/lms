@@ -1,5 +1,8 @@
 node_modules/
 dist/
+# 학습자료 산출물(materials/dist)은 배포용 결과물이라 함께 둔다.
+# 위 dist/ 는 web/ · bridge/ 의 빌드 찌꺼기를 막으려는 것이다.
+!materials/dist/
 # tsc -b 가 남기는 캐시. 빌드할 때마다 바뀌어 커밋에 잡음이 낀다.
 *.tsbuildinfo
 .env

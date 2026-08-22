@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>취업과 경력개발 · 제1강 오리엔테이션</title>
+<meta name="description" content="취업과경력개발 1주차 학습자료 — 제1강_오리엔테이션">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800&family=Noto+Color+Emoji&display=swap">
+<style>
+/* ===========================================================================
+   취업과 경력개발 — 학습자료 디자인 시스템
+   근거: 2주차 학습자료(제2강_나의 삶, 나의 진로 / 나의 이해)의 시각 언어
+   ---------------------------------------------------------------------------
+   색·타이포·모티프(3중 스트라이프, 반원 챕터 배지, 앰버 강조박스)는
+   원본 슬라이드에서 그대로 따왔다. 화면 코드에 색을 직접 쓰지 말고
+   여기 토큰과 시맨틱 클래스를 쓸 것.
+   =========================================================================== */
+
+:root {
+  /* 브랜드 블루 — 헤더 그라디언트(좌 시안 → 우 로열블루) */
+  --dc-cyan:        #0A9EE0;
+  --dc-cyan-light:  #41B6E6;
+  --dc-blue-mid:    #0086CE;
+  --dc-blue:        #0070C0;
+  --dc-blue-deep:   #0057A0;
+  --dc-navy:        #0B2A4A;
+
+  /* 강조 */
+  --dc-yellow:      #FFF200;   /* 헤더 위 섹션 칩 글자 */
+  --dc-amber-fill:  #FFD78F;   /* 강조 박스 채움 */
+  --dc-amber-line:  #E8A33D;   /* 강조 박스 테두리 */
+  --dc-red:         #C00000;   /* 중요 표시 */
+
+  /* 면·선 */
+  --dc-bg:          #F2F4F7;
+  --dc-panel:       #FFFFFF;
+  --dc-blue-soft:   #DCE9F8;
+  --dc-blue-soft-2: #EDF4FC;
+  --dc-blue-line:   #9DC3E6;
+  --dc-line:        #D9E2EC;
+
+  /* 글자 */
+  --dc-ink:         #16181D;
+  --dc-ink-2:       #3D4450;
+  --dc-ink-3:       #6B7280;
+
+  /* 타이포 */
+  --dc-sans: "Noto Sans KR", "Pretendard", -apple-system, BlinkMacSystemFont,
+             "Malgun Gothic", "맑은 고딕", sans-serif;
+  --dc-num:  "Outfit", "Noto Sans KR", sans-serif;
+  --dc-emoji: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+
+  /* 슬라이드 규격 (16:9) */
+  --dc-w: 1280px;
+  --dc-h: 720px;
+  --dc-head-h: 74px;
+  --dc-pad-x: 46px;
+}
+
+/* --------------------------------------------------------------- 슬라이드 틀 */
+.slide {
+  position: relative;
+  width: var(--dc-w);
+  height: var(--dc-h);
+  overflow: hidden;
+  background: var(--dc-bg);
+  color: var(--dc-ink);
+  font-family: var(--dc-sans);
+  font-size: 20px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.slide * { box-sizing: border-box; }
+
+/* 본문 바탕의 아주 옅은 캠퍼스 톤 — 원본의 배경 사진 자리를 대신한다 */
+.slide::after {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.35) 42%, rgba(226,232,240,.55) 100%);
+  pointer-events: none;
+}
+.slide > * { position: relative; z-index: 1; }
+.slide::after { z-index: 0; }
+
+/* ------------------------------------------------------------------- 헤더 띠 */
+.slide__head {
+  height: var(--dc-head-h);
+  padding: 0 28px 0 var(--dc-pad-x);
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(100deg, var(--dc-cyan) 0%, var(--dc-blue-mid) 46%, var(--dc-blue) 100%);
+}
+.slide__eyebrow {
+  display: flex; align-items: baseline; gap: 14px;
+  font-weight: 800; letter-spacing: -.01em;
+}
+.slide__chapno {
+  font-family: var(--dc-num);
+  font-size: 30px; font-weight: 700; color: #FFFFFF; line-height: 1;
+}
+.slide__section {
+  font-size: 27px; color: var(--dc-yellow);
+  text-shadow: 0 1px 0 rgba(0,60,110,.55), 0 0 1px rgba(0,60,110,.9);
+}
+.slide__section--plain { color: #FFFFFF; text-shadow: none; }
+
+/* dima 워드마크 */
+.wordmark {
+  font-family: var(--dc-num);
+  font-weight: 800; font-size: 46px; line-height: 1;
+  letter-spacing: -.045em; color: #FFFFFF; user-select: none;
+}
+.wordmark--dark { color: var(--dc-navy); }
+.wordmark i { font-style: normal; position: relative; }
+.wordmark i::after {
+  content: ""; position: absolute; left: 50%; top: -.26em;
+  width: .19em; height: .19em; border-radius: 50%;
+  background: currentColor; transform: translateX(-50%);
+}
+.slide__head .wordmark { font-size: 42px; margin-top: 13px; }
+
+/* ------------------------------------------------- 3중 스트라이프 (시그니처) */
+.stripes { display: block; width: 100%; height: 30px; }
+
+/* ------------------------------------------------------------------- 본문 틀 */
+.slide__body {
+  height: calc(var(--dc-h) - var(--dc-head-h));
+  padding: 22px var(--dc-pad-x) 44px;
+  display: flex; flex-direction: column; gap: 14px;
+  min-height: 0;
+}
+.slide__body > .table-wrap { min-height: 0; }
+.slide__lede {
+  font-size: 33px; font-weight: 800; letter-spacing: -.02em;
+  color: var(--dc-ink);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--dc-blue-line);
+}
+.slide__cols {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 26px;
+  align-items: stretch; flex: 1 1 auto; min-height: 0;
+}
+.slide__cols--wide-left { grid-template-columns: 1.15fr .85fr; }
+.slide__cols--wide-right { grid-template-columns: .85fr 1.15fr; }
+.stack { display: flex; flex-direction: column; gap: 14px; min-height: 0; min-width: 0; }
+.slide__no {
+  position: absolute; left: 0; right: 0; bottom: 12px;
+  text-align: center; font-family: var(--dc-num);
+  font-size: 15px; color: var(--dc-ink-3);
+}
+
+/* --------------------------------------------------------------- 텍스트 요소 */
+.h-sub {
+  font-size: 27px; font-weight: 800; letter-spacing: -.02em;
+  color: var(--dc-blue-deep);
+  display: flex; align-items: center; gap: 10px;
+}
+.h-sub::before {
+  content: ""; width: 5px; height: 25px; border-radius: 3px;
+  background: linear-gradient(180deg, var(--dc-cyan), var(--dc-blue));
+}
+.p { font-size: 21px; color: var(--dc-ink-2); }
+.p--lg { font-size: 24px; }
+.em { color: var(--dc-red); font-weight: 800; font-style: normal; }
+.strong { font-weight: 800; color: var(--dc-ink); }
+
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
+.list li {
+  position: relative; padding-left: 26px;
+  font-size: 21px; color: var(--dc-ink-2); line-height: 1.45;
+}
+.list li::before {
+  content: ""; position: absolute; left: 4px; top: .58em;
+  width: 9px; height: 9px; background: var(--dc-blue); border-radius: 2px;
+}
+.list--check li::before {
+  content: "✓"; font-family: var(--dc-sans); font-weight: 800;
+  left: 0; top: 0; width: auto; height: auto;
+  background: none; color: var(--dc-blue); font-size: 20px;
+}
+.list--arrow li::before {
+  content: "▸"; left: 2px; top: -.05em; width: auto; height: auto;
+  background: none; color: var(--dc-cyan); font-size: 20px; font-weight: 700;
+}
+.list--num { counter-reset: dcnum; }
+.list--num li { padding-left: 40px; }
+.list--num li::before {
+  counter-increment: dcnum; content: counter(dcnum);
+  left: 0; top: .08em; width: 28px; height: 28px;
+  display: grid; place-items: center; border-radius: 50%;
+  background: var(--dc-blue); color: #fff;
+  font-family: var(--dc-num); font-size: 16px; font-weight: 700;
+}
+
+/* --------------------------------------------------------------------- 강조 */
+.callout {
+  border: 2px solid var(--dc-amber-line);
+  background: var(--dc-amber-fill);
+  border-radius: 8px; padding: 13px 18px;
+  font-size: 22px; font-weight: 700; color: #4A3208;
+}
+.callout--line { background: #FFFFFF; color: var(--dc-ink); font-weight: 600; }
+.callout--blue {
+  border-color: var(--dc-blue-line); background: var(--dc-blue-soft-2); color: var(--dc-navy);
+}
+.callout--red { border-color: #E39C9C; background: #FDECEC; color: #7A1414; }
+.callout .emo { margin-right: 8px; }
+
+.quote {
+  border: 1px solid #C9B9D6; background: #FAF7FC;
+  border-radius: 6px; padding: 20px 24px; text-align: center;
+}
+
+/* --------------------------------------------------------------------- 카드 */
+.cards { display: grid; gap: 14px; }
+.cards--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cards--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cards--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.card {
+  background: var(--dc-panel); border: 1px solid var(--dc-line);
+  border-radius: 12px; padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 7px;
+}
+.card--soft { background: var(--dc-blue-soft); border-color: var(--dc-blue-line); }
+.card__badge {
+  font-family: var(--dc-num); font-size: 14px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--dc-cyan);
+}
+.card__title { font-size: 22px; font-weight: 800; color: var(--dc-navy); letter-spacing: -.02em; }
+.card__text { font-size: 18px; color: var(--dc-ink-2); line-height: 1.42; }
+.card__emo { font-size: 30px; line-height: 1; }
+
+/* ----------------------------------------------------------------------- 표 */
+.table-wrap { width: 100%; overflow-x: auto; }
+.tbl {
+  width: 100%; border-collapse: collapse;
+  background: var(--dc-panel); font-size: 18px;
+}
+.tbl th, .tbl td {
+  border: 1px solid var(--dc-blue-line);
+  padding: 8px 12px; text-align: left; vertical-align: middle;
+}
+.tbl thead th {
+  background: var(--dc-blue-soft); color: var(--dc-navy);
+  font-weight: 800; text-align: center;
+}
+.tbl td.c, .tbl th.c { text-align: center; }
+.tbl tbody tr:nth-child(even) { background: #F6F9FD; }
+.tbl .mark { color: var(--dc-red); font-weight: 700; }
+.tbl--plan { font-size: 17px; }
+.tbl--plan td { padding: 5px 12px; }
+.tbl--plan tr.is-current td { background: #FFF4D6; box-shadow: inset 0 0 0 2px var(--dc-red); }
+
+/* --------------------------------------------------------------- SVG 인포그래픽 */
+.fig { display: block; width: 100%; height: 100%; max-width: 100%; max-height: 100%; }
+.fig-wrap {
+  display: flex; align-items: center; justify-content: center;
+  flex: 1 1 auto; min-height: 0; min-width: 0;
+}
+
+/* ------------------------------------------------------------- 표지 / 챕터 */
+.slide--cover, .slide--chapter, .slide--closing {
+  background: var(--dc-bg);
+}
+.cover__band {
+  position: absolute; inset: 0 0 auto 0; height: 74%;
+  background: linear-gradient(120deg, var(--dc-cyan) 0%, var(--dc-blue-mid) 42%, var(--dc-blue) 100%);
+}
+.cover__band::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 45%);
+}
+.cover__inner { position: absolute; inset: 0; padding: 84px var(--dc-pad-x) 0; }
+.cover__course { font-size: 26px; font-weight: 800; color: #DCEEFB; letter-spacing: -.01em; }
+.cover__title {
+  margin-top: 14px; font-size: 58px; font-weight: 900;
+  color: #FFFFFF; letter-spacing: -.035em; line-height: 1.18;
+}
+.cover__mark { position: absolute; right: 46px; top: 300px; }
+.cover__mark .wordmark { font-size: 132px; }
+.cover__meta {
+  position: absolute; right: var(--dc-pad-x); bottom: 52px;
+  text-align: right; color: var(--dc-ink-2);
+}
+.cover__meta b { display: block; font-size: 23px; font-weight: 800; color: var(--dc-navy); }
+.cover__meta span { display: block; margin-top: 12px; font-size: 23px; font-weight: 700; }
+.cover__stripes { position: absolute; left: 0; right: 0; top: 74%; }
+
+.chapter__band {
+  position: absolute; inset: 0 0 auto 0; height: 52%;
+  background: linear-gradient(100deg, var(--dc-cyan) 0%, var(--dc-blue-mid) 44%, var(--dc-blue) 100%);
+}
+.chapter__stripes { position: absolute; left: 0; right: 0; top: 52%; }
+.chapter__badge {
+  position: absolute; left: 0; top: calc(52% - 108px);
+  width: 120px; height: 216px;
+}
+.chapter__title {
+  position: absolute; left: 0; right: 0; top: 13%;
+  text-align: center; font-size: 68px; font-weight: 900;
+  color: #FFFFFF; letter-spacing: -.04em;
+}
+.chapter__sub {
+  position: absolute; left: 0; right: 0; top: calc(52% + 62px);
+  text-align: center; font-size: 24px; font-weight: 600; color: var(--dc-ink-2);
+}
+.chapter__mark { position: absolute; right: 46px; bottom: 34px; }
+.chapter__mark .wordmark { font-size: 54px; }
+
+.closing__title {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-size: 76px; font-weight: 900; color: #FFFFFF; letter-spacing: -.04em;
+}
+
+/* -------------------------------------------------------------- 다음 차시 */
+.next__lines {
+  position: absolute; right: var(--dc-pad-x); top: 56px;
+  text-align: right; color: #E6F3FF;
+  font-size: 27px; font-weight: 800; font-style: italic; line-height: 1.7;
+}
+.next__title {
+  position: absolute; right: var(--dc-pad-x); top: calc(52% + 34px);
+  text-align: right; font-size: 46px; font-weight: 900;
+  color: var(--dc-navy); letter-spacing: -.035em;
+}
+.next__sub {
+  position: absolute; right: var(--dc-pad-x); top: calc(52% + 100px);
+  text-align: right; font-size: 25px; font-weight: 600; color: var(--dc-ink-2);
+}
+
+/* --------------------------------------------------------------------- 기타 */
+.emo { font-family: var(--dc-emoji); font-style: normal; }
+.pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 15px; border-radius: 999px;
+  background: var(--dc-blue-soft); color: var(--dc-blue-deep);
+  border: 1px solid var(--dc-blue-line);
+  font-size: 18px; font-weight: 700;
+}
+.pill--solid { background: var(--dc-blue); color: #fff; border-color: var(--dc-blue); }
+.link { color: var(--dc-blue-deep); font-weight: 700; word-break: break-all; }
+.link:hover { color: var(--dc-cyan); }
+.linkbox {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 18px; border-radius: 10px;
+  background: var(--dc-blue-soft-2); border: 1px solid var(--dc-blue-line);
+  text-decoration: none;
+}
+.linkbox:hover { background: var(--dc-blue-soft); }
+.linkbox > .emo { font-size: 24px; }
+.linkbox__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.linkbox__label { font-size: 20px; font-weight: 800; color: var(--dc-navy); }
+.linkbox__url {
+  font-family: var(--dc-num); font-size: 17px; font-weight: 600;
+  color: var(--dc-blue-deep); word-break: break-all;
+}
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; align-items: baseline; }
+.kv dt { font-size: 19px; font-weight: 800; color: var(--dc-blue-deep); white-space: nowrap; }
+.kv dd { margin: 0; font-size: 19px; color: var(--dc-ink-2); }
+.note { font-size: 17px; color: var(--dc-ink-3); }
+.screen {
+  background: var(--dc-panel); border: 1px solid var(--dc-line);
+  border-radius: 10px; padding: 14px; }
+
+/* --------------------------------------------------- 빽빽 모드 (is-dense) */
+.slide.is-dense .slide__body { gap: 10px; padding-top: 16px; padding-bottom: 44px; }
+.slide.is-dense .slide__lede { font-size: 28px; }
+.slide.is-dense .h-sub { font-size: 22px; }
+.slide.is-dense .h-sub::before { height: 21px; }
+.slide.is-dense .p { font-size: 18px; }
+.slide.is-dense .p--lg { font-size: 20px; }
+.slide.is-dense .list { gap: 8px; }
+.slide.is-dense .list li { font-size: 18px; }
+.slide.is-dense .callout { font-size: 19px; padding: 10px 15px; }
+.slide.is-dense .note { font-size: 15px; }
+.slide.is-dense .tbl { font-size: 16px; }
+.slide.is-dense .stack { gap: 10px; }
+
+/* 아주 작은 글씨가 필요한 안내문 */
+.slide.is-tiny .p { font-size: 15.5px; line-height: 1.45; }
+.slide.is-tiny .note { font-size: 14px; }
+.slide.is-tiny .list li { font-size: 17px; line-height: 1.42; }
+.slide.is-tiny .card__text { font-size: 16px; }
+.slide.is-tiny .h-sub { font-size: 20px; }
+.slide.is-tiny .h-sub::before { height: 19px; }
+.slide.is-tiny .list { gap: 6px; }
+.slide.is-tiny .stack { gap: 8px; }
+
+/* ---------------------------------------------- 세로 배분 (마지막에 정리한다)
+   본문·단 안의 요소는 제 높이를 지킨다. 남는 자리를 먹고 줄어드는 것은
+   그림(.fig-wrap)과 두 단 묶음(.slide__cols) 뿐이다.
+   — 이 규칙이 없으면 표가 눌려 내용이 잘린다. */
+.slide__body > *, .stack > * { flex: 0 0 auto; min-height: 0; }
+.slide__body > .fig-wrap, .stack > .fig-wrap { flex: 1 1 auto; }
+.slide__body > .slide__cols { flex: 1 1 auto; }
+
+
+/* --- 목차 --------------------------------------------------------------- */
+.toc__title { font-size: 44px; font-weight: 800; color: #3D4450; letter-spacing: -.03em; display: flex; align-items: baseline; gap: 16px; }
+.toc__bar { color: #9DC3E6; font-weight: 400; }
+.toc__en { font-family: var(--dc-num); font-size: 27px; font-weight: 600; color: #6B7280; letter-spacing: .02em; }
+.toc { list-style: none; margin: 22px 0 0; padding: 0 0 0 96px; display: flex; flex-direction: column; gap: 6px; }
+.toc__row { display: flex; align-items: baseline; gap: 14px; padding-bottom: 6px; border-bottom: 2px solid; border-image: linear-gradient(90deg, #0A9EE0, rgba(10,158,224,0)) 1; }
+.toc__no { font-family: var(--dc-num); font-size: 52px; font-weight: 600; color: #41B6E6; line-height: 1; min-width: 44px; }
+.toc__label { font-size: 27px; font-weight: 800; color: #4A5260; letter-spacing: -.02em; }
+
+/* --- 빽빽한 슬라이드 ------------------------------------------------------ */
+.slide.is-dense .slide__body { gap: 10px; padding-top: 18px; padding-bottom: 30px; }
+.slide.is-dense .slide__lede { font-size: 28px; }
+.slide.is-dense .cards { gap: 11px; }
+.slide.is-dense .card { padding: 12px 14px; gap: 4px; }
+.slide.is-dense .card__title { font-size: 20px; }
+.slide.is-dense .card__text { font-size: 16px; line-height: 1.38; }
+.slide.is-dense .card__emo { font-size: 24px; }
+.tbl--grade td { font-size: 20px; font-weight: 700; padding: 8px; }
+
+/* --- 주차별 강의 계획 표: 15줄 한 화면 ------------------------------------- */
+.tbl--plan { font-size: 15px; line-height: 1.3; table-layout: fixed; }
+.tbl--plan th { padding: 6px 10px; font-size: 16px; }
+.tbl--plan td { padding: 3px 10px; }
+.tbl--plan col.subject { width: 64%; }
+.tbl--plan col.task { width: 36%; }
+
+
+/* ===== 뷰어 · 편집기 (인쇄에서는 전부 사라진다) ============================ */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #E8EBF0; color: #16181D;
+  font-family: var(--dc-sans);
+  padding: 74px 0 60px;
+}
+.bar {
+  position: fixed; inset: 0 0 auto 0; z-index: 50; height: 58px;
+  display: flex; align-items: center; gap: 10px; padding: 0 18px;
+  background: rgba(11,42,74,.96); color: #fff;
+  backdrop-filter: blur(6px);
+}
+.bar__title { font-weight: 800; font-size: 17px; letter-spacing: -.01em; margin-right: auto; }
+.bar__title small { display: block; font-weight: 500; font-size: 12px; opacity: .72; }
+.btn {
+  appearance: none; border: 1px solid rgba(255,255,255,.28); border-radius: 8px;
+  background: rgba(255,255,255,.08); color: #fff;
+  font: inherit; font-size: 14px; font-weight: 700;
+  min-height: 40px; padding: 0 14px; cursor: pointer;
+}
+.btn:hover { background: rgba(255,255,255,.18); }
+.btn[aria-pressed="true"] { background: #0A9EE0; border-color: #0A9EE0; }
+.bar select {
+  font: inherit; font-size: 14px; min-height: 40px; max-width: 240px;
+  border-radius: 8px; border: 1px solid rgba(255,255,255,.28);
+  background: rgba(255,255,255,.08); color: #fff; padding: 0 10px;
+}
+.bar select option { color: #16181D; }
+
+.deck { display: flex; flex-direction: column; gap: 26px; padding: 26px 18px; margin: 0 auto; max-width: 1320px; }
+.frame {
+  position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden;
+  background: #fff; border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(11,42,74,.10), 0 12px 30px rgba(11,42,74,.14);
+}
+.frame > .slide { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+.frame__tag {
+  position: absolute; left: 0; top: -22px; font-size: 12px; font-weight: 700;
+  color: #55627A; letter-spacing: .02em;
+}
+
+/* 발표 모드 */
+body.is-present { padding: 0; background: #0B1220; overflow: hidden; }
+body.is-present .bar { background: rgba(11,18,32,.9); }
+body.is-present .deck { padding: 0; max-width: none; height: 100vh; justify-content: center; }
+body.is-present .frame { display: none; border-radius: 0; box-shadow: none; }
+body.is-present .frame.is-live { display: block; width: 100vw; height: 100vh; aspect-ratio: auto; }
+body.is-present .frame__tag { display: none; }
+
+/* 편집 모드 */
+body.is-edit [data-edit] { outline: 2px dashed rgba(10,158,224,.55); outline-offset: 3px; }
+body.is-edit [data-edit]:focus-within { outline-color: #0070C0; outline-style: solid; }
+.hint {
+  max-width: 1320px; margin: 0 auto; padding: 0 18px 8px;
+  font-size: 13px; color: #55627A;
+}
+
+@media (max-width: 900px) {
+  .bar { flex-wrap: wrap; height: auto; padding: 8px 12px; gap: 8px; }
+  body { padding-top: 108px; }
+  .bar__title { width: 100%; margin-right: 0; }
+  .btn, .bar select { font-size: 16px; }
+}
+
+/* ===== 인쇄 · PDF ========================================================= */
+@page { size: 1280px 720px; margin: 0; }
+@media print {
+  body { background: #fff; padding: 0; }
+  .bar, .hint, .frame__tag { display: none !important; }
+  .deck { gap: 0; padding: 0; max-width: none; }
+  .frame {
+    width: 1280px; height: 720px; aspect-ratio: auto;
+    border-radius: 0; box-shadow: none; break-after: page; page-break-after: always;
+  }
+  .frame:last-child { break-after: auto; page-break-after: auto; }
+  .frame > .slide { transform: none !important; }
+  .slide { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar__title">취업과 경력개발 · 제1강 오리엔테이션<small>창의융합교양학부 · 정동엽 교수</small></div>
+  <select id="jump" aria-label="슬라이드 이동"><option value="0">1. 표지</option><option value="1">2. 강사 소개</option><option value="2">3. 목차</option><option value="3">4. CHAPTER 1</option><option value="4">5. 강의 소개</option><option value="5">6. 교과 목표</option><option value="6">7. 수업 목표를 달성하면</option><option value="7">8. CHAPTER 2</option><option value="8">9. 성적 평가 기준</option><option value="9">10. 출석 기준</option><option value="10">11. CHAPTER 3</option><option value="11">12. 주차 별 강의 계획</option><option value="12">13. 과제물 제출 안내</option><option value="13">14. CHAPTER 4</option><option value="14">15. 강의 요구 분석</option><option value="15">16. CHAPTER 5</option><option value="16">17. 창업 인식도 조사</option><option value="17">18. 창업 인식도 조사 — 설문 방법</option><option value="18">19. CHAPTER 6</option><option value="19">20. 진로준비도 검사란?</option><option value="20">21. 진로준비도 검사 — 접속 경로</option><option value="21">22. 진로준비도 검사 — 검사 고르기</option><option value="22">23. 질의응답</option><option value="23">24. 생성형 AI 사용 지침</option><option value="24">25. 다음 차시 안내</option></select>
+  <button class="btn" id="present" type="button" aria-pressed="false">발표 (F)</button>
+  <button class="btn" id="edit" type="button" aria-pressed="false">편집</button>
+  <button class="btn" id="print" type="button">인쇄 · PDF</button>
+  <button class="btn" id="reset" type="button">원본</button>
+</header>
+<p class="hint" id="hint">← → 로 넘깁니다. ‘편집’을 켜면 글자를 눌러 바로 고칠 수 있고, 고친 내용은 이 브라우저에 남습니다.</p>
+<main class="deck" id="deck">
+<div class="frame">
+  <span class="frame__tag">1. 표지</span>
+  <section class="slide slide--cover" id="s01" data-index="1" data-kind="cover" data-name="표지">
+  <div class="cover__band"></div>
+  <div class="cover__stripes"><svg class="stripes" viewBox="0 0 1280 30" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="stg1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0A9EE0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0070C0"/><stop offset="1" stop-color="#0070C0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#41B6E6"/><stop offset="1" stop-color="#41B6E6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="2"  width="793.6" height="4" fill="url(#stg1)"/>
+  <rect x="0" y="11" width="537.6" height="5" fill="url(#stg2)"/>
+  <rect x="0" y="21" width="396.8" height="5" fill="url(#stg3)"/>
+</svg></div>
+  <div class="cover__inner" data-edit>
+    <p class="cover__course">취업과경력개발</p>
+    <h1 class="cover__title">제1강_오리엔테이션</h1>
+  </div>
+  <div class="cover__mark"><span class="wordmark">d<i>i</i>ma</span></div>
+  <div class="cover__meta" data-edit><b>창의융합교양학부</b><span>정동엽 교수</span></div>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">2. 강사 소개</span>
+  <section class="slide slide--content" id="s02" data-index="2" data-kind="content" data-name="강사 소개">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__section slide__section--plain">여러분과 함께 하는 저는 ?</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    
+    <div class="slide__cols slide__cols--wide-right"><div class="stack"><div class="card"><span class="card__emo emo">🎓</span><span class="card__badge">INSTRUCTOR</span><span class="card__title">정 동 엽</span><span class="card__text">아시아퓨처스그룹 사무국장<br>미래학기반 커리어 컨설턴트</span></div><p class="callout callout--blue"><i class="emo">✉️</i>dimajob4u@gmail.com</p></div><div class="stack"><ul class="list list--arrow"><li>아시아퓨처스그룹 사무국장</li><li>아시아미래인재연구소 (前)교육실장 및 전문연구원</li><li>경기대학교 일반대학원 직업학과 박사수료</li><li>가천대학교 경영대학원 고용 및 직업상담학과 석사</li><li>한국기술교육대학교 능력개발원 4차 산업혁명과 일/직업의 변화 교수</li><li>서울산업진흥원 신 직업전문컨설턴트 및 자문위원, 창업 닥터(2013~2020년)</li><li>고용노동부 직업심리 전문가(성인, 청소년, 대학생)</li><li>고용노동부 온라인직업심리 전문가(청소년)</li><li>IT업계 20년 근무(교학사, 삼보컴퓨터 등에서 교육정보화 관련 컨설팅 업무 진행)</li><li>한국어교원 2급(문화체육관광부)</li><li>고용노동부 직업훈련교사 3급(마케팅, 정보기술전략·계획)</li><li>모금전문가, 평생교육사, 사회복지사, 국제공인 NLP Practitioner</li></ul></div></div>
+  </div>
+  <span class="slide__no">2</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">3. 목차</span>
+  <section class="slide slide--toc" id="s03" data-index="3" data-kind="toc" data-name="목차">
+  <header class="slide__head"><span class="slide__eyebrow"></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="toc__title">목차 <span class="toc__bar">|</span> <span class="toc__en">CONTENTS</span></h2>
+    <ol class="toc"><li class="toc__row">
+      <span class="toc__no">1</span>
+      <span class="toc__label">강의 개요(강의계획서)</span>
+    </li><li class="toc__row">
+      <span class="toc__no">2</span>
+      <span class="toc__label">성적 평가</span>
+    </li><li class="toc__row">
+      <span class="toc__no">3</span>
+      <span class="toc__label">주 별 강의 계획</span>
+    </li><li class="toc__row">
+      <span class="toc__no">4</span>
+      <span class="toc__label">강의요구분석(설문)</span>
+    </li><li class="toc__row">
+      <span class="toc__no">5</span>
+      <span class="toc__label">창업 인식도 조사(설문)</span>
+    </li></ol>
+  </div>
+  <span class="slide__no">3</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">4. CHAPTER 1</span>
+  <section class="slide slide--chapter" id="s04" data-index="4" data-kind="chapter" data-name="CHAPTER 1">
+  <div class="chapter__band"></div>
+  <div class="chapter__stripes"><svg class="stripes" viewBox="0 0 1280 30" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="stg1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0A9EE0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0070C0"/><stop offset="1" stop-color="#0070C0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#41B6E6"/><stop offset="1" stop-color="#41B6E6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="2"  width="793.6" height="4" fill="url(#stg1)"/>
+  <rect x="0" y="11" width="537.6" height="5" fill="url(#stg2)"/>
+  <rect x="0" y="21" width="396.8" height="5" fill="url(#stg3)"/>
+</svg></div>
+  <div class="chapter__badge"><svg class="fig" viewBox="0 0 120 216" aria-hidden="true">
+  <defs><path id="chArc1" d="M29 14.4 A98 98 0 0 1 97.3 96.2" fill="none"/></defs>
+  <path d="M0 22 A86 86 0 0 1 0 194 Z" fill="#EDEFF2"/>
+  <text font-family="Outfit, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" letter-spacing="0.8">
+    <textPath href="#chArc1" startOffset="50%" text-anchor="middle">C H A P T E R</textPath>
+  </text>
+  <text x="40" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-size="46" font-weight="700" fill="#3D4450">1</text>
+</svg></div>
+  <h2 class="chapter__title" data-edit>강의 개요</h2>
+  <p class="chapter__sub" data-edit>교과 목표 및 교재 등에 대한 소개</p>
+  <div class="chapter__mark"><span class="wordmark wordmark--dark">d<i>i</i>ma</span></div>
+  <span class="slide__no">4</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">5. 강의 소개</span>
+  <section class="slide slide--content" id="s05" data-index="5" data-kind="content" data-name="강의 소개">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">1</span><span class="slide__section">강의 개요</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">본 수업은 여러분이 자신에게 맞는 진로를 찾을 수 있도록 도와드립니다.</h2>
+    <div class="slide__cols slide__cols--wide-left"><div class="stack"><h3 class="h-sub">행복한 삶이란?</h3><p class="p p--lg">여러분에게 <b class="strong">‘행복한 삶’</b>이란 무엇인가요?</p><p class="callout"><i class="emo">🌱</i>취업과 경력개발은 행복한 삶을 위한 첫 걸음입니다.</p><p class="p">직업은 단순히 돈을 버는 수단이 아닌, <em class="em">자아실현의 공간</em>입니다.</p><p class="p">나의 강점, 흥미, 가치관을 발견하고 취업 역량을 높여봅시다.</p></div><div class="stack"><div class="fig-wrap"><svg class="fig" viewBox="0 0 560 330" role="img" aria-label="행복한 삶으로 가는 첫 걸음은 취업과 경력개발">
+  <defs>
+    <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0070C0"/>
+    </linearGradient>
+  </defs>
+  <circle cx="280" cy="92" r="72" fill="url(#hg)"/>
+  <text x="280" y="80" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="34">😊</text>
+  <text x="280" y="120" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="24" font-weight="800" fill="#FFFFFF">행복한 삶</text>
+
+  <path d="M280 172 V206" stroke="#9DC3E6" stroke-width="3"/>
+  <path d="M274 202 l6 10 6-10z" fill="#0070C0"/>
+
+  <g transform="translate(140,208)">
+    <rect width="280" height="46" rx="23" fill="#DCE9F8" stroke="#9DC3E6"/>
+    <text x="140" y="31" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#0057A0">직업 = 자아실현의 공간</text>
+  </g>
+
+  <g font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">
+    <g transform="translate(14,278)">
+      <rect width="164" height="44" rx="10" fill="#FFFFFF" stroke="#9DC3E6"/>
+      <text x="82" y="29" text-anchor="middle">나의 강점</text>
+    </g>
+    <g transform="translate(198,278)">
+      <rect width="164" height="44" rx="10" fill="#FFFFFF" stroke="#9DC3E6"/>
+      <text x="82" y="29" text-anchor="middle">흥미</text>
+    </g>
+    <g transform="translate(382,278)">
+      <rect width="164" height="44" rx="10" fill="#FFFFFF" stroke="#9DC3E6"/>
+      <text x="82" y="29" text-anchor="middle">가치관</text>
+    </g>
+  </g>
+  <path d="M280 254 V272" stroke="#9DC3E6" stroke-width="3"/>
+</svg></div></div></div>
+  </div>
+  <span class="slide__no">5</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">6. 교과 목표</span>
+  <section class="slide slide--content" id="s06" data-index="6" data-kind="content" data-name="교과 목표">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">1</span><span class="slide__section">강의 개요</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">교과 목표</h2>
+    <p class="callout callout--line"><i class="emo">🎯</i>『취업과 경력개발』 한 학기 수업을 마치면…</p>
+    <div class="fig-wrap"><svg class="fig" viewBox="0 0 1120 392" role="img" aria-label="교과 목표 네 가지">
+  <g transform="translate(0,8)">
+    <rect x="0" y="0" width="1120" height="82" rx="10" fill="#FFFFFF" stroke="#9DC3E6"/>
+    <rect x="0" y="0" width="7" height="82" rx="3" fill="#0070C0"/>
+    <circle cx="52" cy="41" r="25" fill="#0070C0"/>
+    <text x="52" y="49" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#FFFFFF">첫째</text>
+    <text x="94" y="35" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="600" fill="#3D4450">자기이해와 직업세계의 이해를 토대로</text>
+    <text x="94" y="65" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="700" fill="#0B2A4A">자신의 진로목표와 이유를 분명히 알 수 있다.</text>
+  </g>
+  <g transform="translate(0,104)">
+    <rect x="0" y="0" width="1120" height="82" rx="10" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <rect x="0" y="0" width="7" height="82" rx="3" fill="#0070C0"/>
+    <circle cx="52" cy="41" r="25" fill="#0070C0"/>
+    <text x="52" y="49" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#FFFFFF">둘째</text>
+    <text x="94" y="35" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="600" fill="#3D4450">희망기업 및 직업 분석을 통해 현장에서</text>
+    <text x="94" y="65" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="700" fill="#0B2A4A">요구되는 전문지식을 배우려고 노력할 수 있다.</text>
+  </g>
+  <g transform="translate(0,200)">
+    <rect x="0" y="0" width="1120" height="82" rx="10" fill="#FFFFFF" stroke="#9DC3E6"/>
+    <rect x="0" y="0" width="7" height="82" rx="3" fill="#0070C0"/>
+    <circle cx="52" cy="41" r="25" fill="#0070C0"/>
+    <text x="52" y="49" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#FFFFFF">셋째</text>
+    <text x="94" y="35" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="600" fill="#3D4450">취업실무 준비를 위해서 고용환경 변화에 대해</text>
+    <text x="94" y="65" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="700" fill="#0B2A4A">종합적인 시각으로 이해하려고 노력할 수 있다.</text>
+  </g>
+  <g transform="translate(0,296)">
+    <rect x="0" y="0" width="1120" height="82" rx="10" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <rect x="0" y="0" width="7" height="82" rx="3" fill="#0070C0"/>
+    <circle cx="52" cy="41" r="25" fill="#0070C0"/>
+    <text x="52" y="49" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#FFFFFF">넷째</text>
+    <text x="94" y="35" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="600" fill="#3D4450">채용시장에서 일어날 수 있는 다양한 문제에</text>
+    <text x="94" y="65" font-family="Noto Sans KR, sans-serif" font-size="22" font-weight="700" fill="#0B2A4A">대하여 해결방안을 찾는 방법을 알 수 있다.</text>
+  </g>
+</svg></div>
+  </div>
+  <span class="slide__no">6</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">7. 수업 목표를 달성하면</span>
+  <section class="slide slide--content" id="s07" data-index="7" data-kind="content" data-name="수업 목표를 달성하면">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">1</span><span class="slide__section">강의 개요</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">수업 목표를 달성하면…</h2>
+    <p class="callout callout--line"><i class="emo">🏁</i>『취업과 경력개발』 한 학기 수업을 마치면…</p>
+    <div class="fig-wrap"><svg class="fig" viewBox="0 0 1140 316" role="img" aria-label="한 학기를 마치면 달성하는 네 가지 목표">
+  <path d="M0 306 H1140" stroke="#9DC3E6" stroke-width="2"/>
+  <g transform="translate(0,0)">
+    <rect x="10" y="110" width="262" height="190" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <rect x="10" y="110" width="262" height="46" rx="12" fill="#0070C0"/>
+    <rect x="10" y="140" width="262" height="16" fill="#0070C0"/>
+    <text x="141" y="141" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">첫번째</text>
+    <text x="141" y="210" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🧭</text>
+    <text x="141" y="250" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">자신의 직업흥미, 적성,</text>
+    <text x="141" y="276" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">가치관을 알 수 있다.</text>
+  </g>
+  <g transform="translate(285,0)">
+    <rect x="10" y="76" width="262" height="224" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <rect x="10" y="76" width="262" height="46" rx="12" fill="#0070C0"/>
+    <rect x="10" y="106" width="262" height="16" fill="#0070C0"/>
+    <text x="141" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">두번째</text>
+    <text x="141" y="176" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🔍</text>
+    <text x="141" y="216" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">직업정보를 탐색하고</text>
+    <text x="141" y="242" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">분석할 수 있다.</text>
+  </g>
+  <g transform="translate(570,0)">
+    <rect x="10" y="42" width="262" height="258" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <rect x="10" y="42" width="262" height="46" rx="12" fill="#0070C0"/>
+    <rect x="10" y="72" width="262" height="16" fill="#0070C0"/>
+    <text x="141" y="73" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">세번째</text>
+    <text x="141" y="142" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">📄</text>
+    <text x="141" y="182" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">자신의 직무에 적합한 이력서/</text>
+    <text x="141" y="208" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">자기소개서를 작성할 수 있다.</text>
+  </g>
+  <g transform="translate(855,0)">
+    <rect x="10" y="8" width="262" height="292" rx="12" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <rect x="10" y="8" width="262" height="46" rx="12" fill="#0070C0"/>
+    <rect x="10" y="38" width="262" height="16" fill="#0070C0"/>
+    <text x="141" y="39" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">네번째</text>
+    <text x="141" y="108" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🎤</text>
+    <text x="141" y="148" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="600" fill="#3D4450">적절한 면접 기법을 학습하여</text>
+    <text x="141" y="174" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="700" fill="#0B2A4A">활용할 수 있다.</text>
+  </g>
+</svg></div>
+  </div>
+  <span class="slide__no">7</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">8. CHAPTER 2</span>
+  <section class="slide slide--chapter" id="s08" data-index="8" data-kind="chapter" data-name="CHAPTER 2">
+  <div class="chapter__band"></div>
+  <div class="chapter__stripes"><svg class="stripes" viewBox="0 0 1280 30" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="stg1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0A9EE0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0070C0"/><stop offset="1" stop-color="#0070C0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#41B6E6"/><stop offset="1" stop-color="#41B6E6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="2"  width="793.6" height="4" fill="url(#stg1)"/>
+  <rect x="0" y="11" width="537.6" height="5" fill="url(#stg2)"/>
+  <rect x="0" y="21" width="396.8" height="5" fill="url(#stg3)"/>
+</svg></div>
+  <div class="chapter__badge"><svg class="fig" viewBox="0 0 120 216" aria-hidden="true">
+  <defs><path id="chArc2" d="M29 14.4 A98 98 0 0 1 97.3 96.2" fill="none"/></defs>
+  <path d="M0 22 A86 86 0 0 1 0 194 Z" fill="#EDEFF2"/>
+  <text font-family="Outfit, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" letter-spacing="0.8">
+    <textPath href="#chArc2" startOffset="50%" text-anchor="middle">C H A P T E R</textPath>
+  </text>
+  <text x="40" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-size="46" font-weight="700" fill="#3D4450">2</text>
+</svg></div>
+  <h2 class="chapter__title" data-edit>성적 평가</h2>
+  <p class="chapter__sub" data-edit>출석, 중간고사, 기말고사, 과제물 등 성적 평가 방법 소개</p>
+  <div class="chapter__mark"><span class="wordmark wordmark--dark">d<i>i</i>ma</span></div>
+  <span class="slide__no">8</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">9. 성적 평가 기준</span>
+  <section class="slide slide--content is-dense is-tiny" id="s09" data-index="9" data-kind="content" data-name="성적 평가 기준">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">2</span><span class="slide__section">성적평가</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">평가 기준에 따라 적용합니다.</h2>
+    <div class="slide__cols slide__cols--wide-left"><div class="stack"><h3 class="h-sub">1. 성적평가</h3><div class="table-wrap"><table class="tbl tbl--grade"><thead><tr><th>출석</th><th>중간시험</th><th>기말시험</th><th>과제물제출 및 참여도(수업태도)</th></tr></thead><tbody><tr><td class="c">30%</td><td class="c">20%</td><td class="c">20%</td><td class="c">30%(활동워크북)</td></tr></tbody></table></div><h3 class="h-sub">2. 시험 안내</h3><ul class="list"><li><b class="strong">중간고사 : 8주차 시행</b> — 이력서 및 자기소개서 제출 및 조별 공유</li><li><b class="strong">기말고사 : 15주차 시행</b> — 진로 생애계획서 제출 및 조별 공유</li></ul><h3 class="h-sub">3. 평가기준</h3><ul class="list"><li><b class="strong">수업 참여 적극성</b> — 소그룹 토론 참여 적극성, 개인의 생각과 의견 게시 적극성 등을 확인</li><li><b class="strong">활동워크북</b> — 수업시간 내에 작성하는 활동지 제출 여부 및 구체적으로 작성하였는지를 확인</li></ul></div><div class="stack"><div class="fig-wrap"><svg class="fig" viewBox="0 0 470 470" role="img" aria-label="성적 평가 비율: 출석 30퍼센트, 중간시험 조별발표 20퍼센트, 기말시험 20퍼센트, 과제물과 수업태도 30퍼센트">
+  <rect x="6" y="6" width="458" height="458" rx="10" fill="#DCE9F8" opacity=".45" stroke="#9DC3E6"/>
+  <path d="M241.62 92.14A158 158 0 0 1 387.18 292.49L292.79 266.14A60 60 0 0 0 237.51 190.05Z" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+  <path d="M383.09 305.07A158 158 0 0 1 241.62 407.86L237.51 309.95A60 60 0 0 0 291.24 270.91Z" fill="#EDF4FC" stroke="#9DC3E6" stroke-width="2"/>
+  <path d="M228.38 407.86A158 158 0 0 1 86.91 305.07L178.76 270.91A60 60 0 0 0 232.49 309.95Z" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+  <path d="M82.82 292.49A158 158 0 0 1 228.38 92.14L232.49 190.05A60 60 0 0 0 177.21 266.14Z" fill="#EDF4FC" stroke="#9DC3E6" stroke-width="2"/>
+  <text x="332.9" y="165.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="25" font-weight="800" fill="#C00000">출석</text><text x="332.9" y="192.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="25" font-weight="800" fill="#C00000">30%</text>
+  <text x="306.1" y="321.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">중간 시험</text><text x="306.1" y="348.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">(조별발표)</text><text x="306.1" y="375.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">20%</text>
+  <text x="163.9" y="334.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">기말시험</text><text x="163.9" y="361.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">20%</text>
+  <text x="137.1" y="152.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">과제물,</text><text x="137.1" y="179.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">수업태도</text><text x="137.1" y="206.9" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="700" fill="#0057A0">30%</text>
+  <g transform="translate(258,18)">
+    <rect width="200" height="62" rx="6" fill="#0070C0"/>
+    <text x="20" y="40" font-family="Outfit, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">+</text>
+    <text x="44" y="38" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="700" fill="#FFFFFF">취·창업 및 진로상담</text>
+  </g>
+  <path d="M330 88 l9 22 24 2 -18 16 5 24 -20-13 -20 13 5-24 -18-16 24-2z" fill="#FFE14D" stroke="#E8A33D" stroke-width="2"/>
+</svg></div></div></div>
+  </div>
+  <span class="slide__no">9</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">10. 출석 기준</span>
+  <section class="slide slide--content is-dense" id="s10" data-index="10" data-kind="content" data-name="출석 기준">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">2</span><span class="slide__section">성적평가</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">출석</h2>
+    <div class="slide__cols"><div class="stack"><h3 class="h-sub">1. 전자출결(헤이영)</h3><p class="callout callout--red"><i class="emo">⚠️</i>유연한 출결 관리 불가</p><p class="callout"><i class="emo">📌</i>¼ 결석자 학점 미취득 (F, 1주차 포함)<br>진단서는 1주 이내 제출만 유효</p><p class="note">※ 취업관련 면접(면접확인서 필수)은 인정합니다.</p></div><div class="stack"><h3 class="h-sub">2. 공결 기준</h3><p class="note">* 자세한 내용은 학교 홈페이지 참조</p><ul class="list list--check"><li>국가에서 부과한 의무를 이행한 경우 (예: 병무관련 신체검사, 예비군 훈련)</li><li>총장이 인정한 국제 또는 국내 행사나 각종 대회에 참가한 경우</li><li>정부기관의 요청에 의한 특별회합 참가의 경우</li><li>경조사의 경우</li><li>본인 질병(입원) 및 감염병의 예방 및 관리에 관한 법률에 따라 격리 수용이 필요한 경우</li><li>단순질병 (1회만 인정 가능)</li></ul></div></div>
+  </div>
+  <span class="slide__no">10</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">11. CHAPTER 3</span>
+  <section class="slide slide--chapter" id="s11" data-index="11" data-kind="chapter" data-name="CHAPTER 3">
+  <div class="chapter__band"></div>
+  <div class="chapter__stripes"><svg class="stripes" viewBox="0 0 1280 30" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="stg1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0A9EE0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0070C0"/><stop offset="1" stop-color="#0070C0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#41B6E6"/><stop offset="1" stop-color="#41B6E6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="2"  width="793.6" height="4" fill="url(#stg1)"/>
+  <rect x="0" y="11" width="537.6" height="5" fill="url(#stg2)"/>
+  <rect x="0" y="21" width="396.8" height="5" fill="url(#stg3)"/>
+</svg></div>
+  <div class="chapter__badge"><svg class="fig" viewBox="0 0 120 216" aria-hidden="true">
+  <defs><path id="chArc3" d="M29 14.4 A98 98 0 0 1 97.3 96.2" fill="none"/></defs>
+  <path d="M0 22 A86 86 0 0 1 0 194 Z" fill="#EDEFF2"/>
+  <text font-family="Outfit, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" letter-spacing="0.8">
+    <textPath href="#chArc3" startOffset="50%" text-anchor="middle">C H A P T E R</textPath>
+  </text>
+  <text x="40" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-size="46" font-weight="700" fill="#3D4450">3</text>
+</svg></div>
+  <h2 class="chapter__title" data-edit>주차 별 강의 계획</h2>
+  <p class="chapter__sub" data-edit>주차 별 강의 계획을 통해 한 학기 교수-학습의 흐름 파악</p>
+  <div class="chapter__mark"><span class="wordmark wordmark--dark">d<i>i</i>ma</span></div>
+  <span class="slide__no">11</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">12. 주차 별 강의 계획</span>
+  <section class="slide slide--content is-dense" id="s12" data-index="12" data-kind="content" data-name="주차 별 강의 계획">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">3</span><span class="slide__section">주차 별 강의 계획</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">강의계획서에 따라 진행합니다.</h2>
+    <div class="table-wrap"><table class="tbl tbl--plan"><colgroup><col class="subject"><col class="task"></colgroup><thead><tr><th>주차 별 강의 주제</th><th>과제물</th></tr></thead><tbody><tr class="is-current"><td>1. 오리엔테이션 / 진로준비도검사</td><td><span class="mark">강좌요구분석, 창업교육영향조사, 진로준비도검사</span></td></tr><tr><td>2. 나의 삶, 나의 진로 / 나의 이해(강의)</td><td><span class="mark">나의 개인적 특성의 이해, 내가 생각하는 나와 타인이 보는 나</span></td></tr><tr><td>3. 미래 사회 및 직업세계와 진로(강의)</td><td><span class="mark">미래사회와 직업세계의 변화가 나에게 미치는 영향</span></td></tr><tr><td>4. 객관적 검사를 통한 나의 이해 : 직업선호도 검사 실시 및 해석 (강의 및 소그룹 토론)</td><td><span class="mark">직업선호도 검사 L형(자기 이해 검사)</span></td></tr><tr><td>5. 구직능력 향상 1. 이력서 작성하기(강의 및 소그룹 토론)</td><td><span class="mark">나를 표현하는 한마디는?</span></td></tr><tr><td>6. 구직능력 향상 2. 자기소개서 작성하기(강의 및 소그룹 토론)</td><td></td></tr><tr><td>7. 진로실행계획의 수립 방법(강의 및 소그룹 토론)</td><td></td></tr><tr><td>8. 중간고사 – 이력서 및 자기소개서 발표(공유)</td><td><span class="mark">이력서 및 자기소개서 제출</span></td></tr><tr><td>9. 노동관련 법률과 제도 / 창업의 이해</td><td></td></tr><tr><td>10. 사업기획서 작성법 / 진로대안 선정, 탐색 및 결정 – 다양한 취업과 경력경로에 대한 탐색</td><td><span class="mark">나의 잠정적 진로대안 찾기</span></td></tr><tr><td>11. 진로정보 탐색방법, 희망직업 분석</td><td><span class="mark">희망직업 분석지</span></td></tr><tr><td>12. 진로실행계획 수립의 실제 / 경력개발이란</td><td><span class="mark">희망 경력개발 프로그램 탐색하기</span></td></tr><tr><td>13. 나의 진로의사결정</td><td><span class="mark">과거 의사 결정 회고</span></td></tr><tr><td>14. 구직능력 향상 3. 면접 준비하기</td><td></td></tr><tr><td>15. 기말고사</td><td></td></tr></tbody></table></div>
+  </div>
+  <span class="slide__no">12</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">13. 과제물 제출 안내</span>
+  <section class="slide slide--content" id="s13" data-index="13" data-kind="content" data-name="과제물 제출 안내">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">3</span><span class="slide__section">주차 별 강의 계획</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">과제물 제출 안내</h2>
+    <p class="callout callout--line"><i class="emo">📮</i>과제물은 <b class="strong">‘LMS 과제방’</b> 혹은 담당 교수 메일로, 해당 주차 강의일 <em class="em">하루 전 23:59:59</em>까지 dimajob4u@gmail.com 으로 제출하시면 됩니다.</p>
+    <div class="fig-wrap"><svg class="fig" viewBox="0 0 1120 210" role="img" aria-label="과제물 제출 일시는 강의 하루 전 23시 59분 59초까지">
+  <line x1="60" y1="120" x2="1060" y2="120" stroke="#9DC3E6" stroke-width="6" stroke-linecap="round"/>
+  <path d="M1060 120 l-22 -11 v22z" fill="#0070C0"/>
+
+  <g transform="translate(180,0)">
+    <rect x="0" y="16" width="330" height="76" rx="10" fill="#FFD78F" stroke="#E8A33D" stroke-width="2"/>
+    <text x="165" y="46" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#4A3208">과제물 제출 마감</text>
+    <text x="165" y="76" text-anchor="middle" font-family="Outfit, sans-serif" font-size="24" font-weight="700" fill="#4A3208">3. 10.  23:59:59</text>
+    <circle cx="165" cy="120" r="14" fill="#E8A33D" stroke="#FFFFFF" stroke-width="4"/>
+    <text x="165" y="166" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="700" fill="#6B7280">강의 하루 전</text>
+  </g>
+
+  <g transform="translate(650,0)">
+    <rect x="0" y="16" width="330" height="76" rx="10" fill="#DCE9F8" stroke="#9DC3E6" stroke-width="2"/>
+    <text x="165" y="46" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#0057A0">본 강의</text>
+    <text x="165" y="76" text-anchor="middle" font-family="Outfit, sans-serif" font-size="24" font-weight="700" fill="#0057A0">3. 11.  11:00</text>
+    <circle cx="165" cy="120" r="14" fill="#0070C0" stroke="#FFFFFF" stroke-width="4"/>
+    <text x="165" y="166" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="18" font-weight="700" fill="#6B7280">수업 시작</text>
+  </g>
+  <text x="60" y="126" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="700" fill="#6B7280">예시</text>
+</svg></div>
+  </div>
+  <span class="slide__no">13</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">14. CHAPTER 4</span>
+  <section class="slide slide--chapter" id="s14" data-index="14" data-kind="chapter" data-name="CHAPTER 4">
+  <div class="chapter__band"></div>
+  <div class="chapter__stripes"><svg class="stripes" viewBox="0 0 1280 30" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="stg1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0A9EE0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0070C0"/><stop offset="1" stop-color="#0070C0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#41B6E6"/><stop offset="1" stop-color="#41B6E6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="2"  width="793.6" height="4" fill="url(#stg1)"/>
+  <rect x="0" y="11" width="537.6" height="5" fill="url(#stg2)"/>
+  <rect x="0" y="21" width="396.8" height="5" fill="url(#stg3)"/>
+</svg></div>
+  <div class="chapter__badge"><svg class="fig" viewBox="0 0 120 216" aria-hidden="true">
+  <defs><path id="chArc4" d="M29 14.4 A98 98 0 0 1 97.3 96.2" fill="none"/></defs>
+  <path d="M0 22 A86 86 0 0 1 0 194 Z" fill="#EDEFF2"/>
+  <text font-family="Outfit, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" letter-spacing="0.8">
+    <textPath href="#chArc4" startOffset="50%" text-anchor="middle">C H A P T E R</textPath>
+  </text>
+  <text x="40" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-size="46" font-weight="700" fill="#3D4450">4</text>
+</svg></div>
+  <h2 class="chapter__title" data-edit>강의 요구 분석</h2>
+  <p class="chapter__sub" data-edit>강의를 통해 무엇을 얻고자 하는지 설문조사로 알아보기</p>
+  <div class="chapter__mark"><span class="wordmark wordmark--dark">d<i>i</i>ma</span></div>
+  <span class="slide__no">14</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">15. 강의 요구 분석</span>
+  <section class="slide slide--content is-dense" id="s15" data-index="15" data-kind="content" data-name="강의 요구 분석">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">4</span><span class="slide__section">강의 요구 분석</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">이번 강의를 통해 무엇을 얻고 싶은가요?</h2>
+    <div class="cards cards--2"><div class="card card--soft"><span class="card__emo emo">📊</span><span class="card__title">나의 진로 및 취업 준비 정도는?</span></div><div class="card card--soft"><span class="card__emo emo">🤔</span><span class="card__title">‘취업과 경력개발’ 교과목을 수강하게 된 이유는?</span></div><div class="card card--soft"><span class="card__emo emo">📚</span><span class="card__title">‘취업과 경력개발’ 교과목을 통해 배웠으면 하는 내용은 무엇인가요?</span></div><div class="card card--soft"><span class="card__emo emo">🙋</span><span class="card__title">‘취업과 경력개발’ 교과목 담당 교수에게 바라는 점이 있다면?</span></div></div>
+    <h3 class="h-sub">설문 방법 안내</h3>
+    <ul class="list list--check"><li>구글 설문지 링크 주소는 <b class="strong">‘전자 출결 / 강의 공지’</b> 혹은 <b class="strong">‘과제’</b>에 게시 (OT 종결 후 업로드)</li></ul>
+    <a class="linkbox" href="https://forms.gle/7r7zeoC7zy6xZ19i8" target="_blank" rel="noopener"><i class="emo">🔗</i><span class="linkbox__body"><b class="linkbox__label">Y3반 강의 요구 분석 구글 설문지</b><span class="linkbox__url">https://forms.gle/7r7zeoC7zy6xZ19i8</span></span></a>
+  </div>
+  <span class="slide__no">15</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">16. CHAPTER 5</span>
+  <section class="slide slide--chapter" id="s16" data-index="16" data-kind="chapter" data-name="CHAPTER 5">
+  <div class="chapter__band"></div>
+  <div class="chapter__stripes"><svg class="stripes" viewBox="0 0 1280 30" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="stg1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0A9EE0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0070C0"/><stop offset="1" stop-color="#0070C0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#41B6E6"/><stop offset="1" stop-color="#41B6E6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="2"  width="793.6" height="4" fill="url(#stg1)"/>
+  <rect x="0" y="11" width="537.6" height="5" fill="url(#stg2)"/>
+  <rect x="0" y="21" width="396.8" height="5" fill="url(#stg3)"/>
+</svg></div>
+  <div class="chapter__badge"><svg class="fig" viewBox="0 0 120 216" aria-hidden="true">
+  <defs><path id="chArc5" d="M29 14.4 A98 98 0 0 1 97.3 96.2" fill="none"/></defs>
+  <path d="M0 22 A86 86 0 0 1 0 194 Z" fill="#EDEFF2"/>
+  <text font-family="Outfit, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" letter-spacing="0.8">
+    <textPath href="#chArc5" startOffset="50%" text-anchor="middle">C H A P T E R</textPath>
+  </text>
+  <text x="40" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-size="46" font-weight="700" fill="#3D4450">5</text>
+</svg></div>
+  <h2 class="chapter__title" data-edit>창업 인식도 조사</h2>
+  <p class="chapter__sub" data-edit>창업에 대한 학습자들의 인식 정도를 파악하여 수업에 반영</p>
+  <div class="chapter__mark"><span class="wordmark wordmark--dark">d<i>i</i>ma</span></div>
+  <span class="slide__no">16</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">17. 창업 인식도 조사</span>
+  <section class="slide slide--content is-dense is-tiny" id="s17" data-index="17" data-kind="content" data-name="창업 인식도 조사">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">5</span><span class="slide__section">창업 인식도 조사</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">창업교육 정책에 반영하고자 합니다.</h2>
+    <p class="callout"><i class="emo">📝</i>대학생 창업교육이 창업가 정신 및 진로준비행동에 미치는 영향에 대한 조사</p>
+    <div class="slide__cols"><div class="stack"><p class="p"><b class="strong">안녕하십니까? 귀하의 행복과 발전을 기원합니다.</b></p><p class="p">4차 산업혁명 시대의 도래와 함께 방송·예술 분야에 대한 사회적 관심이 날로 확대되고 있습니다. 특히 4차 산업혁명은 방송(미디어) 기술과 예술 콘텐츠의 결합을 통한 신산업 창출을 가속화할 것으로 예상됩니다.</p><p class="p">이에 본교에서는 학생들의 취업 및 창업역량 강화를 위해 LINC+ 사업의 일환으로 다양한 창업교육지원사업(방송예술 창업가 양성특강, 방송예술 창업가 양성 캠프, 지적재산권반 운영, 1인 예술가 양성 강좌 운영 등)과 창업보육지원사업(문화콘텐츠 창업가 육성, 창업교육센터 구축, 창업경진대회 등), 창업사업화지원사업(창업가 양성 정부사업 참여지원, 1인 예술가 벤치마킹 지원, 창업교육센터 활성화 등), 취업교육 및 취업지원사업(문화예술인 양성 강좌 운영, 1인 예술가 채용오디션 등)을 전개하고 있습니다.</p></div><div class="stack"><p class="p">이에 본 설문은 창업 교과목이 창업가 정신 및 진로역량 강화에 미치는 효과를 측정하기 위해 작성되었습니다. 본 연구를 통해 도출된 결과물은 학생들의 창업교육 정책 결정에 의미 있게 활용될 것입니다. 여러분의 소중한 의견 주시면 감사하겠습니다.</p><p class="callout callout--blue"><i class="emo">🔒</i>본 설문은 <b class="strong">통계법 33조(비밀의 보호)</b>에 따라 개인정보는 통계 목적으로만 사용·보호됩니다.</p><div class="card"><span class="card__emo emo">🧑‍🏫</span><span class="card__badge">RESEARCHER</span><span class="card__title">연구책임자</span><span class="card__text">동아방송예술대학교 김성길 교수<br>careerdima@gmail.com</span></div></div></div>
+  </div>
+  <span class="slide__no">17</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">18. 창업 인식도 조사 — 설문 방법</span>
+  <section class="slide slide--content" id="s18" data-index="18" data-kind="content" data-name="창업 인식도 조사 — 설문 방법">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">5</span><span class="slide__section">창업 인식도 조사</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">설문 방법 안내</h2>
+    <ul class="list list--check"><li>구글 설문지 링크 주소는 <b class="strong">‘LMS 과제방 / 강의 공지’</b> 혹은 <b class="strong">‘과제’</b>에 게시 (OT 종결 후 업로드)</li></ul>
+    <a class="linkbox" href="https://forms.gle/XAnbLVxeTSdJBVdK7" target="_blank" rel="noopener"><i class="emo">🔗</i><span class="linkbox__body"><b class="linkbox__label">Y3반 창업교육 영향조사 구글 설문지</b><span class="linkbox__url">https://forms.gle/XAnbLVxeTSdJBVdK7</span></span></a>
+  </div>
+  <span class="slide__no">18</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">19. CHAPTER 6</span>
+  <section class="slide slide--chapter" id="s19" data-index="19" data-kind="chapter" data-name="CHAPTER 6">
+  <div class="chapter__band"></div>
+  <div class="chapter__stripes"><svg class="stripes" viewBox="0 0 1280 30" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="stg1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0A9EE0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0070C0"/><stop offset="1" stop-color="#0070C0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#41B6E6"/><stop offset="1" stop-color="#41B6E6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="2"  width="793.6" height="4" fill="url(#stg1)"/>
+  <rect x="0" y="11" width="537.6" height="5" fill="url(#stg2)"/>
+  <rect x="0" y="21" width="396.8" height="5" fill="url(#stg3)"/>
+</svg></div>
+  <div class="chapter__badge"><svg class="fig" viewBox="0 0 120 216" aria-hidden="true">
+  <defs><path id="chArc6" d="M29 14.4 A98 98 0 0 1 97.3 96.2" fill="none"/></defs>
+  <path d="M0 22 A86 86 0 0 1 0 194 Z" fill="#EDEFF2"/>
+  <text font-family="Outfit, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" letter-spacing="0.8">
+    <textPath href="#chArc6" startOffset="50%" text-anchor="middle">C H A P T E R</textPath>
+  </text>
+  <text x="40" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-size="46" font-weight="700" fill="#3D4450">6</text>
+</svg></div>
+  <h2 class="chapter__title" data-edit>진로 준비도 검사</h2>
+  <p class="chapter__sub" data-edit>효과적인 진로 및 취업선택을 지원하고자 개발된 검사</p>
+  <div class="chapter__mark"><span class="wordmark wordmark--dark">d<i>i</i>ma</span></div>
+  <span class="slide__no">19</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">20. 진로준비도 검사란?</span>
+  <section class="slide slide--content is-dense" id="s20" data-index="20" data-kind="content" data-name="진로준비도 검사란?">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">6</span><span class="slide__section">진로준비도 검사</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">진로준비도 검사란?</h2>
+    <p class="callout callout--line"><i class="emo">🧭</i>대학생 및 취업을 준비하는 대졸 청년층 구직자들을 대상으로 하며, 진로발달수준과 취업준비 행동 수준에 대한 객관적인 정보를 바탕으로 효과적인 진로 및 취업선택을 지원하고자 개발된 검사입니다.</p>
+    <div class="table-wrap"><table class="tbl "><thead><tr><th>구분</th><th>내용</th></tr></thead><tbody><tr><td class="c">검사 시간</td><td>약 20분 소요 (시간제한 없음)</td></tr><tr><td class="c">주요 내용</td><td>진로 및 취업선택 지원을 위한 진로발달수준 및 취업준비행동 수준 측정</td></tr><tr><td class="c">검사 구성</td><td>1부와 2부로 구성</td></tr><tr><td class="c">응답 요령</td><td>문항을 읽고 평소의 생각이나 행동대로 솔직하고 성실하게 응답</td></tr><tr><td class="c">제출 방법</td><td>검사 완료 후 결과 캡처하여 <b class="strong">LMS 과제방에 제출</b></td></tr></tbody></table></div>
+  </div>
+  <span class="slide__no">20</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">21. 진로준비도 검사 — 접속 경로</span>
+  <section class="slide slide--content is-dense" id="s21" data-index="21" data-kind="content" data-name="진로준비도 검사 — 접속 경로">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">6</span><span class="slide__section">진로준비도 검사</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">검사는 어디서 하나요?</h2>
+    <div class="slide__cols"><div class="stack"><div class="fig-wrap"><svg class="fig" viewBox="0 0 640 430" role="img" aria-label="고용24에서 대학생 진로준비도검사까지 가는 다섯 단계">
+  <g transform="translate(0,0)">
+    <rect x="0" y="0" width="640" height="60" rx="10" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <circle cx="34" cy="30" r="18" fill="#0070C0"/>
+    <text x="34" y="38" text-anchor="middle" font-family="Outfit, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">1</text>
+    <text x="66" y="27" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#0B2A4A">고용24 접속</text>
+    <text x="66" y="49" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="600" fill="#6B7280">work24.go.kr</text>
+    <path d="M320 62 l-8 0 8 10 8-10z" fill="#9DC3E6"/>
+  </g>
+  <g transform="translate(0,74)">
+    <rect x="0" y="0" width="640" height="60" rx="10" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <circle cx="34" cy="30" r="18" fill="#0070C0"/>
+    <text x="34" y="38" text-anchor="middle" font-family="Outfit, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">2</text>
+    <text x="66" y="27" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#0B2A4A">취업지원</text>
+    <text x="66" y="49" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="600" fill="#6B7280">상단 메뉴</text>
+    <path d="M320 62 l-8 0 8 10 8-10z" fill="#9DC3E6"/>
+  </g>
+  <g transform="translate(0,148)">
+    <rect x="0" y="0" width="640" height="60" rx="10" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <circle cx="34" cy="30" r="18" fill="#0070C0"/>
+    <text x="34" y="38" text-anchor="middle" font-family="Outfit, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">3</text>
+    <text x="66" y="27" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#0B2A4A">직업심리검사</text>
+    <text x="66" y="49" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="600" fill="#6B7280">취업가이드 안</text>
+    <path d="M320 62 l-8 0 8 10 8-10z" fill="#9DC3E6"/>
+  </g>
+  <g transform="translate(0,222)">
+    <rect x="0" y="0" width="640" height="60" rx="10" fill="#FFFFFF" stroke="#9DC3E6" stroke-width="2"/>
+    <circle cx="34" cy="30" r="18" fill="#0070C0"/>
+    <text x="34" y="38" text-anchor="middle" font-family="Outfit, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">4</text>
+    <text x="66" y="27" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#0B2A4A">대학생 진로준비도검사</text>
+    <text x="66" y="49" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="600" fill="#6B7280">검사 대상: 대학생</text>
+    <path d="M320 62 l-8 0 8 10 8-10z" fill="#9DC3E6"/>
+  </g>
+  <g transform="translate(0,296)">
+    <rect x="0" y="0" width="640" height="60" rx="10" fill="#FFD78F" stroke="#E8A33D" stroke-width="2"/>
+    <circle cx="34" cy="30" r="18" fill="#E8A33D"/>
+    <text x="34" y="38" text-anchor="middle" font-family="Outfit, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">5</text>
+    <text x="66" y="27" font-family="Noto Sans KR, sans-serif" font-size="21" font-weight="800" fill="#4A3208">검사 실시 (20분)</text>
+    <text x="66" y="49" font-family="Noto Sans KR, sans-serif" font-size="16" font-weight="600" fill="#6B4A10">결과 캡처 → LMS 제출</text>
+    
+  </g>
+</svg></div></div><div class="stack"><h3 class="h-sub">고용24 직업심리검사</h3><a class="linkbox" href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do" target="_blank" rel="noopener"><i class="emo">🔗</i><span class="linkbox__body"><b class="linkbox__label">고용24 직업심리검사 목록</b><span class="linkbox__url">https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do</span></span></a><p class="callout callout--blue"><i class="emo">🔎</i>검사 대상은 <b class="strong">대학생</b>, 측정 내용은 <b class="strong">진로(취업)준비도</b>로 골라 찾으면 빠릅니다.</p><p class="callout"><i class="emo">📥</i>검사가 끝나면 결과 화면을 캡처해 <em class="em">LMS 과제방</em>에 올립니다.</p></div></div>
+  </div>
+  <span class="slide__no">21</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">22. 진로준비도 검사 — 검사 고르기</span>
+  <section class="slide slide--content is-dense" id="s22" data-index="22" data-kind="content" data-name="진로준비도 검사 — 검사 고르기">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__chapno">6</span><span class="slide__section">진로준비도 검사</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">‘대학생진로준비도검사’를 고릅니다.</h2>
+    <div class="slide__cols"><div class="stack"><div class="fig-wrap"><svg class="fig" viewBox="0 0 630 300" role="img" aria-label="고용24 직업심리검사 목록에서 대학생 진로준비도검사를 고른다">
+  <g transform="translate(0,0)">
+    <rect x="6" y="6" width="298" height="134" rx="10" fill="#FFFFFF" stroke="#D9E2EC" stroke-width="1.5"/>
+    <rect x="22" y="22" width="115" height="26" rx="13" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <text x="30" y="40" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="700" fill="#0057A0">진로(취업)준비도</text>
+    <text x="22" y="76" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#0B2A4A">진로준비진단검사(찾아Dream)</text>
+    <rect x="150" y="98" width="140" height="30" rx="6" fill="#4A5DBE"/>
+    <text x="220" y="118" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">검사 실시 (2분)</text>
+  </g>
+  <g transform="translate(320,0)">
+    <rect x="6" y="6" width="298" height="134" rx="10" fill="#FFFFFF" stroke="#C00000" stroke-width="3"/>
+    <rect x="22" y="22" width="71" height="26" rx="13" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <text x="30" y="40" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="700" fill="#0057A0">진로준비도</text>
+    <text x="22" y="76" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#0B2A4A">대학생진로준비도검사</text>
+    <rect x="150" y="98" width="140" height="30" rx="6" fill="#0070C0"/>
+    <text x="220" y="118" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">검사 실시 (20분)</text>
+  </g>
+  <g transform="translate(0,152)">
+    <rect x="6" y="6" width="298" height="134" rx="10" fill="#FFFFFF" stroke="#D9E2EC" stroke-width="1.5"/>
+    <rect x="22" y="22" width="38" height="26" rx="13" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <text x="30" y="40" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="700" fill="#0057A0">역량</text>
+    <text x="22" y="76" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#0B2A4A">창업적성검사</text>
+    <rect x="150" y="98" width="140" height="30" rx="6" fill="#4A5DBE"/>
+    <text x="220" y="118" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">검사 실시 (20분)</text>
+  </g>
+  <g transform="translate(320,152)">
+    <rect x="6" y="6" width="298" height="134" rx="10" fill="#FFFFFF" stroke="#D9E2EC" stroke-width="1.5"/>
+    <rect x="22" y="22" width="38" height="26" rx="13" fill="#EDF4FC" stroke="#9DC3E6"/>
+    <text x="30" y="40" font-family="Noto Sans KR, sans-serif" font-size="14" font-weight="700" fill="#0057A0">흥미</text>
+    <text x="22" y="76" font-family="Noto Sans KR, sans-serif" font-size="19" font-weight="800" fill="#0B2A4A">직업흥미탐색검사(간편형)</text>
+    <rect x="150" y="98" width="140" height="30" rx="6" fill="#4A5DBE"/>
+    <text x="220" y="118" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">검사 실시 (5분)</text>
+  </g>
+</svg></div></div><div class="stack"><p class="callout callout--red"><i class="emo">✅</i>우리가 볼 검사는 <b class="strong">대학생진로준비도검사</b> (검사 실시 20분) 입니다.</p><ul class="list"><li>진로발달수준과 취업준비 행동수준에 대한 객관적인 정보를 확인</li><li>진로탐색과 취업준비를 위해 좀 더 노력해야 할 점이 무엇인지 알아볼 수 있음</li><li>검사 대상: 대학생</li></ul><p class="note">※ 화면에는 다른 검사들도 함께 보입니다. 이름을 꼭 확인하세요.</p></div></div>
+  </div>
+  <span class="slide__no">22</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">23. 질의응답</span>
+  <section class="slide slide--closing" id="s23" data-index="23" data-kind="closing" data-name="질의응답">
+  <div class="cover__band" style="height:100%"></div>
+  <h2 class="closing__title" data-edit>질의응답</h2>
+  <span class="slide__no">23</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">24. 생성형 AI 사용 지침 · 추가</span>
+  <section class="slide slide--content is-dense is-tiny is-added" id="s24" data-index="24" data-kind="content" data-name="생성형 AI 사용 지침">
+  <header class="slide__head"><span class="slide__eyebrow"><span class="slide__section">생성형 AI 사용 지침</span></span><span class="wordmark">d<i>i</i>ma</span></header>
+  <div class="slide__body" data-edit>
+    <h2 class="slide__lede">학생 생성형 AI 사용 지침</h2>
+    <p class="callout"><i class="emo">📌</i><b class="strong">0) 모든 과제 및 발표자료, 팀프로젝트에 적용한다.</b></p>
+    <div class="fig-wrap" style="max-height:150px"><svg class="fig" viewBox="0 0 1090 174" role="img" aria-label="생성형 AI 사용 흐름: 초안은 AI, 재해석과 핵심 결론은 사람, 출처와 프롬프트는 반드시 명시">
+  <g transform="translate(0,0)">
+    <rect x="0" y="10" width="248" height="150" rx="14" fill="#EDF4FC" stroke="#9DC3E6" stroke-width="2"/>
+    <text x="124" y="64" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🤖</text>
+    <text x="124" y="104" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="23" font-weight="800" fill="#0057A0">초안</text>
+    <text x="124" y="133" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="600" fill="#3D4450">AI 사용 허용</text>
+    <path d="M252 78 l14 7 -14 7z" fill="#0070C0"/><path d="M248 85 h8" stroke="#0070C0" stroke-width="3"/>
+  </g>
+  <g transform="translate(272,0)">
+    <rect x="0" y="10" width="248" height="150" rx="14" fill="#DCE9F8" stroke="#9DC3E6" stroke-width="2"/>
+    <text x="124" y="64" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🧠</text>
+    <text x="124" y="104" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="23" font-weight="800" fill="#0057A0">재해석 · 발전</text>
+    <text x="124" y="133" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="600" fill="#3D4450">사람이 변형한다</text>
+    <path d="M252 78 l14 7 -14 7z" fill="#0070C0"/><path d="M248 85 h8" stroke="#0070C0" stroke-width="3"/>
+  </g>
+  <g transform="translate(544,0)">
+    <rect x="0" y="10" width="248" height="150" rx="14" fill="#FFD78F" stroke="#E8A33D" stroke-width="2"/>
+    <text x="124" y="64" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">✍️</text>
+    <text x="124" y="104" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="23" font-weight="800" fill="#4A3208">핵심 · 결론</text>
+    <text x="124" y="133" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="600" fill="#3D4450">반드시 사람이 직접</text>
+    <path d="M252 78 l14 7 -14 7z" fill="#0070C0"/><path d="M248 85 h8" stroke="#0070C0" stroke-width="3"/>
+  </g>
+  <g transform="translate(816,0)">
+    <rect x="0" y="10" width="248" height="150" rx="14" fill="#FFFFFF" stroke="#C00000" stroke-width="2"/>
+    <text x="124" y="64" text-anchor="middle" font-family="Noto Color Emoji, sans-serif" font-size="38">🔖</text>
+    <text x="124" y="104" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="23" font-weight="800" fill="#C00000">출처 · 프롬프트</text>
+    <text x="124" y="133" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" font-weight="600" fill="#3D4450">반드시 명시한다</text>
+    
+  </g>
+</svg></div>
+    <div class="slide__cols slide__cols--wide-left"><div class="stack"><ul class="list list--num"><li>초안본 작성에는 <b class="strong">생성형 AI 사용을 허용</b>한다.</li><li>핵심 아이디어, 최종 분석과 결론은 <em class="em">반드시 사람이 직접</em> 작성해야 한다.</li><li>생성형 AI 사용 시 <b class="strong">서비스 종류·활용 목적·활용 범위</b>를 명시하고 출처를 표기한다. — 사용한 프롬프트를 <em class="em">반드시 제시</em>해야 한다 (메타 프롬프트 포함).</li><li>AI 답변을 그대로 쓰지 않고 <b class="strong">재해석·변형</b>하여 발전시킨다.</li><li>지침 위반 시 <em class="em">모든 불이익은 작성자인 담당자</em>에게 있음을 고지한다.</li></ul></div><div class="stack"><div class="card"><span class="card__emo emo">🧾</span><span class="card__badge">FORM</span><span class="card__title">출처 표기 예시</span><span class="card__text">· 서비스: (예) ChatGPT, Claude<br>· 활용 목적: 1차 개요 초안 작성<br>· 활용 범위: 목차 구성에 한함<br>· 사용 프롬프트: 전문 첨부(메타 프롬프트 포함)</span></div></div></div>
+  </div>
+  <span class="slide__no">24</span>
+</section>
+</div>
+<div class="frame">
+  <span class="frame__tag">25. 다음 차시 안내</span>
+  <section class="slide slide--next" id="s25" data-index="25" data-kind="next" data-name="다음 차시 안내">
+  <div class="chapter__band"></div>
+  <div class="chapter__stripes"><svg class="stripes" viewBox="0 0 1280 30" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="stg1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0A9EE0"/><stop offset="1" stop-color="#0A9EE0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0070C0"/><stop offset="1" stop-color="#0070C0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#41B6E6"/><stop offset="1" stop-color="#41B6E6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="2"  width="793.6" height="4" fill="url(#stg1)"/>
+  <rect x="0" y="11" width="537.6" height="5" fill="url(#stg2)"/>
+  <rect x="0" y="21" width="396.8" height="5" fill="url(#stg3)"/>
+</svg></div>
+  <div class="chapter__badge"><svg class="fig" viewBox="0 0 120 216" aria-hidden="true">
+  <defs><path id="chArc2" d="M29 14.4 A98 98 0 0 1 97.3 96.2" fill="none"/></defs>
+  <path d="M0 22 A86 86 0 0 1 0 194 Z" fill="#EDEFF2"/>
+  <text font-family="Outfit, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" letter-spacing="0.8">
+    <textPath href="#chArc2" startOffset="50%" text-anchor="middle">C H A P T E R</textPath>
+  </text>
+  <text x="40" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-size="46" font-weight="700" fill="#3D4450">2</text>
+</svg></div>
+  <p class="next__lines" data-edit>자신의 삶과 진로에 대한<br>탐색을 시작합니다.</p>
+  <h2 class="next__title" data-edit>다음 차시 안내</h2>
+  <p class="next__sub" data-edit>제2강  나의 삶, 나의 진로 / 나의 이해</p>
+  <div class="chapter__mark"><span class="wordmark wordmark--dark">d<i>i</i>ma</span></div>
+  <span class="slide__no">25</span>
+</section>
+</div>
+</main>
+<script>
+(function () {
+  var deck = document.getElementById('deck');
+  var frames = Array.prototype.slice.call(deck.querySelectorAll('.frame'));
+  var live = 0;
+  var KEY = 'lm:1주차_오리엔테이션';
+
+  /* 1280px 원본을 실제 폭에 맞춰 축소한다 */
+  function fit() {
+    frames.forEach(function (f) {
+      var s = f.querySelector('.slide');
+      if (!s) return;
+      s.style.transform = 'scale(' + (f.clientWidth / 1280) + ')';
+    });
+  }
+  window.addEventListener('resize', fit);
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(deck);
+  fit();
+  document.fonts && document.fonts.ready.then(fit);
+
+  /* 편집 내용 복원 */
+  function edits() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
+  }
+  function restore() {
+    var saved = edits(), n = 0;
+    Object.keys(saved).forEach(function (id) {
+      var el = document.querySelector('[data-edit-id="' + id + '"]');
+      if (el) { el.innerHTML = saved[id]; n++; }
+    });
+    if (n) status(n + '개 영역에 저장해 둔 편집 내용을 되살렸습니다.');
+  }
+  function save(el) {
+    var saved = edits();
+    saved[el.dataset.editId] = el.innerHTML;
+    try { localStorage.setItem(KEY, JSON.stringify(saved)); status('저장됨 · ' + new Date().toLocaleTimeString('ko-KR')); }
+    catch (e) { status('브라우저 저장에 실패했습니다.'); }
+  }
+  function status(t) { document.getElementById('hint').textContent = t; }
+
+  document.querySelectorAll('[data-edit]').forEach(function (el, i) {
+    el.dataset.editId = 'e' + i;
+    el.addEventListener('blur', function () { if (document.body.classList.contains('is-edit')) save(el); }, true);
+  });
+  restore();
+
+  /* 발표 모드 */
+  function show(i) {
+    live = Math.max(0, Math.min(frames.length - 1, i));
+    frames.forEach(function (f, k) { f.classList.toggle('is-live', k === live); });
+    document.getElementById('jump').value = String(live);
+    if (document.body.classList.contains('is-present')) fit();
+    else frames[live].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function present(on) {
+    document.body.classList.toggle('is-present', on);
+    document.getElementById('present').setAttribute('aria-pressed', String(on));
+    show(live); fit();
+  }
+  document.getElementById('present').addEventListener('click', function () {
+    present(!document.body.classList.contains('is-present'));
+  });
+  document.getElementById('edit').addEventListener('click', function () {
+    var on = !document.body.classList.contains('is-edit');
+    document.body.classList.toggle('is-edit', on);
+    this.setAttribute('aria-pressed', String(on));
+    document.querySelectorAll('[data-edit]').forEach(function (el) { el.contentEditable = on ? 'true' : 'false'; });
+    status(on ? '글자를 눌러 바로 고칠 수 있습니다. 고친 내용은 이 브라우저에 저장됩니다.' : '편집을 껐습니다.');
+  });
+  document.getElementById('reset').addEventListener('click', function () {
+    if (!confirm('이 브라우저에 저장한 편집 내용을 모두 지우고 원본으로 돌아갑니다.')) return;
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    location.reload();
+  });
+  document.getElementById('print').addEventListener('click', function () { window.print(); });
+  document.getElementById('jump').addEventListener('change', function () { show(Number(this.value)); });
+
+  document.addEventListener('keydown', function (e) {
+    if (document.body.classList.contains('is-edit')) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { show(live + 1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { show(live - 1); e.preventDefault(); }
+    if (e.key === 'Escape') present(false);
+    if (e.key === 'f' || e.key === 'F') present(true);
+  });
+})();
+</script>
+</body>
+</html>
