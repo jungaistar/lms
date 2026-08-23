@@ -291,11 +291,20 @@ function Invoke-Scan {
 
     $text = $null
     $how  = '이름만'
-    if ($OOXML_EXT -contains $ext)      { $text = Get-OoxmlText -Path $f.FullName; if ($text) { $how = '내용' } }
-    elseif ($TEXT_EXT -contains $ext)   { $text = Get-PlainText -Path $f.FullName; if ($text) { $how = '내용' } }
-    elseif ($BINARY_EXT -contains $ext) { $how = '이름만(구형식)' }
+    $c    = $null
+    # 파일 하나가 말썽이어도 훑기 전체가 멈추면 안 된다
+    try {
+      if ($OOXML_EXT -contains $ext)      { $text = Get-OoxmlText -Path $f.FullName; if ($text) { $how = '내용' } }
+      elseif ($TEXT_EXT -contains $ext)   { $text = Get-PlainText -Path $f.FullName; if ($text) { $how = '내용' } }
+      elseif ($BINARY_EXT -contains $ext) { $how = '이름만(구형식)' }
 
-    $c = Get-Classification -FileName $f.Name -Text $text
+      $c = Get-Classification -FileName $f.Name -Text $text
+    } catch {
+      Write-Warning "읽지 못함: $($f.FullName) — $($_.Exception.Message)"
+      $how = '읽기 실패'
+      $text = $null
+      $c = Get-Classification -FileName $f.Name -Text ''
+    }
 
     [void]$rows.Add([pscustomobject]@{
       순번     = $i
@@ -341,30 +350,53 @@ function Invoke-Apply {
   $verb = if ($Move) { '이동' } else { '복사' }
   Write-Host "[$verb] $($rows.Count) 줄 → $Dest" -ForegroundColor Cyan
 
+  # 폴더 이름에 쓸 수 없는 글자가 csv 에 들어와도 죽지 않게 걷어낸다
+  $badChars = [System.IO.Path]::GetInvalidFileNameChars()
+  function Get-SafeFolderName {
+    param([string]$Name)
+    $t = $Name.Trim()
+    foreach ($c in $badChars) { $t = $t.Replace([string]$c, '') }
+    $t = $t.Trim()
+    if ([string]::IsNullOrWhiteSpace($t)) { return $UNCLASSIFIED }
+    return $t
+  }
+
   $done = 0; $skipped = 0
+  $lineNo = 0
   foreach ($r in $rows) {
-    $src = $r.원본경로
-    if (-not (Test-Path -LiteralPath $src)) { $skipped++; continue }
-
-    $folder = if ([string]::IsNullOrWhiteSpace($r.분류)) { $UNCLASSIFIED } else { $r.분류.Trim() }
-    $targetDir = Join-Path $Dest $folder
-    New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
-
-    $name = [System.IO.Path]::GetFileNameWithoutExtension($src)
-    $ext  = [System.IO.Path]::GetExtension($src)
-    $target = Join-Path $targetDir ($name + $ext)
-    $n = 1
-    while (Test-Path -LiteralPath $target) {
-      $target = Join-Path $targetDir ("{0}_{1}{2}" -f $name, $n, $ext)
-      $n++
-    }
-
+    $lineNo++
+    # 한 줄이 잘못돼도 나머지 줄은 계속 간다 — 500개 중 하나 때문에 멈추면 안 된다
     try {
+      $src = $r.원본경로
+      if ([string]::IsNullOrWhiteSpace($src)) {
+        Write-Warning "$lineNo 번째 줄: 원본경로가 비어 있다 — 건너뜀"
+        $skipped++; continue
+      }
+      if (-not (Test-Path -LiteralPath $src)) {
+        Write-Warning "$lineNo 번째 줄: 원본이 없다 — $src"
+        $skipped++; continue
+      }
+
+      $folder = if ($null -eq $r.분류) { $UNCLASSIFIED } else { Get-SafeFolderName -Name ([string]$r.분류) }
+      $targetDir = Join-Path $Dest $folder
+      if (-not (Test-Path -LiteralPath $targetDir)) {
+        New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
+      }
+
+      $name = [System.IO.Path]::GetFileNameWithoutExtension($src)
+      $ext  = [System.IO.Path]::GetExtension($src)
+      $target = Join-Path $targetDir ($name + $ext)
+      $n = 1
+      while (Test-Path -LiteralPath $target) {
+        $target = Join-Path $targetDir ("{0}_{1}{2}" -f $name, $n, $ext)
+        $n++
+      }
+
       if ($Move) { Move-Item -LiteralPath $src -Destination $target }
       else       { Copy-Item -LiteralPath $src -Destination $target }
       $done++
     } catch {
-      Write-Warning "$verb 실패: $src — $($_.Exception.Message)"
+      Write-Warning "$lineNo 번째 줄 $verb 실패 — $($_.Exception.Message)"
       $skipped++
     }
   }
