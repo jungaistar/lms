@@ -9,7 +9,7 @@
  * 실행: npx tsx test/roster.check.ts
  */
 
-import { parseRoster } from '../src/lib/roster';
+import { parseRoster, rosterLeftovers } from '../src/lib/roster';
 
 let pass = 0;
 let fail = 0;
@@ -127,6 +127,47 @@ function eq(label: string, got: unknown, want: unknown) {
   eq('여러 줄 · 팀 없음', rows.every((r) => r.team === null), true);
   eq('여러 줄 · 학년 모두 읽음', rows.map((r) => r.grade), [3, 3, 3, 2]);
   eq('여러 줄 · 학번 모두 9자리', rows.every((r) => /^\d{9}$/.test(r.student_no)), true);
+}
+
+// ── ⑥ 명단 교체 — 붙여넣은 표에 없는 학생 골라내기 ──────────
+{
+  const rows = parseRoster('202458001\t김민준\n202458002\t이서연');
+  const existing = [
+    { id: 'a', student_no: '202458001', name: '김민준', active: true },
+    { id: 'b', student_no: '202458002', name: '이서연', active: true },
+    { id: 'c', student_no: '202113032', name: '이기성', active: true },
+  ];
+  eq('교체 · 명단에 있는 사람은 안 고른다', rosterLeftovers(existing, rows).map((s) => s.id), ['c']);
+}
+
+{
+  // 제외된 학생도 골라낸다 — 명단을 교체한다는 건 붙여넣은 표가 전부라는 뜻이다.
+  const rows = parseRoster('202458001\t김민준');
+  const existing = [
+    { id: 'a', student_no: '202458001', active: true },
+    { id: 'b', student_no: '202458099', active: false },
+  ];
+  eq('교체 · 제외된 학생도 대상', rosterLeftovers(existing, rows).map((s) => s.id), ['b']);
+}
+
+{
+  // 이름이 달라도 학번이 같으면 남는다. 개명·오타로 멀쩡한 학생을 지우면 안 된다.
+  const rows = parseRoster('202458001\t김민서');
+  const existing = [{ id: 'a', student_no: '202458001', name: '김민준', active: true }];
+  eq('교체 · 이름이 갈려도 학번으로 남긴다', rosterLeftovers(existing, rows).length, 0);
+}
+
+{
+  // 학번 앞뒤 공백은 같은 사람으로 본다.
+  const rows = parseRoster('202458001\t김민준');
+  const existing = [{ id: 'a', student_no: ' 202458001 ', active: true }];
+  eq('교체 · 공백은 같은 학번', rosterLeftovers(existing, rows).length, 0);
+}
+
+{
+  // 붙여넣기가 비면 전원이 대상이다. importRoster 가 그 전에 막지만 함수만 두고 본다.
+  const existing = [{ id: 'a', student_no: '202458001', active: true }];
+  eq('교체 · 빈 명단이면 전원 대상', rosterLeftovers(existing, parseRoster('')).map((s) => s.id), ['a']);
 }
 
 console.log(`\n명단 파서: ${pass}개 통과${fail ? `, ${fail}개 실패` : ''}`);

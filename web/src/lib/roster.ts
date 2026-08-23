@@ -127,3 +127,23 @@ export function parseRoster(text: string): RosterRow[] {
 
   return rows;
 }
+
+/**
+ * 명단 교체 — 붙여넣은 명단에 **없는** 학생을 골라낸다.
+ *
+ * 학기가 바뀌면 지난 학기 명단이 그대로 남는다. 학번이 하나도 겹치지 않아서
+ * 그냥 붙여넣으면 두 학기가 한 과목 안에 쌓인다 (2026-08-23 에 실제로 그랬다).
+ *
+ * 가르는 열쇠는 **학번 하나**다. 이름은 보지 않는다 — 개명·오타로 갈리면
+ * 멀쩡한 학생이 지울 목록에 들어간다.
+ *
+ * 제외(`active = false`) 된 학생도 똑같이 골라낸다. 명단을 교체한다는 것은
+ * 붙여넣은 표가 그 과목의 전부라는 뜻이고, 제외는 "명단에는 있다" 는 상태다.
+ */
+export function rosterLeftovers<T extends { student_no: string }>(
+  existing: T[],
+  rows: RosterRow[],
+): T[] {
+  const keep = new Set(rows.map((r) => r.student_no.trim()));
+  return existing.filter((s) => !keep.has(s.student_no.trim()));
+}

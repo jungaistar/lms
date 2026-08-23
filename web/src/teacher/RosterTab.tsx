@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
 import type { Student, Team } from '../lib/types';
 import { errText } from '../lib/errors';
-import { parseRoster } from '../lib/roster';
+import { parseRoster, rosterLeftovers } from '../lib/roster';
 
 export default function RosterTab({ courseId }: { courseId: string }) {
   const [students, setStudents] = useState<Student[]>([]);
@@ -12,6 +12,7 @@ export default function RosterTab({ courseId }: { courseId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [showImport, setShowImport] = useState(false);
+  const [replace, setReplace] = useState(false);
 
   const load = useCallback(async () => {
     const [s, t] = await Promise.all([
@@ -33,6 +34,19 @@ export default function RosterTab({ courseId }: { courseId: string }) {
   async function importRoster() {
     const rows = parseRoster(paste);
     if (rows.length === 0) return setError('읽어들일 수 있는 줄이 없습니다. "학번 이름 팀" 형식인지 확인하세요.');
+
+    // 교체는 지우는 일이다. 무엇이 지워지는지 세어서 **넣기 전에** 묻는다.
+    const doomed = replace ? rosterLeftovers(students, rows) : [];
+    if (doomed.length > 0) {
+      const head = doomed.slice(0, 5).map((s) => `${s.student_no} ${s.name}`).join(', ');
+      const more = doomed.length > 5 ? ` 외 ${doomed.length - 5}명` : '';
+      const ok = confirm(
+        `붙여넣은 명단에 없는 ${doomed.length}명을 지웁니다.\n${head}${more}\n\n` +
+          '그 학생이 남긴 평가 · 출결 · 과제 · 성적도 함께 사라집니다. 되돌릴 수 없습니다.\n' +
+          '지우지 않고 집계에서만 빼려면 취소하고 각 줄의 "제외" 를 쓰세요.',
+      );
+      if (!ok) return;
+    }
 
     setBusy(true);
     setError(null);
@@ -78,11 +92,24 @@ export default function RosterTab({ courseId }: { courseId: string }) {
       }
       if (sErr) throw sErr;
 
+      // 3) 교체면 명단에 없던 학생을 지운다. **새 명단을 넣은 뒤**에 지우는 이유는
+      //    넣기가 실패했을 때 아무도 지우지 않기 위해서다.
+      //    한 번에 다 보내면 주소가 너무 길어져서 끊어 보낸다.
+      for (let i = 0; i < doomed.length; i += 50) {
+        const { error: dErr } = await teacherClient
+          .from('students')
+          .delete()
+          .in('id', doomed.slice(i, i + 50).map((s) => s.id));
+        if (dErr) throw dErr;
+      }
+
       setNotice(
         `${rows.length}명 반영했습니다.` +
+          (doomed.length ? ` 명단에 없던 ${doomed.length}명은 지웠습니다.` : '') +
           (degraded ? ' (학년·학과는 0011 마이그레이션을 올린 뒤 다시 붙여넣으면 저장됩니다.)' : ''),
       );
       setPaste('');
+      setReplace(false);
       setShowImport(false);
       await load();
     } catch (e) {
@@ -140,9 +167,29 @@ export default function RosterTab({ courseId }: { courseId: string }) {
             style={{ fontSize: 14 }}
             placeholder={'1\t성악(보컬)과\t3\t201936083\t전예찬\n2\t방송극작과\t3\t202126002\t고재욱\n\n또는  202458001\t김민준\t1조'}
           />
+          <label
+            className="row"
+            style={{ alignItems: 'flex-start', gap: 10, marginTop: 12, cursor: 'pointer' }}
+          >
+            <input
+              type="checkbox"
+              checked={replace}
+              onChange={(e) => setReplace(e.target.checked)}
+              style={{ width: 18, height: 18, flex: '0 0 auto', marginTop: 2 }}
+            />
+            <span className="small">
+              <b>명단 교체</b> — 붙여넣은 명단에 <b>없는</b> 학생을 지웁니다.
+              학기가 바뀌어 지난 학기 명단이 그대로 남아 있을 때 씁니다.
+              지우기 전에 몇 명인지 묻습니다.
+            </span>
+          </label>
           <div className="spacer" />
           <button className="btn-primary btn-block" onClick={importRoster} disabled={busy || !paste.trim()}>
-            {busy ? '반영 중…' : `${parseRoster(paste).length}명 반영`}
+            {busy
+              ? '반영 중…'
+              : replace
+                ? `${parseRoster(paste).length}명으로 교체`
+                : `${parseRoster(paste).length}명 반영`}
           </button>
         </div>
       )}
