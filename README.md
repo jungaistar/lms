@@ -78,6 +78,7 @@ docs/      설계 문서와 설치·운영 가이드
 
 학기 중 실제 운영 순서는 [docs/30-operations.md](docs/30-operations.md)에 있습니다.
 작업 이력은 [docs/90-worklog.md](docs/90-worklog.md)에 날짜순으로 남깁니다.
+**지금 어디까지 왔는지**는 [docs/00-status.md](docs/00-status.md) — 측정해서 적은 점검표입니다.
 
 ## 학생 로그인
 
