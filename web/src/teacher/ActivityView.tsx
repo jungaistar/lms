@@ -203,7 +203,7 @@ export default function ActivityView() {
               제출 {progress.submitted} / {progress.assigned}건 ({pct}%) · 대상 {progress.targets}개 · 평가자 {progress.evaluators}명
               {progress.min_per_target < 3 && progress.submitted > 0 && (
                 <div style={{ color: 'var(--warn)', marginTop: 4 }}>
-                  ⚠️ 평가가 {progress.min_per_target}건뿐인 대상이 있습니다. 이 상태로 확정하면 그 대상의 점수는 신뢰도가 낮습니다.
+                  평가가 {progress.min_per_target}건뿐인 대상이 있습니다. 이 상태로 확정하면 그 대상의 점수는 신뢰도가 낮습니다.
                 </div>
               )}
             </div>

@@ -106,7 +106,6 @@ export default function Discussion() {
 
       {roots.length === 0 && (
         <div className="empty">
-          <div className="big">💬</div>
           아직 글이 없습니다. 첫 글을 남겨보세요.
         </div>
       )}

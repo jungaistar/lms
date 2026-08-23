@@ -863,7 +863,6 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-fam
   padding: 56px 20px; border: 1px dashed var(--line-strong);
   border-radius: var(--r-md); background: var(--surface);
 }
-.empty .big { font-size: 34px; margin-bottom: 10px; }
 
 /* ════════════════════════════════════════════════════════
    푸터

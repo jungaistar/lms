@@ -106,7 +106,7 @@ export default function SurveyAnswer() {
 
         {done ? (
           <>
-            <div className="empty"><div className="big">✅</div>참여를 마쳤습니다. 고맙습니다.</div>
+            <div className="empty">참여를 마쳤습니다. 고맙습니다.</div>
             <button className="btn-primary btn-block" onClick={() => nav('/home')}>강의홈으로</button>
           </>
         ) : survey.status !== 'open' ? (

@@ -80,7 +80,7 @@ export default function ActivityTab({ courseId }: { courseId: string }) {
       {error && <div className="alert alert-error">{error}</div>}
 
       {activities.length === 0 && !creating && (
-        <div className="empty"><div className="big">📋</div>아직 평가 활동이 없습니다.</div>
+        <div className="empty">아직 평가 활동이 없습니다.</div>
       )}
 
       <ul className="list">

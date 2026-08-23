@@ -171,7 +171,7 @@ export default function TeamsTab({ courseId, courseTitle }: { courseId: string; 
         </div>
       </div>
 
-      {teams.length === 0 && <div className="empty"><div className="big">👥</div>팀이 없습니다.</div>}
+      {teams.length === 0 && <div className="empty">팀이 없습니다.</div>}
 
       <div className="feature-grid">
         {teams.map((t) => {

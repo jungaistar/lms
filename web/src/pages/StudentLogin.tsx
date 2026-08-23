@@ -116,7 +116,6 @@ export default function StudentLogin() {
         {phase.at === 'pending' && (
           <div className="card">
             <div className="empty" style={{ border: 0, background: 'none', padding: '20px 0' }}>
-              <div className="big">⏳</div>
               <b style={{ color: 'var(--fg-strong)' }}>승인을 기다리는 중입니다.</b>
             </div>
             <p className="small">
