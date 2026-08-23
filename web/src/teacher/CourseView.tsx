@@ -16,6 +16,9 @@ import TasksTab from './TasksTab';
 import TaskSyncTab from './TaskSyncTab';
 import SurveyTab from './SurveyTab';
 import AttendanceTab from './AttendanceTab';
+import DailyTab from './DailyTab';
+import ContactsTab from './ContactsTab';
+import MessageTab from './MessageTab';
 import LiveCheckTab from './LiveCheckTab';
 import DeductionTab from './DeductionTab';
 import RubricTab from './RubricTab';
@@ -128,6 +131,7 @@ export default function CourseView() {
           {current === 'roster' && <RosterTab courseId={course.id} />}
           {current === 'match' && <RosterMatchTab courseId={course.id} courseTitle={course.title} />}
           {current === 'access' && <AccessTab course={course} />}
+          {current === 'contacts' && <ContactsTab courseId={course.id} courseTitle={course.title} />}
           {current === 'teams' && <TeamsTab courseId={course.id} courseTitle={course.title} />}
           {current === 'weeks' && <WeeksTab courseId={course.id} />}
           {current === 'notices' && <BoardTab courseId={course.id} only="notices" />}
@@ -136,7 +140,9 @@ export default function CourseView() {
           {current === 'tasksync' && <TaskSyncTab courseId={course.id} courseTitle={course.title} onGo={go} />}
           {current === 'surveys' && <SurveyTab courseId={course.id} courseTitle={course.title} />}
           {current === 'attendance' && <AttendanceTab courseId={course.id} />}
+          {current === 'daily' && <DailyTab courseId={course.id} />}
           {current === 'live' && <LiveCheckTab courseId={course.id} />}
+          {current === 'message' && <MessageTab courseId={course.id} courseTitle={course.title} />}
           {current === 'deduction' && <DeductionTab courseId={course.id} courseTitle={course.title} />}
           {current === 'rubric' && <RubricTab courseId={course.id} />}
           {current === 'activity' && <ActivityTab courseId={course.id} />}
