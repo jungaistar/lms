@@ -633,3 +633,64 @@ export function parseHeyYoungRequests(text: string): { rows: RequestRow[]; skipp
 
   return { rows, skipped };
 }
+
+// ── 출석부에서 회차 만들기 ─────────────────────────────────────
+
+export interface SessionPlanInput {
+  /** 파일이 요구하는 주차·교시·날짜 (`MatrixParseResult.columns`). */
+  columns: Array<{ week: number; session: number; date: string | null }>;
+  weeks: Array<{ id: string; week_no: number }>;
+  sessions: Array<{ id: string; week_id: string; session_no: number; meets_on: string | null }>;
+}
+
+export interface SessionPlan {
+  /** 만들어야 할 회차. 날짜까지 들고 있다. */
+  missing: Array<{ week: number; session: number; date: string | null }>;
+  /** 그러려면 먼저 만들어야 할 주차 번호. 오름차순. */
+  newWeekNos: number[];
+  /** 이미 있지만 수업일이 비어 있어서 채울 수 있는 회차. */
+  blankDates: Array<{ id: string; date: string }>;
+}
+
+/**
+ * 헤이영 출석부와 지금 회차를 대조해 **무엇을 만들고 무엇을 채울지** 정한다.
+ *
+ * 출석부에는 주차 · 교시 · 날짜가 다 들어 있는데도 예전에는 회차가 없으면
+ * 그 칸을 버렸다. 학기마다 과목마다 회차 서른 개를 손으로 만들어야 했다.
+ *
+ * 이미 적어 둔 수업일은 **덮지 않는다.** 교수가 보강으로 날짜를 옮겨 둘 수 있고,
+ * 그건 파일보다 사람 쪽이 옳다. 비어 있는 칸만 채운다.
+ */
+export function planSessions({ columns, weeks, sessions }: SessionPlanInput): SessionPlan {
+  const want = new Map<string, { week: number; session: number; date: string | null }>();
+  for (const c of columns) {
+    if (c.week > 0) want.set(`${c.week}:${c.session}`, c);
+  }
+
+  const weekNoOf = new Map(weeks.map((w) => [w.id, w.week_no]));
+  const haveWeek = new Set(weeks.map((w) => w.week_no));
+  const haveKey = new Set<string>();
+  for (const s of sessions) {
+    const no = weekNoOf.get(s.week_id);
+    if (no != null) haveKey.add(`${no}:${s.session_no}`);
+  }
+
+  const missing = [...want.values()]
+    .filter((c) => !haveKey.has(`${c.week}:${c.session}`))
+    .sort((a, b) => a.week - b.week || a.session - b.session);
+
+  const newWeekNos = [...new Set(missing.map((c) => c.week))]
+    .filter((n) => !haveWeek.has(n))
+    .sort((a, b) => a - b);
+
+  const blankDates: Array<{ id: string; date: string }> = [];
+  for (const s of sessions) {
+    if (s.meets_on) continue;
+    const no = weekNoOf.get(s.week_id);
+    if (no == null) continue;
+    const date = want.get(`${no}:${s.session_no}`)?.date;
+    if (date) blankDates.push({ id: s.id, date });
+  }
+
+  return { missing, newWeekNos, blankDates };
+}

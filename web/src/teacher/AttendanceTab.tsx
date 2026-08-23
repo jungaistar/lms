@@ -5,6 +5,7 @@ import {
   matchRoster,
   parseHeyYoungCsv,
   parseHeyYoungMatrix,
+  planSessions,
   type HeyYoungParseResult,
   type MatrixParseResult,
   type MatrixStatus,
@@ -264,16 +265,83 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
     }
   }
 
-  /** 주차·교시로 회차를 찾아 학기 전체를 한 번에 적재한다. */
+  /**
+   * 주차·교시로 회차를 찾아 학기 전체를 한 번에 적재한다.
+   *
+   * 헤이영 출석부에는 **주차 · 교시 · 날짜가 다 들어 있다.** 그런데 예전에는
+   * 회차가 없으면 그 칸을 통째로 버리고 "주차 탭에서 만들어 주세요" 라고만 했다.
+   * 학기마다 과목마다 회차 서른 개를 손으로 만들어야 했다는 뜻이다.
+   * 이제 파일에 있는 회차를 여기서 만들고 수업일까지 채운 뒤 적재한다.
+   */
   async function applyMatrix() {
     if (!matrix) return;
+
+    const { missing, newWeekNos, blankDates } = planSessions({
+      columns: matrix.columns,
+      weeks,
+      sessions,
+    });
+    const weekIdOf = new Map(weeks.map((w) => [w.week_no, w.id]));
+
+    if (missing.length > 0) {
+      const ok = confirm(
+        `파일에 있는 회차 ${missing.length}개가 아직 없습니다. 만들고 이어서 적재할까요?\n` +
+          (newWeekNos.length ? `주차 ${newWeekNos.length}개(${newWeekNos[0]}~${newWeekNos[newWeekNos.length - 1]}주)도 함께 만듭니다.\n` : '') +
+          '수업일은 파일에 적힌 날짜로 채웁니다. 이미 적어 둔 수업일은 그대로 둡니다.',
+      );
+      if (!ok) return;
+    }
+
     setBusy(true);
     setError(null);
     try {
-      const weekNo = new Map(weeks.map((w) => [w.week_no, w.id]));
+      // 1) 없는 주차를 먼저 만든다. 회차가 주차에 매달리기 때문이다.
+      if (newWeekNos.length > 0) {
+        const { data, error: wErr } = await teacherClient
+          .from('course_weeks')
+          .insert(newWeekNos.map((n) => ({ course_id: courseId, week_no: n, title: `${n}주차` })))
+          .select('id, week_no');
+        if (wErr) throw wErr;
+        ((data ?? []) as Array<{ id: string; week_no: number }>)
+          .forEach((w) => weekIdOf.set(w.week_no, w.id));
+      }
+
+      // 2) 없는 회차를 만든다. 수업일은 파일의 월·일에서 가져온다.
+      if (missing.length > 0) {
+        const rows = missing
+          .map((c) => ({ week_id: weekIdOf.get(c.week), session_no: c.session, meets_on: c.date }))
+          .filter((r): r is { week_id: string; session_no: number; meets_on: string | null } => !!r.week_id);
+        if (rows.length > 0) {
+          const { error: cErr } = await teacherClient.from('course_sessions').insert(rows);
+          if (cErr) throw cErr;
+        }
+      }
+
+      // 3) 이미 있던 회차 중 **수업일이 비어 있는 것만** 파일 날짜로 채운다.
+      for (const b of blankDates) {
+        const { error: dErr } = await teacherClient
+          .from('course_sessions')
+          .update({ meets_on: b.date })
+          .eq('id', b.id);
+        if (dErr) throw dErr;
+      }
+
+      // 4) 방금 만든 것까지 넣어 다시 읽는다. 화면 상태(weeks/sessions)는 아직 옛것이다.
+      const { data: wData, error: wReadErr } = await teacherClient
+        .from('course_weeks').select('*').eq('course_id', courseId).order('week_no');
+      if (wReadErr) throw wReadErr;
+      const freshWeeks = (wData ?? []) as CourseWeek[];
+      let freshSessions: CourseSession[] = [];
+      if (freshWeeks.length > 0) {
+        const { data: sData, error: sReadErr } = await teacherClient
+          .from('course_sessions').select('*').in('week_id', freshWeeks.map((x) => x.id)).order('session_no');
+        if (sReadErr) throw sReadErr;
+        freshSessions = (sData ?? []) as CourseSession[];
+      }
+
       const sessionOf = new Map<string, string>();
-      sessions.forEach((s) => {
-        const w = weeks.find((x) => x.id === s.week_id);
+      freshSessions.forEach((s) => {
+        const w = freshWeeks.find((x) => x.id === s.week_id);
         if (w) sessionOf.set(`${w.week_no}:${s.session_no}`, s.id);
       });
 
@@ -318,9 +386,12 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
       });
 
       const parts = [`출결 ${payload.length}칸을 적재했습니다.`];
+      if (newWeekNos.length) parts.push(`주차 ${newWeekNos.length}개를 만들었습니다.`);
+      if (missing.length) parts.push(`회차 ${missing.length}개를 만들었습니다.`);
+      if (blankDates.length) parts.push(`수업일 ${blankDates.length}칸을 채웠습니다.`);
       if (unmatchedStudents) parts.push(`명단에 없는 학생 ${unmatchedStudents}명은 건너뛰었습니다.`);
       if (missingSessions.size) {
-        parts.push(`회차가 없어 넣지 못한 칸: ${[...missingSessions].slice(0, 6).join(', ')}${missingSessions.size > 6 ? ' …' : ''} — 주차 탭에서 회차를 만들어 주세요.`);
+        parts.push(`아직 회차가 없어 넣지 못한 칸: ${[...missingSessions].slice(0, 6).join(', ')}${missingSessions.size > 6 ? ' …' : ''}`);
       }
       setNotice(parts.join(' '));
       setMatrix(null);
@@ -362,8 +433,10 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
       {notice && <div className="alert alert-ok">{notice}</div>}
 
       {orderedSessions.length === 0 && (
-        <div className="alert alert-warn">
-          회차가 없습니다. <b>주차</b> 탭에서 주차와 회차를 먼저 만들어 주세요. 출석은 회차에 붙습니다.
+        <div className="alert alert-info">
+          아직 회차가 없습니다. 아래에 <b>헤이영 출석부</b>를 올리면 파일에 적힌
+          주차 · 교시 · 날짜로 <b>회차를 만들면서</b> 적재합니다.
+          손으로 만들려면 <b>주/회차 관리</b> 에서 하세요.
         </div>
       )}
 
@@ -374,6 +447,8 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
           헤이영 <b>강좌별 출석관리 → 교과목명 클릭 → 엑셀다운</b> 으로 받은 파일입니다.
           학생 한 명이 한 줄이고 주차마다 교시 칸이 붙은 표라 <b>학기 전체가 한 번에</b> 들어갑니다.
           엑셀에서 <b>CSV UTF-8</b> 로 저장해 올려 주세요.
+          <b>없는 회차는 파일에 적힌 주차 · 교시 · 날짜로 만들어 가며</b> 적재합니다 —
+          미리 만들어 둘 필요가 없습니다.
         </p>
         <input
           type="file"
