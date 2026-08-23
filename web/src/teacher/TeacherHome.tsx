@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { teacherClient } from '../lib/supabase';
 import { MEMBER_STATUS_LABEL, type Course, type Profile } from '../lib/types';
 import PageHero from '../components/PageHero';
+import TermContactsCard from './TermContactsCard';
 
 /** 학생이 손으로 입력할 코드라 헷갈리는 글자(O/0, I/1)를 뺀다. */
 function randomJoinCode(): string {
@@ -199,6 +200,9 @@ export default function TeacherHome() {
           {profile && profile.status !== 'approved' ? '승인 후 과목을 만들 수 있습니다' : '+ 새 과목'}
         </button>
       )}
+
+      {/* 학기 전체 연락처 — 과목마다 들어가지 않고 한 번에 내려받는 자리 */}
+      <TermContactsCard courses={courses} />
     </div>
     </>
   );
