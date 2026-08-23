@@ -680,6 +680,11 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-fam
 @media (max-width: 900px) {
   input, select, textarea { font-size: 16px !important; }
   input:not([type='checkbox']):not([type='radio']), select { min-height: 44px; }
+  /* 버튼도 44px 이다.
+     예전에는 입력 칸에만 걸어 두었는데, 그 사이 화면 대부분이 `.btn-sm`
+     (기본 40px) 로 옮겨 가면서 아이패드·안드로이드 태블릿에서 실제로 누르는
+     대상이 전부 40px 이 됐다. 손가락으로 쓰는 폭이면 버튼도 같이 커져야 한다. */
+  .btn, button.btn-sm, a.btn-sm { min-height: 44px; }
 }
 
 /* 수업 중 체크 — 폰에서는 한 학생이 두 줄로 떨어지게 하고
@@ -689,6 +694,55 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-fam
   .live-row .who { flex: 1 1 100%; }
   .live-row > .btn-row { flex: 1 1 100% !important; gap: 6px; }
   .live-row > .btn-row > .btn-sm { flex: 1 1 0; min-width: 0; padding: 10px 2px; }
+}
+
+/* 일자별 기록 — 한 줄에 출결 · 수업태도 · 과제 · 메모가 다 들어간다.
+   넓은 화면에서는 옆으로 늘어서고, 좁아지면 묶음마다 줄이 바뀐다.
+   묶음(.mark-group)이 통째로 접히므로 라벨과 버튼이 갈라지지 않는다. */
+.mark-row {
+  display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap;
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: #fff; padding: 12px; margin-bottom: 8px;
+}
+.mark-row .who { flex: 1 1 120px; min-width: 0; align-self: center; }
+.mark-row .who b { display: block; font-weight: 700; color: var(--fg-strong); }
+.mark-row .who span { font-size: 12px; color: var(--fg-disabled); font-family: var(--mono); }
+.mark-row.marked { border-color: var(--accent); background: var(--accent-50); }
+.mark-group { display: flex; flex-direction: column; gap: 6px; flex: 0 1 auto; min-width: 0; }
+/* 남는 폭을 먹는 묶음(메모). 넓은 화면에서 버튼 묶음이 억지로 늘어나
+   안쪽에서 줄바꿈되는 대신, 이쪽이 늘어난다. */
+.mark-group-wide { flex: 1 1 200px; }
+.mark-group > .k {
+  font-size: 12px; font-weight: 700; color: var(--fg-disabled);
+  letter-spacing: 0.02em; white-space: nowrap;
+}
+
+/* 묶음이 옆으로 나란히 설 때는 사이에 선을 하나 둔다.
+   이게 없으면 수업태도 0~5 와 과제 0~5 가 붙어 **똑같이 생긴 버튼 열두 개**
+   한 줄로 보인다. 라벨은 위에 있어서 누를 때는 눈에 안 들어온다 —
+   태블릿에서 실제로 옆 묶음을 누르게 된다. */
+@media (min-width: 641px) {
+  .mark-group + .mark-group { border-left: 1px solid var(--line); padding-left: 12px; }
+}
+
+/* 태블릿 — 아이패드 세로와 안드로이드 태블릿이 여기 걸린다.
+   묶음 두 개가 한 줄에 나란히 서게 폭을 넓힌다. */
+@media (max-width: 900px) {
+  .mark-group, .mark-group-wide { flex: 1 1 45%; }
+}
+
+/* 폰 — 묶음마다 한 줄을 통째로 쓰고, 버튼은 줄을 고르게 나눠 갖는다.
+   버튼 하나가 44px 아래로 내려가지 않아야 손가락으로 눌린다. */
+@media (max-width: 640px) {
+  .mark-row { padding: 10px; gap: 10px; }
+  .mark-row .who { flex: 1 1 100%; }
+  .mark-group, .mark-group-wide { flex: 1 1 100%; }
+  .mark-group > .btn-row { gap: 6px; }
+  /* 44px 은 손가락 하나가 확실히 닿는 크기다. .btn-sm 의 기본 40px 로는
+     수업 중에 서서 누를 때 옆 칸이 눌린다 — 출결을 잘못 찍으면 성적이 틀어진다. */
+  .mark-group > .btn-row > .btn-sm { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 10px 2px; }
+  .mark-group > .score-picker { gap: 6px; }
+  .mark-group > .score-picker > button { flex: 1 1 0; min-width: 44px; min-height: 44px; }
 }
 
 /* ════════════════════════════════════════════════════════

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!--
+  일자별 기록 한 줄 — 폭별로 눈으로 보는 자리.
+
+  왜 따로 있나 — 교수 화면은 로그인해야 열린다. 그래서 레이아웃만 떼어
+  실제 styles.css 를 그대로 물려 확인한다. 마크업은 DailyTab.tsx 가
+  그리는 것과 같다. 화면 전체 확인은 responsive-check/ 로 따로 한다.
+
+  쓰는 법: dist/ 에 복사해 preview 로 열거나, 이 파일을 직접 열어도 된다
+  (styles.css 경로만 맞으면 된다).
+-->
+<html lang="ko"><head><meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>일자별 기록 — 폭별 확인</title>
+<link rel="stylesheet" href="../src/styles.css" />
+</head><body>
+<div class="container wide">
+  <div class="admin-head"><h2>일자별 기록</h2><p>출결 · 수업태도 · 과제를 날짜별로</p></div>
+
+  <div class="card tight">
+    <div class="small" style="margin-bottom:10px">
+      출석 <b>28</b> 지각 <b>3</b> 결석 <b>2</b> 조퇴 <b>1</b> 인정결석 <b>0</b>
+      <span class="muted">· 미표시 <b>1</b></span>
+      <span class="muted" style="margin-left:12px">· 태도 매김 <b>30</b>/35 · 과제 매김 <b>28</b>/35</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn-sm btn-ghost">미표시 전원 출석</button>
+      <button class="btn-sm btn-ghost">안 매긴 태도 전원 만점</button>
+      <button class="btn-sm btn-ghost">안 매긴 과제 전원 만점</button>
+      <button class="btn-sm btn-danger">이 날짜 점수 지우기</button>
+    </div>
+  </div>
+
+  <div class="mark-row marked">
+    <div class="who"><b>김민준</b><span>202458001</span></div>
+    <div class="mark-group"><span class="k">출결</span>
+      <div class="btn-row">
+        <button class="btn-sm btn-navy">출석</button><button class="btn-sm btn-ghost">지각</button>
+        <button class="btn-sm btn-ghost">결석</button><button class="btn-sm btn-ghost">조퇴</button>
+        <button class="btn-sm btn-ghost">인정결석</button>
+      </div></div>
+    <div class="mark-group"><span class="k">수업태도 <span class="muted">/5</span></span>
+      <div class="score-picker">
+        <button>0</button><button>1</button><button>2</button>
+        <button aria-pressed="true">3</button><button>4</button><button>5</button>
+      </div></div>
+    <div class="mark-group"><span class="k">과제 <span class="muted">/5</span></span>
+      <div class="score-picker">
+        <button>0</button><button>1</button><button>2</button>
+        <button>3</button><button>4</button><button aria-pressed="true">5</button>
+      </div></div>
+    <div class="mark-group mark-group-wide"><span class="k">메모</span>
+      <input value="발표 잘함" aria-label="김민준 메모" /></div>
+    <span class="badge">헤이영</span>
+    <span class="small muted" style="flex:0 0 auto">9. 1. 14:20 고침</span>
+  </div>
+
+  <div class="mark-row">
+    <div class="who"><b>이서연</b><span>202458002</span></div>
+    <div class="mark-group"><span class="k">출결</span>
+      <div class="btn-row">
+        <button class="btn-sm btn-ghost">출석</button><button class="btn-sm btn-ghost">지각</button>
+        <button class="btn-sm btn-navy">결석</button><button class="btn-sm btn-ghost">조퇴</button>
+        <button class="btn-sm btn-ghost">인정결석</button>
+      </div></div>
+    <div class="mark-group"><span class="k">수업태도 <span class="muted">/5</span></span>
+      <div class="score-picker">
+        <button>0</button><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button>
+      </div></div>
+    <div class="mark-group"><span class="k">과제 <span class="muted">/5</span></span>
+      <div class="score-picker">
+        <button>0</button><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button>
+      </div></div>
+    <div class="mark-group mark-group-wide"><span class="k">메모</span>
+      <input placeholder="발표 잘함 · 졸음 …" aria-label="이서연 메모" /></div>
+  </div>
+</div>
+</body></html>

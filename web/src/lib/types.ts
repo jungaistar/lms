@@ -567,3 +567,76 @@ export interface AttendanceRequestRow {
   result: string | null;
   applied_at: string | null;
 }
+
+// ════════════════════════════════════════════════════════════
+//  0012 — 연락처 · 일자별 수업 기록
+// ════════════════════════════════════════════════════════════
+
+/**
+ * 학생 연락처.
+ *
+ * students 가 아니라 별도 표에 있다. students 에는 student_peer_read 정책이
+ * 있어서 같은 반 학생이 명단 전체를 읽을 수 있기 때문이다 —
+ * 거기 전화번호를 붙이면 학생 한 명이 반 전체 번호를 가져간다.
+ * 이 표에는 학생용 RLS 정책이 아예 없다.
+ */
+export interface StudentContact {
+  student_id: string;
+  course_id: string;
+  /** 정규화한 번호 (010-1234-5678). 마스킹된 줄은 비어 있다. */
+  phone: string | null;
+  /** 헤이영에 있던 원문. 010-****-5678 처럼 가려진 것도 그대로 둔다. */
+  phone_raw: string | null;
+  masked: boolean;
+  guardian_phone: string | null;
+  note: string | null;
+  source: 'heyyoung' | 'manual';
+  updated_at: string;
+}
+
+/** 회차(=수업 날짜)마다 남기는 수업태도 · 과제 점수. 교수만 본다. */
+export interface SessionMark {
+  id: string;
+  session_id: string;
+  student_id: string;
+  /** null 은 '아직 안 매김' 이다. 0(최하점)과 다르다. */
+  attitude: number | null;
+  task: number | null;
+  note: string | null;
+  updated_at: string;
+}
+
+export interface MarkPolicy {
+  course_id: string;
+  attitude_max: number;
+  task_max: number;
+  /** skip = 안 매긴 날은 평균에서 빼고 센다 / zero = 0점으로 본다 */
+  unmarked: 'skip' | 'zero';
+  updated_at: string;
+}
+
+export const UNMARKED_LABEL: Record<MarkPolicy['unmarked'], string> = {
+  skip: '평균에서 빼고 셈',
+  zero: '0점으로 셈',
+};
+
+/** session_mark_summary() 한 줄. 셈은 전부 DB 함수가 한다. */
+export interface SessionMarkSummaryRow {
+  student_id: string;
+  student_no: string;
+  name: string;
+  sessions_total: number;
+  attitude_marked: number;
+  attitude_sum: number | null;
+  attitude_avg: number | null;
+  attitude_pct: number | null;
+  task_marked: number;
+  task_sum: number | null;
+  task_avg: number | null;
+  task_pct: number | null;
+  present_cnt: number;
+  late_cnt: number;
+  absent_cnt: number;
+  excused_cnt: number;
+  early_leave_cnt: number;
+}

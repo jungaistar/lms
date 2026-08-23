@@ -15,6 +15,7 @@ export type MenuKey =
   | 'roster'
   | 'match'
   | 'access'
+  | 'contacts'
   | 'teams'
   | 'weeks'
   | 'notices'
@@ -23,7 +24,9 @@ export type MenuKey =
   | 'tasksync'
   | 'surveys'
   | 'attendance'
+  | 'daily'
   | 'live'
+  | 'message'
   | 'deduction'
   | 'rubric'
   | 'activity'
@@ -57,7 +60,10 @@ export type IconName =
   | 'sync'
   | 'poll'
   | 'check'
+  | 'phone'
+  | 'grid'
   | 'bolt'
+  | 'send'
   | 'minus'
   | 'ruler'
   | 'star'
@@ -77,6 +83,7 @@ export function buildMenu(course: Course): MenuGroup[] {
         { key: 'roster', label: '수강생 관리', icon: 'people', hint: '명단 · 제외 · 복귀' },
         { key: 'match', label: '명단 대조', icon: 'compare', hint: '학교 LMS 명단과 맞추기' },
         { key: 'access', label: '입장 승인', icon: 'key', hint: '이메일 · 학번 · 이름 대조' },
+        { key: 'contacts', label: '연락처 관리', icon: 'phone', hint: '헤이영 전화번호 · 가입 이메일' },
         { key: 'teams', label: '팀 편성', icon: 'team', hint: '팀 만들기 · 배정' },
       ],
     },
@@ -95,7 +102,9 @@ export function buildMenu(course: Course): MenuGroup[] {
       title: '출결 · 기타',
       items: [
         { key: 'attendance', label: '출석 관리', icon: 'check', hint: '출결일지 · 헤이영' },
+        { key: 'daily', label: '일자별 기록', icon: 'grid', hint: '출결 · 수업태도 · 과제를 날짜별로' },
         { key: 'live', label: '수업 중 체크', icon: 'bolt', hint: '지각 · 태도를 그 자리에서' },
+        { key: 'message', label: '문자 · 알림', icon: 'send', hint: '헤이영 문자 · 메일 · 카톡' },
         { key: 'deduction', label: '기타 · 감점', icon: 'minus', hint: '기타 점수를 만드는 항목' },
       ],
     },
