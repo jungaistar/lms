@@ -252,6 +252,12 @@ export default function ContactsTab({ courseId, courseTitle }: { courseId: strin
           한 줄에 <b>학번 · 이름 · 전화번호</b>가 있으면 됩니다. 여러 줄을 한 번에 넣어도 됩니다.
           머리글이 있어도 되고 없어도 됩니다.
         </p>
+        <div className="alert alert-info small" style={{ marginTop: 8 }}>
+          <b>한 명씩 누르지 않아도 됩니다.</b> 헤이영{' '}
+          <b>UMS시스템 → 푸시 → 푸시 전송 → 수신자 추가</b> 에서 강좌를 고르고 검색하면
+          그 강좌 학생의 <b>이름 · 학번 · 학과 · 학년 · 전화번호</b>가 한 표에 나옵니다.
+          화면 맨 위 <b>개인정보마스킹여부</b> 체크를 끄고 그 표를 통째로 긁어 붙여넣으세요.
+        </div>
         <textarea
           rows={5}
           value={paste}

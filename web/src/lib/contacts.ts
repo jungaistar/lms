@@ -18,7 +18,7 @@
  * 네트워크도 DB 도 건드리지 않는 순수 함수만 둔다. 그대로 시험할 수 있다.
  */
 
-import { splitCells, findStudentNo, pickName } from './extTasks';
+import { splitCells, findStudentNo } from './extTasks';
 
 export interface ContactRow {
   /** 학번. 명단과 맞추는 유일한 열쇠다. */
@@ -73,6 +73,57 @@ const ALIASES = {
 
 const normalizeHeader = (s: string) =>
   s.replace(/^﻿/, '').replace(/[\s()[\]{}·.\-_/]/g, '').toLowerCase();
+
+/**
+ * 학과처럼 생긴 칸. `roster.ts` 와 같은 규칙이다.
+ *
+ * 이게 없으면 **학과가 이름 자리에 들어간다.** 2026-08-23 에 헤이영
+ * 푸시 `수신자 추가` 표(이름 · 학번/교번 · 학과 · 학년 · 전화번호)를
+ * 붙여넣어 보고 알았다 — 이름이 마스킹돼 있으면(`이*현`) 이름 칸을
+ * 버리고 학번 다음 칸인 **학과**를 이름으로 집었다.
+ */
+const DEPT = /^[가-힣A-Za-z0-9()\-·[\]]{1,}(과|계열|학부|전공)$/;
+
+/** 학년 칸. "3" 도 "3학년" 도 이름이 아니다. */
+const GRADE_CELL = /^[1-6]\s*(학년)?$/;
+
+/**
+ * 마스킹된 이름도 이름으로 본다 — `이*현` · `오**`.
+ *
+ * 마스킹된 이름은 DB 에 쓰지 않는다(`save_student_contacts()` 는 이름을
+ * 건드리지 않는다). 그래도 화면에는 보여 준다. 교수가 명단과 눈으로
+ * 맞춰 볼 때 학과보다는 `이*현` 이 훨씬 쓸모 있다.
+ */
+const NAME_CELL = /^[가-힣A-Za-z][가-힣A-Za-z\s*●✱]{1,19}$/;
+
+const looksLikeContactName = (c: string | undefined): c is string =>
+  !!c && NAME_CELL.test(c.trim()) && !DEPT.test(c.trim()) && !GRADE_CELL.test(c.trim());
+
+/**
+ * 이름 고르기.
+ *
+ * 머리글이 이름 칸을 짚어 주면 그 칸을 **그대로** 쓴다 (마스킹돼 있어도).
+ * 머리글이 없으면 학번 뒤 → 앞 순서로 훑되 학과 · 학년 칸은 건너뛴다.
+ */
+function pickContactName(cells: string[], studentNo: string | null, nameAt: number): string | null {
+  if (nameAt >= 0) {
+    const c = (cells[nameAt] ?? '').trim();
+    if (c && !DEPT.test(c) && !GRADE_CELL.test(c)) return c;
+  }
+  const at = studentNo ? cells.indexOf(studentNo) : -1;
+  if (at >= 0) {
+    for (let i = at + 1; i < cells.length; i += 1) {
+      const c = (cells[i] ?? '').trim();
+      if (looksLikeContactName(c)) return c;
+    }
+    for (let i = at - 1; i >= 0; i -= 1) {
+      const c = (cells[i] ?? '').trim();
+      if (looksLikeContactName(c)) return c;
+    }
+    return null;
+  }
+  return cells.map((c) => (c ?? '').trim()).find(looksLikeContactName) ?? null;
+}
 
 /**
  * 마스킹 기호.
@@ -235,10 +286,8 @@ export function parseContacts(text: string): ContactParseResult {
     }
 
     // 이름 — 없어도 넘어간다. 맞추는 열쇠는 학번이다.
-    const nameCell = nameAt >= 0 ? (cells[nameAt] ?? '').trim() : '';
-    const name = nameCell && /^[가-힣A-Za-z\s]{2,20}$/.test(nameCell)
-      ? nameCell
-      : pickName(cells, studentNo);
+    // 학과를 이름으로 집지 않는 것이 요점이다 (pickContactName 주석 참고).
+    const name = pickContactName(cells, studentNo, nameAt);
 
     // 전화번호 — 머리글이 있으면 그 칸을, 없으면 번호처럼 생긴 칸 중 학번이 아닌 것.
     const phoneCell =
