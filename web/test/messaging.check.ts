@@ -15,6 +15,10 @@
 
 import {
   applyFilter,
+  CHANNEL_LABEL,
+  HEYYOUNG_PUSH_RESULT_URL,
+  HEYYOUNG_PUSH_URL,
+  pushRecipientList,
   buildGmailLink,
   buildMailtoLink,
   buildSmsLink,
@@ -166,6 +170,41 @@ const person = (n: string, phone: string | null, email: string | null = null): M
   eq('그날 미표시', applyFilter(rows, 'unmarked_today').map((r) => r.student_id), ['c']);
   eq('누적 결석 3회 이상', applyFilter(rows, 'absent_many', 3).map((r) => r.student_id), ['a', 'd']);
   eq('누적 결석 4회 이상', applyFilter(rows, 'absent_many', 4).map((r) => r.student_id), ['a']);
+}
+
+// ── 헤이영 푸시 ──────────────────────────────────────────────
+// 2026-08-23 에 헤이영을 교수 계정으로 열어 보고 만든 검사다.
+// 그날 두 가지를 알았다 — 문자발송 화면이 교수 메뉴에 아예 없고,
+// 푸시 수신자는 번호가 아니라 **학번**으로 찾는다.
+{
+  const people: MessagePerson[] = [
+    { studentId: 'a', studentNo: '202134032', name: '이동현', phone: '010-1111-1111', email: null },
+    { studentId: 'b', studentNo: '202136033', name: '오도헌', phone: null, email: null },
+    { studentId: 'c', studentNo: ' 202213066 ', name: '김명준', phone: '010-3333-3333', email: null },
+  ];
+
+  eq('푸시 · 학번을 낸다 (번호가 아니다)',
+    pushRecipientList(people), '202134032\n202136033\n202213066');
+  eq('푸시 · 쉼표 모양',
+    pushRecipientList(people, 'comma'), '202134032, 202136033, 202213066');
+
+  // 문자와 갈리는 자리 — 번호 없는 학생을 빼지 않는다.
+  // 푸시는 번호를 안 쓴다. 빼면 앱은 깔았는데 번호만 안 적어 낸 학생이 조용히 사라진다.
+  eq('푸시 · 번호 없는 사람도 넣는다', pushRecipientList(people).split('\n').length, 3);
+  eq('문자 · 번호 없는 사람은 빠진다', phoneList(people).split('\n').length, 2);
+
+  eq('푸시 · 학번 앞뒤 공백은 턴다',
+    pushRecipientList([people[2]!]), '202213066');
+  eq('푸시 · 아무도 없으면 빈 글자', pushRecipientList([]), '');
+}
+
+{
+  // 주소는 실제로 열어 본 것만 적는다.
+  // 예전 상수 /admin/screen/HCO0301M01 은 404 였다 — 경로에 /admin 이 없다.
+  eq('푸시 전송 주소', HEYYOUNG_PUSH_URL, 'https://campus.heyoung.co.kr/screen/HMS0201M02');
+  eq('전송결과 주소', HEYYOUNG_PUSH_RESULT_URL, 'https://campus.heyoung.co.kr/screen/HMS0203M01');
+  eq('주소에 /admin 이 없다', /\/admin\//.test(HEYYOUNG_PUSH_URL), false);
+  eq('푸시 채널 이름', CHANNEL_LABEL.heyyoung_push, '헤이영 푸시');
 }
 
 // ── 결과 ─────────────────────────────────────────────────────
