@@ -63,7 +63,6 @@ export default function Feedback() {
 
       {items.length === 0 ? (
         <div className="empty">
-          <div className="big">🗒️</div>
           아직 받은 피드백이 없습니다.
           <div className="small" style={{ marginTop: 6 }}>평가가 마감되면 여기에 표시됩니다.</div>
         </div>

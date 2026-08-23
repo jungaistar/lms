@@ -117,7 +117,6 @@ export default function StudentHome() {
       </h2>
       {pending.length === 0 ? (
         <div className="empty">
-          <div className="big">✅</div>
           지금 해야 할 평가가 없습니다.
         </div>
       ) : (

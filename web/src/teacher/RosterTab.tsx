@@ -148,7 +148,7 @@ export default function RosterTab({ courseId }: { courseId: string }) {
       )}
 
       {students.length === 0 ? (
-        <div className="empty"><div className="big">👥</div>명단이 비어 있습니다.</div>
+        <div className="empty">명단이 비어 있습니다.</div>
       ) : (
         <div className="table-wrap">
           <table>

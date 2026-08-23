@@ -152,7 +152,7 @@ export default function CourseHome() {
           해야 할 것{todoCount > 0 && <span className="count">({todoCount})</span>}
         </div>
         {todoCount === 0 ? (
-          <div className="empty"><div className="big">✅</div>지금 해야 할 것이 없습니다.</div>
+          <div className="empty">지금 해야 할 것이 없습니다.</div>
         ) : (
           <ul className="list">
             {pendingTasks.map((t) => (

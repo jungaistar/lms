@@ -112,7 +112,6 @@ export default function TeacherHome() {
 
       {courses.length === 0 && !creating && (
         <div className="empty">
-          <div className="big">📚</div>
           아직 과목이 없습니다.
         </div>
       )}

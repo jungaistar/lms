@@ -60,7 +60,6 @@ export default function AuthOtp() {
           </>
         ) : (
           <div className="empty">
-            <div className="big">🔑</div>
             로그인하는 중…
           </div>
         )}
