@@ -17,10 +17,11 @@
  * 네트워크도 DB 도 건드리지 않는 순수 함수만 둔다.
  */
 
-export type SendChannel = 'heyyoung' | 'sms' | 'email' | 'share' | 'copy';
+export type SendChannel = 'heyyoung' | 'heyyoung_push' | 'sms' | 'email' | 'share' | 'copy';
 
 export const CHANNEL_LABEL: Record<SendChannel, string> = {
   heyyoung: '헤이영 문자',
+  heyyoung_push: '헤이영 푸시',
   sms: '기기 문자앱',
   email: '메일',
   share: '공유(카톡 등)',
@@ -176,8 +177,60 @@ export function buildGmailLink(people: MessagePerson[], subject: string, body: s
   return `https://mail.google.com/mail/?${q.toString()}`;
 }
 
-/** 헤이영 문자발송 화면. 사람이 로그인해서 여는 자리다 — 이쪽이 대신 쏘지 않는다. */
-export const HEYYOUNG_SMS_URL = 'https://campus.heyoung.co.kr/admin/screen/HCO0301M01';
+// ════════════════════════════════════════════════════════════
+//  헤이영 — 2026-08-23 에 교수 계정으로 직접 열어 보고 적은 주소들
+// ════════════════════════════════════════════════════════════
+//
+// 그날 알게 된 것 두 가지.
+//
+//  ① 예전에 적어 둔 문자발송 주소(`/admin/screen/HCO0301M01`)는 **404 다.**
+//     화면 경로에 `/admin` 이 없다.
+//  ② 그리고 **교수 메뉴에 문자발송 화면 자체가 없다.** UMS시스템 아래는
+//     푸시뿐이다 — 푸시 전송 · 컨텐츠관리 · 전송결과 · 전송통계.
+//
+// 그래서 헤이영으로 무언가를 보내는 실제 길은 **푸시**다.
+// 문자는 번호 목록만 내주고 사람이 알아서 쓰는 자리로 남긴다.
+
+/** 헤이영 첫 화면. 문자 화면 주소를 확인하지 못했으므로 여기로 보낸다. */
+export const HEYYOUNG_HOME_URL = 'https://campus.heyoung.co.kr';
+
+/** 푸시 전송. 제목 · 내용 · 이미지 · 예약전송이 있는 화면이다. */
+export const HEYYOUNG_PUSH_URL = 'https://campus.heyoung.co.kr/screen/HMS0201M02';
+
+/** 푸시 수신자 추가 팝업. 강좌를 고르면 그 강좌 학생이 한 번에 나온다. */
+export const HEYYOUNG_PUSH_RECV_URL = 'https://campus.heyoung.co.kr/screen/HMS0201M04';
+
+/** 보낸 뒤 결과를 보는 자리. */
+export const HEYYOUNG_PUSH_RESULT_URL = 'https://campus.heyoung.co.kr/screen/HMS0203M01';
+
+/**
+ * 푸시는 **헤이영캠퍼스 앱을 깐 학생만** 받는다. 화면이 그렇게 적어 두었다.
+ * 문자와 달리 번호가 있어도 앱이 없으면 안 간다 — 그래서 "번호 없음" 과
+ * "앱 없음" 은 다른 문제다. 이쪽은 앱 설치 여부를 알 길이 없다.
+ */
+export const PUSH_APP_ONLY_NOTE =
+  '헤이영캠퍼스 앱을 깐 학생만 받습니다. 번호가 있어도 앱이 없으면 가지 않습니다.';
+
+export type PushListStyle = 'lines' | 'comma';
+
+export const PUSH_STYLE_LABEL: Record<PushListStyle, string> = {
+  lines: '한 줄에 하나',
+  comma: '쉼표로 이어서',
+};
+
+/**
+ * 푸시 수신자 목록 — **학번**을 뽑는다.
+ *
+ * 헤이영 푸시의 수신자 추가는 번호가 아니라 `이름 및 학번/교번` 으로 찾는다.
+ * 그래서 문자 쪽 phoneList() 와 달리 학번을 낸다.
+ *
+ * 번호가 없는 학생도 **뺀 없이 넣는다.** 푸시는 번호를 안 쓰기 때문이다 —
+ * 번호가 비었다고 빼면 앱은 깔았는데 번호만 안 적어 낸 학생이 조용히 사라진다.
+ */
+export function pushRecipientList(people: MessagePerson[], style: PushListStyle = 'lines'): string {
+  const nos = people.map((p) => p.studentNo.trim()).filter(Boolean);
+  return style === 'comma' ? nos.join(', ') : nos.join('\n');
+}
 
 // ════════════════════════════════════════════════════════════
 //  대상 거르기

@@ -9,7 +9,13 @@ import {
   buildSmsLink,
   CHANNEL_LABEL,
   FILTER_LABEL,
-  HEYYOUNG_SMS_URL,
+  HEYYOUNG_HOME_URL,
+  HEYYOUNG_PUSH_URL,
+  HEYYOUNG_PUSH_RESULT_URL,
+  PUSH_APP_ONLY_NOTE,
+  PUSH_STYLE_LABEL,
+  pushRecipientList,
+  type PushListStyle,
   isAppleDevice,
   isPersonalized,
   PHONE_STYLE_LABEL,
@@ -58,6 +64,7 @@ export default function MessageTab({ courseId, courseTitle }: { courseId: string
   const [touchedPick, setTouchedPick] = useState(false);
 
   const [subject, setSubject] = useState('');
+  const [pushStyle, setPushStyle] = useState<PushListStyle>('lines');
   const [body, setBody] = useState('');
   const [style, setStyle] = useState<PhoneListStyle>('lines');
 
@@ -402,6 +409,11 @@ export default function MessageTab({ courseId, courseTitle }: { courseId: string
           아래 번호 목록을 복사해 헤이영 <b>문자발송</b> 화면의 받는사람 칸에 붙여 넣으세요.
           화면이 받는 모양이 저마다 달라서 세 가지를 다 내줍니다.
         </p>
+        <div className="alert alert-warn small" style={{ marginTop: 8 }}>
+          2026-08-23 에 교수 계정으로 확인해 보니 <b>헤이영 교수 메뉴에 문자발송 화면이 없습니다.</b>
+          UMS시스템 아래는 푸시뿐입니다. 학교에서 문자 권한을 따로 받은 경우가 아니라면
+          아래 <b>헤이영 푸시</b>를 쓰세요.
+        </div>
         <div className="row" style={{ gap: 8, alignItems: 'flex-end' }}>
           <label className="small muted" style={{ flex: '1 1 220px' }}>
             모양
@@ -426,10 +438,81 @@ export default function MessageTab({ courseId, courseTitle }: { courseId: string
             onClick={() => copy(personalized ? preview : bulkBody, '문안을')}>
             문안 복사
           </button>
-          <a className="btn btn-sm btn-ghost" href={HEYYOUNG_SMS_URL} target="_blank" rel="noreferrer">
+          <a className="btn btn-sm btn-ghost" href={HEYYOUNG_HOME_URL} target="_blank" rel="noreferrer">
             헤이영 열기 ↗
           </a>
           <button className="btn-sm btn-navy" disabled={people.length === 0} onClick={() => record('heyyoung')}>
+            보냈다고 기록
+          </button>
+        </div>
+      </div>
+
+      {/* 헤이영 푸시 */}
+      <div className="card tight">
+        <h3 style={{ marginTop: 0 }}>헤이영 푸시로 보내기</h3>
+        <p className="small muted">
+          헤이영 <b>UMS시스템 → 푸시 → 푸시 전송</b> 화면에 붙여 넣는 자리입니다.
+          이쪽이 대신 쏘지 않습니다 — 헤이영에는 공개 API 가 없고, 잘못 쏘면
+          한 번에 수십 명에게 잘못된 알림이 갑니다. 보내기는 교수님이 누르세요.
+        </p>
+        <div className="alert alert-info small" style={{ marginTop: 8 }}>
+          {PUSH_APP_ONLY_NOTE}
+        </div>
+
+        <ol className="small muted" style={{ marginTop: 10, paddingLeft: 18, lineHeight: 1.7 }}>
+          <li><b>수신자 추가</b> → 년도학기와 <b>강좌</b>를 고르고 검색하면 그 강좌 학생이 한 번에 나옵니다. 전체 체크 후 <b>선택추가</b>.</li>
+          <li>일부에게만 보낼 때는 아래 <b>학번 목록</b>을 하나씩 <b>이름 및 학번/교번</b> 칸에 넣어 찾습니다.</li>
+          <li>제목과 내용을 붙여 넣고 <b>메시지전송</b>. 나중에 보내려면 <b>예약전송</b>을 켜세요.</li>
+        </ol>
+
+        <div className="row" style={{ gap: 8, alignItems: 'flex-end', marginTop: 10 }}>
+          <label className="small muted" style={{ flex: '1 1 220px' }}>
+            학번 목록 모양
+            <select value={pushStyle} onChange={(e) => setPushStyle(e.target.value as PushListStyle)}>
+              {(Object.keys(PUSH_STYLE_LABEL) as PushListStyle[]).map((k) => (
+                <option key={k} value={k}>{PUSH_STYLE_LABEL[k]}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <textarea
+          rows={4} readOnly value={pushRecipientList(people, pushStyle)}
+          aria-label="푸시 수신자 학번 목록"
+          style={{ marginTop: 10, fontFamily: 'var(--mono)' }}
+        />
+
+        <label className="small muted" htmlFor="push-title" style={{ marginTop: 10, display: 'block' }}>
+          푸시 제목
+        </label>
+        <input
+          id="push-title" value={subject} onChange={(e) => setSubject(e.target.value)}
+          placeholder="예) 자원관리능력 3주차 결석 안내"
+        />
+        <div className="small muted" style={{ marginTop: 4 }}>
+          제목 {subject.length}자 · 내용 {(personalized ? preview : bulkBody).length}자.
+          푸시는 문자와 달리 바이트 제한이 걸리지 않지만, 잠금화면에서는 앞부분만 보입니다.
+        </div>
+
+        <div className="btn-row" style={{ marginTop: 10 }}>
+          <button className="btn-sm btn-primary" disabled={people.length === 0}
+            onClick={() => copy(pushRecipientList(people, pushStyle), `학번 ${people.length}개를`)}>
+            학번 {people.length}개 복사
+          </button>
+          <button className="btn-sm btn-ghost" disabled={!subject.trim()}
+            onClick={() => copy(subject, '제목을')}>
+            제목 복사
+          </button>
+          <button className="btn-sm btn-ghost" disabled={!body.trim()}
+            onClick={() => copy(personalized ? preview : bulkBody, '내용을')}>
+            내용 복사
+          </button>
+          <a className="btn btn-sm btn-ghost" href={HEYYOUNG_PUSH_URL} target="_blank" rel="noreferrer">
+            푸시 전송 열기 ↗
+          </a>
+          <a className="btn btn-sm btn-ghost" href={HEYYOUNG_PUSH_RESULT_URL} target="_blank" rel="noreferrer">
+            전송결과 ↗
+          </a>
+          <button className="btn-sm btn-navy" disabled={people.length === 0} onClick={() => record('heyyoung_push')}>
             보냈다고 기록
           </button>
         </div>
