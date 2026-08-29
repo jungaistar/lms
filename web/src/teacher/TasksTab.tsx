@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
+import { phoneText } from '../lib/weekly';
 import { errText } from '../lib/errors';
 import {
   TASK_STATUS_LABEL,
   type CourseWeek,
   type Student,
+  type StudentContact,
   type Task,
   type TaskMode,
   type TaskStatus,
@@ -28,6 +30,8 @@ export default function TasksTab({ courseId }: { courseId: string }) {
   const [students, setStudents] = useState<Student[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [subs, setSubs] = useState<TaskSubmission[]>([]);
+  /** 안 낸 학생에게 그 자리에서 연락하려고 번호를 함께 띄운다. 개인 과제에서만 쓴다. */
+  const [phones, setPhones] = useState<Map<string, string>>(new Map());
   const [gradingId, setGradingId] = useState<string | null>(null);
   const [showNew, setShowNew] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -44,17 +48,28 @@ export default function TasksTab({ courseId }: { courseId: string }) {
   });
 
   const load = useCallback(async () => {
-    const [w, t, s, tm] = await Promise.all([
+    const [w, t, s, tm, c] = await Promise.all([
       teacherClient.from('course_weeks').select('*').eq('course_id', courseId).order('week_no'),
       teacherClient.from('tasks').select('*').eq('course_id', courseId).order('due_at', { nullsFirst: false }),
       teacherClient.from('students').select('*').eq('course_id', courseId).eq('active', true).order('student_no'),
       teacherClient.from('teams').select('*').eq('course_id', courseId).order('name'),
+      teacherClient.from('student_contacts').select('*').eq('course_id', courseId),
     ]);
     if (t.error) setError(t.error.message);
     setWeeks((w.data ?? []) as CourseWeek[]);
     setTasks((t.data ?? []) as Task[]);
     setStudents((s.data ?? []) as Student[]);
     setTeams((tm.data ?? []) as Team[]);
+
+    // 0012 가 안 올라간 프로젝트에는 연락처 표가 없다. 그때는 번호 칸만 빈다.
+    const pm = new Map<string, string>();
+    if (!c.error) {
+      for (const row of (c.data ?? []) as StudentContact[]) {
+        const text = phoneText({ id: row.student_id, student_no: '', name: '', phone: row.phone, phone_raw: row.phone_raw });
+        if (text) pm.set(row.student_id, text);
+      }
+    }
+    setPhones(pm);
   }, [courseId]);
 
   useEffect(() => { load(); }, [load]);
@@ -141,12 +156,13 @@ export default function TasksTab({ courseId }: { courseId: string }) {
   };
 
   const grading = tasks.find((t) => t.id === gradingId) ?? null;
-  const owners: Array<{ id: string; label: string; sub: TaskSubmission | undefined }> = grading
+  const owners: Array<{ id: string; label: string; phone: string; sub: TaskSubmission | undefined }> = grading
     ? grading.mode === 'team'
-      ? teams.map((t) => ({ id: t.id, label: t.name, sub: subs.find((s) => s.team_id === t.id) }))
+      ? teams.map((t) => ({ id: t.id, label: t.name, phone: '', sub: subs.find((s) => s.team_id === t.id) }))
       : students.map((s) => ({
           id: s.id,
           label: `${s.student_no} ${s.name}`,
+          phone: phones.get(s.id) ?? '',
           sub: subs.find((x) => x.student_id === s.id),
         }))
     : [];
@@ -303,6 +319,7 @@ export default function TasksTab({ courseId }: { courseId: string }) {
               <thead>
                 <tr>
                   <th>{grading.mode === 'team' ? '팀' : '학생'}</th>
+                  {grading.mode !== 'team' && <th>전화번호</th>}
                   <th>제출</th>
                   <th style={{ width: 110 }}>점수</th>
                   <th>피드백</th>
@@ -313,6 +330,7 @@ export default function TasksTab({ courseId }: { courseId: string }) {
                   <GradeRow
                     key={o.id}
                     label={o.label}
+                    phone={grading.mode === 'team' ? null : o.phone}
                     max={grading.max_points}
                     sub={o.sub}
                     onSave={(score, feedback) => grade(grading, o.id, score, feedback)}
@@ -330,11 +348,14 @@ export default function TasksTab({ courseId }: { courseId: string }) {
 /** 한 줄만 자기 입력값을 들고 있게 해서 표 전체가 다시 그려지지 않게 한다. */
 function GradeRow({
   label,
+  phone,
   max,
   sub,
   onSave,
 }: {
   label: string;
+  /** null 이면 팀 줄이라 번호 칸 자체가 없다. */
+  phone: string | null;
   max: number;
   sub: TaskSubmission | undefined;
   onSave: (score: string, feedback: string) => void;
@@ -350,6 +371,9 @@ function GradeRow({
   return (
     <tr>
       <td>{label}</td>
+      {phone !== null && (
+        <td className="mono small">{phone || <span className="muted">—</span>}</td>
+      )}
       <td className="muted small">
         {sub?.submitted_at ? (
           <>

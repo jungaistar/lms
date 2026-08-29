@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "responsive": "node -e \"const f=require('fs');f.mkdirSync('dist/responsive-check',{recursive:true});f.copyFileSync('tools/responsive-check.html','dist/responsive-check/index.html');console.log('→ http://localhost:4173/responsive-check/  (npm run preview 를 함께 띄우세요)')\"",
     "typecheck": "tsc -b --noEmit",
-    "test": "tsx test/roster.check.ts && tsx test/roster-files.check.ts && tsx test/heyyoung.check.ts && tsx test/heyyoung-matrix.check.ts && tsx test/contacts.check.ts && tsx test/messaging.check.ts && tsx test/exporters.check.ts && tsx test/exttasks.check.ts && tsx test/plan-sessions.check.ts && tsx test/responsive.check.ts"
+    "test": "tsx test/roster.check.ts && tsx test/roster-files.check.ts && tsx test/heyyoung.check.ts && tsx test/heyyoung-matrix.check.ts && tsx test/contacts.check.ts && tsx test/messaging.check.ts && tsx test/exporters.check.ts && tsx test/exttasks.check.ts && tsx test/weekly.check.ts && tsx test/plan-sessions.check.ts && tsx test/responsive.check.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.58.0",

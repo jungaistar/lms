@@ -11,6 +11,7 @@ import RosterMatchTab from './RosterMatchTab';
 import AccessTab from './AccessTab';
 import TeamsTab from './TeamsTab';
 import WeeksTab from './WeeksTab';
+import WeeklyTab from './WeeklyTab';
 import BoardTab from './BoardTab';
 import TasksTab from './TasksTab';
 import TaskSyncTab from './TaskSyncTab';
@@ -134,6 +135,9 @@ export default function CourseView() {
           {current === 'contacts' && <ContactsTab courseId={course.id} courseTitle={course.title} />}
           {current === 'teams' && <TeamsTab courseId={course.id} courseTitle={course.title} />}
           {current === 'weeks' && <WeeksTab courseId={course.id} />}
+          {current === 'weekly' && (
+            <WeeklyTab courseId={course.id} courseTitle={course.title} onGo={go} />
+          )}
           {current === 'notices' && <BoardTab courseId={course.id} only="notices" />}
           {current === 'materials' && <BoardTab courseId={course.id} only="materials" />}
           {current === 'tasks' && <TasksTab courseId={course.id} />}
