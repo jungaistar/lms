@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { teacherClient } from '../lib/supabase';
+import { phoneText } from '../lib/weekly';
 import {
   ATTENDANCE_LABEL,
   matchRoster,
@@ -19,6 +20,7 @@ import type {
   DeductionKind,
   DeductionSummaryRow,
   Student,
+  StudentContact,
 } from '../lib/types';
 
 const STATUSES: MatrixStatus[] = ['present', 'late', 'absent', 'excused', 'early_leave'];
@@ -37,6 +39,8 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
   const [sessions, setSessions] = useState<CourseSession[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [rows, setRows] = useState<AttendanceRow[]>([]);
+  /** 결석한 학생에게 그 자리에서 연락하려고 번호를 함께 띄운다. 표가 없으면 빈 채로 둔다. */
+  const [phones, setPhones] = useState<Map<string, string>>(new Map());
   const [sessionId, setSessionId] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,13 +59,24 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
   const [attitude, setAttitude] = useState<Map<string, number>>(new Map());
 
   const load = useCallback(async () => {
-    const [w, s] = await Promise.all([
+    const [w, s, c] = await Promise.all([
       teacherClient.from('course_weeks').select('*').eq('course_id', courseId).order('week_no'),
       teacherClient.from('students').select('*').eq('course_id', courseId).eq('active', true).order('student_no'),
+      teacherClient.from('student_contacts').select('*').eq('course_id', courseId),
     ]);
     const wl = (w.data ?? []) as CourseWeek[];
     setWeeks(wl);
     setStudents((s.data ?? []) as Student[]);
+
+    // 0012 가 안 올라간 프로젝트에는 연락처 표가 없다. 그때는 번호 칸만 빈다.
+    const pm = new Map<string, string>();
+    if (!c.error) {
+      for (const row of (c.data ?? []) as StudentContact[]) {
+        const text = phoneText({ id: row.student_id, student_no: '', name: '', phone: row.phone, phone_raw: row.phone_raw });
+        if (text) pm.set(row.student_id, text);
+      }
+    }
+    setPhones(pm);
 
     if (wl.length === 0) return setSessions([]);
     const { data: cs } = await teacherClient
@@ -410,13 +425,14 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
   /** 현재 회차의 출결일지를 내보내기용 표로 만든다. */
   function buildSheet(): SheetTable {
     const s = orderedSessions.find((x) => x.id === sessionId);
-    const head = ['학번', '이름', '출결', '체크인', '출처'];
+    const head = ['학번', '이름', '전화번호', '출결', '체크인', '출처'];
     if (attitudeKind) head.push(`${attitudeKind.label} (건)`);
     const rows2 = students.map((st) => {
       const r = byStudent.get(st.id);
       const base: Array<string | number | null> = [
         st.student_no,
         st.name,
+        phones.get(st.id) ?? '',
         r ? STATUS_LABEL[r.status as MatrixStatus] : '미표시',
         r?.checked_in_at ? new Date(r.checked_in_at).toLocaleString('ko-KR') : '',
         r?.source === 'heyyoung' ? '헤이영' : r ? '직접' : '',
@@ -588,7 +604,7 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
           <div className="table-wrap">
             <table>
               <thead>
-                <tr><th>학번</th><th>이름</th><th>체크인</th><th>출결</th>{attitudeKind && <th>{attitudeKind.label}</th>}</tr>
+                <tr><th>학번</th><th>이름</th><th>전화번호</th><th>체크인</th><th>출결</th>{attitudeKind && <th>{attitudeKind.label}</th>}</tr>
               </thead>
               <tbody>
                 {students.map((s) => {
@@ -597,6 +613,9 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
                     <tr key={s.id}>
                       <td className="mono">{s.student_no}</td>
                       <td>{s.name}</td>
+                      <td className="mono small">
+                        {phones.get(s.id) || <span className="muted">—</span>}
+                      </td>
                       <td className="muted small">
                         {r?.checked_in_at ? new Date(r.checked_in_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '—'}
                         {r?.source === 'heyyoung' && <span className="badge" style={{ marginLeft: 6 }}>헤이영</span>}

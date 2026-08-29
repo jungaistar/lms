@@ -18,6 +18,7 @@ export type MenuKey =
   | 'contacts'
   | 'teams'
   | 'weeks'
+  | 'weekly'
   | 'notices'
   | 'materials'
   | 'tasks'
@@ -91,6 +92,7 @@ export function buildMenu(course: Course): MenuGroup[] {
       title: '수업 운영',
       items: [
         { key: 'weeks', label: '주/회차 관리', icon: 'calendar', hint: '주차 · 회차 · 공개' },
+        { key: 'weekly', label: '주차별 명단', icon: 'grid', hint: '미제출 · 결석 · 전화번호' },
         { key: 'notices', label: '과목 공지', icon: 'megaphone' },
         { key: 'materials', label: '자료 관리', icon: 'folder', hint: '학습자료실 · 강의계획서' },
         { key: 'tasks', label: '과제 관리', icon: 'pencil', hint: '출제 · 채점' },
